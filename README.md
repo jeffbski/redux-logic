@@ -56,8 +56,8 @@ import { createEpicMiddleware } from './redux-logic';
 import rootReducer, { epics } from './rootReducer';
 
 const deps = { // injected dependencies for epics
-  a: 1,
-  b: 2
+  SECRET_KEY: 'dsfjsdkfjsdlfjls',
+  firebase: firebaseInstance
 };
 
 const epicMiddleware = createEpicMiddleware(epics, deps);
@@ -148,6 +148,7 @@ createEpic({
   throttle, // throttle for N ms, default 0
 
   // execution phases, define one or more
+  // deps are injected into first argument
   validate({ getState, action }, allow, reject) {}
 
   transform({ getState, action }, next) {}
