@@ -136,7 +136,7 @@ export default [
 
 ## Full API
 
-
+```js
 createEpic({
   // filtering/cancelling
   type, // string, regex, array of strings or regexes
@@ -165,3 +165,4 @@ epicMiddleware.addEpics(epics);
 
 // replacing epics, epic state is reset but epics should still finish
 epicMiddleware.replaceEpics(epics);
+```
