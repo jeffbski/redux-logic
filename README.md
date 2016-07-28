@@ -167,3 +167,60 @@ epicMiddleware.addEpics(epics);
 // replacing epics, epic state is reset but epics should still finish
 epicMiddleware.replaceEpics(epics);
 ```
+
+
+## Potential names
+
+ - redux-epic is already taken
+
+Other names that redux-observable looked at are
+daemon, coordinator, channel, broker, effect, delegator, process, action-listener
+
+   - redux-epics (available)
+   - synonyms http://www.thesaurus.com/browse/history/2
+     - redux-feature (avail)
+     - redux-drama
+     - redux-myth (avail)
+     - redux-legend (avail)
+     - redux-tale (avail)
+     - redux-lore (avail)
+     - redux-mythos
+     - redux-conte (a short tale of adventure) (avail)
+       - http://www.thesaurus.com/browse/conte
+     - redux-beat
+   - http://www.thesaurus.com/browse/logic
+     - redux-logic (available)
+     - redux-case (avail)
+     - redux-claim
+   - https://en.wikipedia.org/wiki/Business_logic
+     - redux-work (avail)
+     - redux-domain (avail)
+     - redux-business
+   - http://www.thesaurus.com/browse/saga
+   - http://www.thesaurus.com/browse/score
+     - redux-score
+     - redux-play(s)
+     - redux-playbook (taken)
+     - redux-manage
+     - redux-perform
+     - redux-reach
+     - redux-produce
+     - redux-strategy
+     - redux-arrange
+     - redux-attain
+   - http://www.thesaurus.com/browse/playbook
+     - redux-scenario (avail)
+   - http://www.thesaurus.com/browse/side%20effect
+     - redux-reaction
+     - redux-sequence
+     - redux-waves
+   - http://www.thesaurus.com/browse/strategy
+     - redux-scene
+     - redux-control
+     - redux-command
+     - redux-protocol
+     - redux-tactic(s)
+     - redux-step
+     - redux-plan
+ - redux-epic-middleware
+ - redux-epic-effects
