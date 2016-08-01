@@ -358,7 +358,7 @@ So here is what I really wanted:
 
 After pondering this for a bit, I realized that this wouldn't be that hard to build. I simply need to be able to configure a few behaviors and my middleware would invoke the necessary RxJS observable code to enable that behavior. Then I could simply provide a simple interface to the business logic code.
 
-> "I wrote the RxJS code so you wouldn't have to"
+> "I wrote the RxJS code so you won't have to"
 
 If I organize this in the middleware properly I can perform interception of actions before they hit the reducers as well as perform async processing and dispatching after.
 
