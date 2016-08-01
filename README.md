@@ -8,6 +8,8 @@ Redux middleware for organizing business logic and action side effects.
 
 You declare some behavior that wraps your code providing things like filtering, cancelation, limiting, etc., then write just the simple business logic code that runs in the center.
 
+Inspired by redux-observable epics, redux-saga, and custom redux middleware.
+
 ## tl;dr
 
 One place to keep all of your business logic and side effects with redux
@@ -326,6 +328,13 @@ const fetchPollsLogic = createLogic({
 
 This is pretty nice leaving us with mainly our business logic code that could be easily extracted and called from here.
 
+## Inspiration
+
+redux-logic was inspired from these projects:
+
+ - [redux-observable epics](https://redux-observable.js.org)
+ - [redux-saga](http://yelouafi.github.io/redux-saga/)
+ - [redux middleware](http://redux.js.org/docs/advanced/Middleware.html)
 
 ## Get involved
 
