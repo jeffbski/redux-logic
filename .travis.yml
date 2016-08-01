@@ -1,0 +1,16 @@
+language: node_js
+node_js:
+  - "4"
+  - "5"
+  - "6"
+script:
+  - npm run check:src
+  - npm run build
+  - npm run check:examples
+branches:
+  only:
+    - master
+cache:
+  directories:
+  - $HOME/.npm
+  - examples/async/node_modules

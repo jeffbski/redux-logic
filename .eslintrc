@@ -1,0 +1,23 @@
+{
+  "extends": "airbnb-base",
+  "rules": {
+    // don't require dangling commas
+    "comma-dangle": 0,
+    // don't require functions to be declared before use
+    "no-use-before-define": [2, { "functions": false, "classes": true }],
+    // Disable until Flow supports let and const
+    "no-var": 0,
+    "react/jsx-uses-react": 1,
+    "react/jsx-no-undef": 2,
+    "react/wrap-multilines": 2,
+    "valid-jsdoc": 2
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true
+    }
+  },
+  "plugins": [
+    "react"
+  ]
+}
