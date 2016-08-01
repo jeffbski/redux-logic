@@ -4,6 +4,8 @@ Redux middleware for organizing business logic and action side effects.
 
 > "I wrote the rxjs code so you didn't have to."
 
+[![Build Status](https://secure.travis-ci.org/jeffbski/redux-logic.png?branch=master)](http://travis-ci.org/jeffbski/redux-logic)
+
 You declare some behavior that wraps your code providing things like filtering, cancelation, limiting, etc., then write just the simple business logic code that runs in the center.
 
 ## tl;dr
