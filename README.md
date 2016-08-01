@@ -24,7 +24,7 @@ Built-in declarative functionality
 
 ## Quick Example
 
-This is an example of logic which will listen for actions of type FETCH_POLLS and it will perform ajax request to fetch data which it dispatches the results (or error) on completion. It supports cancellation by allowing anyone to send an action of type CANCEL_FETCH_POLLS. It also uses `take latest` feature that if additional FETCH_POLLS actions come in before this completes, it will simply cancel the previous requests and just use the latest.
+This is an example of logic which will listen for actions of type FETCH_POLLS and it will perform ajax request to fetch data for which it dispatches the results (or error) on completion. It supports cancellation by allowing anything to send an action of type CANCEL_FETCH_POLLS. It also uses `take latest` feature that if additional FETCH_POLLS actions come in before this completes, it will simply cancel the previous requests and just use the latest.
 
 The developer can just declare the type filtering, cancellation, and take latest behavior, no code needs to be written for that. That leaves the developer to focus on the real business requirements which are invoked in the process hook.
 
