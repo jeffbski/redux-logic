@@ -7,9 +7,8 @@ import fs from 'fs';
 import path from 'path';
 import { spawnSync } from 'child_process';
 
-var exampleDirs = fs.readdirSync(__dirname).filter((file) => {
-  return fs.statSync(path.join(__dirname, file)).isDirectory();
-});
+var exampleDirs = fs.readdirSync(__dirname).filter((file) =>
+  fs.statSync(path.join(__dirname, file)).isDirectory());
 
 // Ordering is important here. `npm install` must come first.
 var cmdArgs = [

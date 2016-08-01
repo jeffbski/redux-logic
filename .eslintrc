@@ -1,6 +1,7 @@
 {
   "extends": "airbnb-base",
   "rules": {
+    "arrow-body-style": [1, "as-needed"],
     // don't require dangling commas
     "comma-dangle": 0,
     // don't require functions to be declared before use
