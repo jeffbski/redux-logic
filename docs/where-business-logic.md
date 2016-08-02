@@ -431,6 +431,59 @@ const addTimestampAndUniqueIDLogic = createLogic({
 });
 ```
 
+## The full redux-logic API
+
+```js
+const fooLogic = createLogic({
+  // filtering/cancelling
+  type, // required str, regex, array of str/regex, use '*' for all
+  cancelType, // string, regex, array of strings or regexes
+
+  // limiting - optionally define one of these
+  latest, // only take latest, default false
+  debounce, // debounce for N ms, default 0
+  throttle, // throttle for N ms, default 0
+
+  // Put your business logic into one or more of these
+  // execution phase hooks.
+  //
+  // Note: If you provided any optional dependencies in your
+  // createLogicMiddleware call, then these will be provided to
+  // your code in the first argument along with getState and action
+  validate({ getState, action }, allow, reject) {
+    // run your verification logic and then call allow or reject
+    // with the action to pass along. You may pass original action
+    // or a modified/different action. Use undefined to prevent any
+    // action from being propagated like allow() or reject()
+    allow(action); // OR reject(action)
+  }),
+
+  transform({ getState, action }, next) {
+    // perform any transformation and provide the new action to next
+    next(action);
+  }),
+
+  process({ getState, action, cancelled$ }, dispatch) {
+    // Perform your processing then call dispatch with an action
+    // or use dispatch() to complete without dispatching anything.
+    // Multi-dispatch: see advanced API docs
+    dispatch(myNewAction);
+  })
+});
+
+const logicMiddleware = createLogicMiddleware(
+  logic, // array of logic items
+  deps   // optional injected deps/config, supplied to logic
+);
+
+// dynamically add logic later at runtime, keeping logic state
+logicMiddleware.addLogic(newLogic);
+
+// replacing logic, logic state is reset but in-flight logic
+// should still complete properly
+logicMiddleware.replaceLogic(replacementLogic);
+```
+
 So that's redux-logic in a nutshell.
 
 I'm excited about how this unifies and simplifies business logic code letting us focus on the important details.
