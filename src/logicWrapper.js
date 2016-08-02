@@ -86,6 +86,18 @@ export default function logicWrapper(epic, store, deps) {
         }
       });
 
+      function dispatch(act, allowMore = false) {
+        if (act) { // ignore empty action
+          dispatch$.next( // create obs for mergeAll
+            (isObservable(act)) ?
+              act :
+              Observable.of(act)
+          );
+        }
+        if (!allowMore) { dispatch$.complete(); }
+      }
+
+
       // passed into each execution phase hook
       const depObj = {
         ...deps,
@@ -95,18 +107,34 @@ export default function logicWrapper(epic, store, deps) {
         action
       };
 
-      function allow(act) {
-        depObj.action = act;
-        // bind next with shouldProcess = true
-        function boundNext(nextAction) {
-          return next(true, nextAction);
+      function shouldDispatch(act, useDispatch) {
+        if (!act) { return false; }
+        if (useDispatch === 'auto') { // dispatch on diff type
+          return (act.type !== action.type);
         }
-        transform(depObj, boundNext);
+        return (useDispatch); // otherwise forced truthy/falsy
       }
 
-      function reject(act, useDispatch = false) {
-        if (useDispatch) {
-          dispatch(act);
+      function allow(act, useDispatch = 'auto') {
+        if (shouldDispatch(act, useDispatch)) {
+          dispatch(act, true); // allow more
+          epicAction$.complete();
+          // skip transform since nothing to transform
+          return next(true, undefined);
+        }
+
+        // normal next
+        depObj.action = act;
+        // bind next with shouldProcess = true
+        function boundNext(nextAction, useDisp = useDispatch) {
+          return next(true, nextAction, useDisp);
+        }
+        return transform(depObj, boundNext);
+      }
+
+      function reject(act, useDispatch = 'auto') {
+        if (shouldDispatch(act, useDispatch)) {
+          dispatch(act, true); // allow more, will be completed later
           epicAction$.complete();
           return;
         }
@@ -114,14 +142,20 @@ export default function logicWrapper(epic, store, deps) {
         // normal next
         depObj.action = act;
         // bind next with shouldProcess = false
-        function boundNext(nextAction) {
-          return next(false, nextAction);
+        function boundNext(nextAction, useDisp = useDispatch) {
+          return next(false, nextAction, useDisp);
         }
         transform(depObj, boundNext);
       }
 
-      function next(shouldProcess, act) {
-        postIfDefinedOrComplete(act, epicAction$);
+      function next(shouldProcess, act, useDispatch = 'auto') {
+        if (shouldDispatch(act, useDispatch)) {
+          dispatch(act, true); // allow more, will be completed later
+          epicAction$.complete();
+        } else { // normal next
+          postIfDefinedOrComplete(act, epicAction$);
+        }
+        // unless rejected, we will process even if allow/next dispatched
         if (shouldProcess) { // processing, was an accept
           // delay process slightly so state can be updated
           Observable.of(true)
@@ -143,17 +177,6 @@ export default function logicWrapper(epic, store, deps) {
         } else {
           act$.complete();
         }
-      }
-
-      function dispatch(act) {
-        if (act) { // ignore empty action
-          dispatch$.next( // create obs for mergeAll
-            (isObservable(act)) ?
-              act :
-              Observable.of(act)
-          );
-        }
-        dispatch$.complete();
       }
 
       // start use of the action

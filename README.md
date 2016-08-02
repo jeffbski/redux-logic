@@ -241,8 +241,7 @@ const fooLogic = createLogic({
   process({ getState, action, cancelled$ }, dispatch) {
     // Perform your processing then call dispatch with an action
     // or use dispatch() to complete without dispatching anything.
-    // Advanced use: dispatch an observable to perform multiple
-    // dispatches or to use a long running subscription
+    // Multi-dispatch: see advanced API docs
     dispatch(myNewAction);
   })
 });
