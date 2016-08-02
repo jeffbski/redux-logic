@@ -165,6 +165,7 @@ const validationLogic = createLogic({
 });
 
 const addUniqueId = createLogic({
+  type: '*',
   transform({ getState, action }, next) {
     // add unique tid to action.meta of every action
     const existingMeta = action.meta || {};
