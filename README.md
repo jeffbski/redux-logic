@@ -17,7 +17,7 @@ One place to keep all of your business logic and side effects with redux
 With simple code you can:
 
  - validate, verify, auth check actions and allow/reject or modify actions
- - tranform - augment/enhance/modify actions
+ - transform - augment/enhance/modify actions
  - process - async processing and dispatching, orchestration, I/O (ajax, REST, web sockets, ...)
 
 Built-in declarative functionality
