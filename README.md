@@ -112,7 +112,8 @@ const fetchPollsLogic = createLogic({
 ## Compared to SAM or PAL Pattern
 
  - With redux-logic you can implement the SAM / PAL pattern without giving up React and Redux. Namely you can separate out your business logic from your action creators and reducers keeping them thin. redux-logic provides a nice place to accept, reject, and transform actions before your reducers are run. You have access to the full state to make decisions and you can trigger actions based on the updated state as well.
- - If you implement SAM / PAL without React, Redux, redux-logic you will have lots of boilerplate code to write.
+ - Implementing the SAM/PAL pattern on your own requires lots of boilerplate code
+
 
 ## Usage
 
