@@ -120,7 +120,7 @@ const fetchPollsLogic = createLogic({
 // in configureStore.js
 import { createLogicMiddleware } from './redux-logic';
 import rootReducer from './rootReducer';
-import epics from './logic';
+import logic from './logic';
 
 const deps = { // optional injected dependencies for logic
   // anything you need to have available in your logic
