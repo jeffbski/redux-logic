@@ -74,46 +74,6 @@ const fetchPollsLogic = createLogic({
    - create subscriptions - streaming updates
    - easy testing - since your code is just a function it's easy to isolate and test
 
-## Compared to fat action creators
-
- - no easy way to cancel or do limiting like take latest
- - action creators would not have access to the full global state so you might have to pass down lots of extra data that isn't needed for rendering. Every time business logic changes might require new data to be made available
- - no global interception - applying logic or transformations across all or many actions
- -  Testing components and fat action creators may require running the code (possibly mocked).
-
-## Compared to redux-thunk
-
- - With thunks business logic is spread over action creators
- - With thunks there is not an easy way to cancel async work nor to perform limiting (take latest, throttling, debouncing)
- - no global interception - applying logic or transformations across all or many actions
- - Testing components and thunked action creators may require running the code (possibly mocked).
-
-
-## Compared to redux-observable
-
- - redux-logic doesn't require the developer to use rxjs observables. It uses observables under the covers to provide cancellation, throttling, etc. You simply configure these parameters to get this functionality. You can still use rxjs in your code if you want, but not a requirement.
- - redux-logic hooks in before the reducer stack like middleware allowing validation, verification, auth, tranformations. Allow, reject, tranform actions before they hit your reducers to update your state as well as accessing state after reducers have run. redux-observable hooks in after the reducers have updated state so they have no opportuntity to prevent the updates.
-
-## Compared to redux-saga
-
- - redux-logic doesn't require you to code with generators
- - redux-saga relies on pulling data (usually in a never ending loop) while redux-logic and logic are reactive, responding to data as it is available
- - redux-saga runs after reducers have been run, redux-logic can intercept and allow/reject/modify before reducers run also as well as after
- - redux-saga doesn't support dynamic loading of code
-
-
-## Compared to custom redux middleware
-
- - Both are fully featured to do any type of business logic (validations, tranformations, processing)
- - redux-logic already has built-in capabilities for some of the hard stuff like cancellation, limiting, dynamic loading of code. With custom middleware you have to implement all functionality.
- - No safety net, if things break it could stop all of your future actions
- - Testing requires some mocking or setup
-
-## Compared to SAM or PAL Pattern
-
- - With redux-logic you can implement the SAM / PAL pattern without giving up React and Redux. Namely you can separate out your business logic from your action creators and reducers keeping them thin. redux-logic provides a nice place to accept, reject, and transform actions before your reducers are run. You have access to the full state to make decisions and you can trigger actions based on the updated state as well.
- - Implementing the SAM/PAL pattern on your own requires lots of boilerplate code
-
 
 ## Usage
 
@@ -258,6 +218,47 @@ logicMiddleware.addLogic(arrNewLogic);
 // should still complete properly
 logicMiddleware.replaceLogic(arrReplacementLogic);
 ```
+
+## Compared to fat action creators
+
+ - no easy way to cancel or do limiting like take latest with fat action creators
+ - action creators would not have access to the full global state so you might have to pass down lots of extra data that isn't needed for rendering. Every time business logic changes might require new data to be made available
+ - no global interception using just action creators - applying logic or transformations across all or many actions
+ -  Testing components and fat action creators may require running the code (possibly mocked).
+
+## Compared to redux-thunk
+
+ - With thunks business logic is spread over action creators
+ - With thunks there is not an easy way to cancel async work nor to perform limiting (take latest, throttling, debouncing)
+ - no global interception with thunks - applying logic or transformations across all or many actions
+ - Testing components and thunked action creators may require running the code (possibly mocked).
+
+
+## Compared to redux-observable
+
+ - redux-logic doesn't require the developer to use rxjs observables. It uses observables under the covers to provide cancellation, throttling, etc. You simply configure these parameters to get this functionality. You can still use rxjs in your code if you want, but not a requirement.
+ - redux-logic hooks in before the reducer stack like middleware allowing validation, verification, auth, tranformations. Allow, reject, tranform actions before they hit your reducers to update your state as well as accessing state after reducers have run. redux-observable hooks in after the reducers have updated state so they have no opportuntity to prevent the updates.
+
+## Compared to redux-saga
+
+ - redux-logic doesn't require you to code with generators
+ - redux-saga relies on pulling data (usually in a never ending loop) while redux-logic and logic are reactive, responding to data as it is available
+ - redux-saga runs after reducers have been run, redux-logic can intercept and allow/reject/modify before reducers run also as well as after
+ - redux-saga doesn't support dynamic loading of code
+
+
+## Compared to custom redux middleware
+
+ - Both are fully featured to do any type of business logic (validations, tranformations, processing)
+ - redux-logic already has built-in capabilities for some of the hard stuff like cancellation, limiting, dynamic loading of code. With custom middleware you have to implement all functionality.
+ - No safety net, if things break it could stop all of your future actions
+ - Testing requires some mocking or setup
+
+## Compared to SAM or PAL Pattern
+
+ - With redux-logic you can implement the SAM / PAL pattern without giving up React and Redux. Namely you can separate out your business logic from your action creators and reducers keeping them thin. redux-logic provides a nice place to accept, reject, and transform actions before your reducers are run. You have access to the full state to make decisions and you can trigger actions based on the updated state as well.
+ - Implementing the SAM/PAL pattern on your own requires lots of boilerplate code
+
 
 ## Other possible feature additions
 
