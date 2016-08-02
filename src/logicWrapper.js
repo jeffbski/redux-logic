@@ -96,20 +96,28 @@ export default function logicWrapper(epic, store, deps) {
       };
 
       function allow(act) {
-        // bind next with shouldProcess = true
         depObj.action = act;
-        transform(depObj, next.bind(null, true));
+        // bind next with shouldProcess = true
+        function boundNext(nextAction) {
+          return next(true, nextAction);
+        }
+        transform(depObj, boundNext);
       }
 
       function reject(act, useDispatch = false) {
         if (useDispatch) {
           dispatch(act);
           epicAction$.complete();
-        } else { // normal next
-          depObj.action = act;
-          // bind next with shouldProcess = false
-          transform(depObj, next.bind(null, false));
+          return;
         }
+
+        // normal next
+        depObj.action = act;
+        // bind next with shouldProcess = false
+        function boundNext(nextAction) {
+          return next(false, nextAction);
+        }
+        transform(depObj, boundNext);
       }
 
       function next(shouldProcess, act) {
