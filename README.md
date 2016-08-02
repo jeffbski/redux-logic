@@ -210,7 +210,7 @@ export default [
 
 ```js
 const fooLogic = createLogic({
-  // filtering/cancelling
+  // filtering/canceling
   type, // required string, regex, array of str/regex, use '*' for all
   cancelType, // string, regex, array of strings or regexes
 

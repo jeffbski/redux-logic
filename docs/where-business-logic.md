@@ -435,7 +435,7 @@ const addTimestampAndUniqueIDLogic = createLogic({
 
 ```js
 const fooLogic = createLogic({
-  // filtering/cancelling
+  // filtering/canceling
   type, // required str, regex, array of str/regex, use '*' for all
   cancelType, // string, regex, array of strings or regexes
 
