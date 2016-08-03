@@ -7,13 +7,12 @@ import { component as Polls,
          actions as pollsActions } from './polls/index';
 const { pollsFetch, pollsFetchCancel } = pollsActions;
 
-
 export function App({ polls, fetchStatus, pollsFetch, pollsFetchCancel }) {
   return (
       <div className="App">
         <div className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h2>Async Fetch</h2>
+          <h2>Async Fetch Vanilla</h2>
         </div>
         <div className="pollsDiv">
           <div className="desc">
