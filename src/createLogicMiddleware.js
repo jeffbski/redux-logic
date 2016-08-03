@@ -1,6 +1,8 @@
 import { Subject } from 'rxjs/Subject';
 import wrapper from './logicWrapper';
 
+const debug = (/* ...args */) => {};
+
 export default function createLogicMiddleware(arrLogic = [], deps = {}) {
   const actionSrc$ = new Subject();
   let savedStore;
@@ -19,7 +21,7 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
       logicSub = sub;
 
       return action => {
-        console.log('starting off', action);
+        debug('starting off', action);
         actionSrc$.next(action);
         return action;
       };
@@ -33,7 +35,7 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
                                         logicSub, actionEnd$, deps);
     actionEnd$ = action$;
     logicSub = sub;
-    console.log('added logic');
+    debug('added logic');
   };
 
   // existing state in the logic is reset,
@@ -43,7 +45,7 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
                                         logicSub, actionSrc$, deps);
     actionEnd$ = action$;
     logicSub = sub;
-    console.log('replaced logic');
+    debug('replaced logic');
   };
 
   return mw;
@@ -57,9 +59,9 @@ function applyLogic(logic, store, next, sub, actionIn$, deps) {
   const actionOut$ = wrappedLogic.reduce((acc$, wep) => wep(acc$),
                                          actionIn$);
   const newSub = actionOut$.subscribe(action => {
-    console.log('actionEnd$', action);
+    debug('actionEnd$', action);
     const result = next(action);
-    console.log('result', result);
+    debug('result', result);
   });
 
   return {

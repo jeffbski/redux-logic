@@ -5,6 +5,7 @@
     // don't require dangling commas
     "comma-dangle": 0,
     // don't require functions to be declared before use
+    "indent": 0,
     "no-use-before-define": [2, { "functions": false, "classes": true }],
     // Disable until Flow supports let and const
     "no-var": 0,
