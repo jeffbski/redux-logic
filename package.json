@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "clean": "rimraf build-lib dist build-es coverage",
-    "lint": "eslint src test examples build",
+    "lint": "eslint src test",
     "test": "cross-env BABEL_ENV=commonjs mocha --compilers js:babel-register --recursive",
     "test:watch": "npm test -- --watch",
     "test:cov": "cross-env BABEL_ENV=commonjs babel-node $(npm bin)/isparta cover $(npm bin)/_mocha -- --recursive",
