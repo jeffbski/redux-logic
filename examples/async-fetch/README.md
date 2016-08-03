@@ -46,6 +46,8 @@ const fetchPollsLogic = createLogic({
 
  - `src/App.js` - App component which uses redux connect to provide the polls state and bound action handlers as props
 
+ - `test/fetch-polls-logic.spec.js` - testing pollsFetch logic in isolation
+
 ## Usage
 
 ```bash

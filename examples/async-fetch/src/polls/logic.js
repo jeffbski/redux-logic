@@ -2,7 +2,11 @@ import { createLogic } from 'redux-logic';
 import { pollsFetch, pollsFetchCancel, pollsFetchFulfilled,
          pollsFetchRejected } from './actions';
 
-const fetchPollsLogic = createLogic({
+const artificialDelay = (process && process.env.NODE_ENV === 'test') ?
+      0 : // 0 delay for tests
+      4000; // 4s delay for interactive use
+
+export const fetchPollsLogic = createLogic({
   type: pollsFetch,
   cancelType: pollsFetchCancel,
   latest: true, // take latest only
@@ -20,7 +24,7 @@ const fetchPollsLogic = createLogic({
         .then(polls => dispatch(pollsFetchFulfilled(polls)))
         .catch((err) =>
                dispatch(pollsFetchRejected(err)));
-    }, 4000);
+    }, artificialDelay);
   }
 });
 
