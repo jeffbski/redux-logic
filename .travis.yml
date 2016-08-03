@@ -13,3 +13,4 @@ branches:
 cache:
   directories:
   - $HOME/.npm
+  - examples/async-fetch/node_modules
