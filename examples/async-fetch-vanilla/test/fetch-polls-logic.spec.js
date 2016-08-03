@@ -23,10 +23,10 @@ describe('fetchPollsLogic', () => {
       fetchPollsLogic.process({ httpClient }, dispatch);
     });
 
-    it('should dispatch action polls/FETCH_FULFILLED with polls', () => {
+    it('should dispatch action POLLS_FETCH_FULFILLED with polls', () => {
       expect(dispatch.calls.length).toBe(1);
       expect(dispatch.calls[0].arguments[0]).toEqual({
-        type: 'polls/FETCH_FULFILLED',
+        type: 'POLLS_FETCH_FULFILLED',
         payload: [{ id: 1 }]
       });
     });
@@ -48,10 +48,10 @@ describe('fetchPollsLogic', () => {
       fetchPollsLogic.process({ httpClient }, dispatch);
     });
 
-    it('should dispatch action polls/FETCH_REJECTED', () => {
+    it('should dispatch action POLLS_FETCH_REJECTED', () => {
       expect(dispatch.calls.length).toBe(1);
       expect(dispatch.calls[0].arguments[0].type)
-        .toBe('polls/FETCH_REJECTED');
+        .toBe('POLLS_FETCH_REJECTED');
       expect(dispatch.calls[0].arguments[0].error)
         .toBe(true);
       expect(dispatch.calls[0].arguments[0].payload)
