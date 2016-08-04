@@ -221,10 +221,10 @@ logicMiddleware.replaceLogic(arrReplacementLogic);
 
 ## Examples
 
- - [async-fetch-vanilla](/jeffbski/redux-logic/tree/master/examples/async-fetch-vanilla) - async fetch example using axios
- - [async-fetch](/jeffbski/redux-logic/tree/master/examples/async-fetch) - async fetch example using axios and redux-actions
- - [countdown](/jeffbski/redux-logic/tree/master/examples/countdown) - a countdown timer
- - [form-validation](/jeffbski/redux-logic/tree/master/examples/form-validation) - form validation and async post to server using axios, displays updated user list
+ - [async-fetch-vanilla](./examples/async-fetch-vanilla) - async fetch example using axios
+ - [async-fetch](./examples/async-fetch) - async fetch example using axios and redux-actions
+ - [countdown](./examples/countdown) - a countdown timer
+ - [form-validation](./examples/form-validation) - form validation and async post to server using axios, displays updated user list
 
 ## Compared to fat action creators
 
