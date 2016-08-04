@@ -1,8 +1,8 @@
-import { key, POLLS_FETCH, POLLS_FETCH_CANCEL, POLLS_FETCH_FULFILLED,
-         POLLS_FETCH_REJECTED } from './actions';
+import { key, USERS_FETCH, USERS_FETCH_CANCEL, USERS_FETCH_FULFILLED,
+         USERS_FETCH_REJECTED } from './actions';
 
 export const selectors = {
-  polls: state => state[key].list,
+  users: state => state[key].list,
   fetchStatus: state => state[key].fetchStatus
 };
 
@@ -13,24 +13,24 @@ const initialState = {
 
 export default function reducer(state = initialState, action) {
   switch(action.type) {
-  case POLLS_FETCH:
+  case USERS_FETCH:
     return {
       ...state,
       fetchStatus: `fetching... ${(new Date()).toLocaleString()}`,
       list: []
     };
-  case POLLS_FETCH_FULFILLED:
+  case USERS_FETCH_FULFILLED:
     return {
       ...state,
       list: action.payload,
       fetchStatus: `Results from ${(new Date()).toLocaleString()}`
     };
-  case POLLS_FETCH_REJECTED:
+  case USERS_FETCH_REJECTED:
     return {
       ...state,
       fetchStatus: `errored: ${action.payload}`
     };
-  case POLLS_FETCH_CANCEL:
+  case USERS_FETCH_CANCEL:
     return {
       ...state,
       fetchStatus: 'user cancelled'

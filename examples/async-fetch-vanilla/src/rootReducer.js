@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
-import { key as pollsKey,
-         reducer as pollsReducer } from './polls/index';
+import { key as usersKey,
+         reducer as usersReducer } from './users/index';
 
 export default combineReducers({
-  [pollsKey]: pollsReducer
+  [usersKey]: usersReducer
 });

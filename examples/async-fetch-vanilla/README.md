@@ -1,6 +1,6 @@
 # Async Fetch Vanilla
 
-This is an example of using redux-logic for async fetching with axios triggered by a `POLLS_FETCH` action type.
+This is an example of using redux-logic for async fetching with axios triggered by a `USERS_FETCH` action type.
 
 It builds action creators and reducers without using any helper libraries.
 
@@ -10,22 +10,22 @@ Finally we are also showcasing that runtime dependencies can be injected rather 
 
 
 ```js
-// in src/polls/logic.js
+// in src/users/logic.js
 
-const fetchPollsLogic = createLogic({
-  type: POLLS_FETCH,
-  cancelType: POLLS_FETCH_CANCEL,
+export const usersFetchLogic = createLogic({
+  type: usersFetch,
+  cancelType: usersFetchCancel,
   latest: true, // take latest only
 
   // use axios injected as httpClient from configureStore logic deps
   // we also have access to getState and action in the first argument
   // but they were not needed for this particular code
   process({ httpClient }, dispatch) {
-    httpClient.get('https://survey.codewinds.com/polls')
-      .then(resp => resp.data.polls)
-      .then(polls => dispatch(pollsFetchFulfilled(polls)))
+    httpClient.get(`http://reqres.in/api/users`)
+      .then(resp => resp.data.data) // use data property of payload
+      .then(users => dispatch(usersFetchFulfilled(users)))
       .catch((err) =>
-             dispatch(pollsFetchRejected(err)));
+             dispatch(usersFetchRejected(err)));
   }
 });
 ```
@@ -36,17 +36,17 @@ const fetchPollsLogic = createLogic({
 
  - `src/rootLogic.js` - combines logic from all other parts of the app and defines the order they appear in the logic pipeline. Shows how you can structure large apps to easily combine logic.
 
- - `src/polls/logic.js` - the logic specific to the polls part of the app, this contains our async fetch logic
+ - `src/users/logic.js` - the logic specific to the users part of the app, this contains our async fetch logic
 
- - `src/polls/actions.js` - contains the action creators
+ - `src/users/actions.js` - contains the action creators
 
- - `src/polls/reducer.js` - contains a reducer which handles all the polls specific state. Also contains the polls related selectors. By collocating the reducer and the selectors we only have to update this one file to change the shape of our reducer state.
+ - `src/users/reducer.js` - contains a reducer which handles all the users specific state. Also contains the users related selectors. By collocating the reducer and the selectors we only have to update this one file to change the shape of our reducer state.
 
- - `src/polls/component.js` - Polls React.js component for displaying the status, fetch + cancel buttons, and the list of polls
+ - `src/users/component.js` - Users React.js component for displaying the status, fetch + cancel buttons, and the list of users
 
- - `src/App.js` - App component which uses redux connect to provide the polls state and bound action handlers as props
+ - `src/App.js` - App component which uses redux connect to provide the users state and bound action handlers as props
 
- - `test/fetch-polls-logic.spec.js` - testing pollsFetch logic in isolation
+ - `test/fetch-users-logic.spec.js` - testing usersFetch logic in isolation
 
 ## Usage
 
@@ -54,6 +54,6 @@ const fetchPollsLogic = createLogic({
 npm start # builds and runs dev server
 ```
 
-Click fetch button which dispatches a simple `POLLS_FETCH` action, that the logicMiddleware picks up, hands to fetchPollsLogic and runs the code in the process hook creating async fetch which eventually resolves and is handed to `pollsFetchFullfilled` action creator or `pollsFetchRejected` error action creator before being dispatched.
+Click fetch button which dispatches a simple `USERS_FETCH` action, that the logicMiddleware picks up, hands to fetchUsersLogic and runs the code in the process hook creating async fetch which eventually resolves and is handed to `usersFetchFullfilled` action creator or `usersFetchRejected` error action creator before being dispatched.
 
 Note: To slow things down so you can interactively cancel and test the take latest functionality, I have added in a setTimeout to delay the resolution by 4 seconds. This allows you time to click cancel or to click fetch multiple times to see that it will only result in the latest result being fulfilled.
