@@ -219,6 +219,13 @@ logicMiddleware.addLogic(arrNewLogic);
 logicMiddleware.replaceLogic(arrReplacementLogic);
 ```
 
+## Examples
+
+ - [async-fetch-vanilla](./tree/master/examples/async-fetch-vanilla) - async fetch example using axios
+ - [async-fetch](./tree/master/examples/async-fetch) - async fetch example using axios and redux-actions
+ - [countdown](./tree/master/examples/countdown) - a countdown timer
+ - [form-validation](./tree/master/examples/form-validation) - form validation and async post to server using axios, displays updated user list
+
 ## Compared to fat action creators
 
  - no easy way to cancel or do limiting like take latest with fat action creators
