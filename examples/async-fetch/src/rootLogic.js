@@ -1,5 +1,5 @@
-import { logic as pollsLogic } from './polls/index';
+import { logic as userLogic } from './users/index';
 
 export default [
-  ...pollsLogic
+  ...userLogic
 ];

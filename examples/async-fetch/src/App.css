@@ -24,16 +24,16 @@
   to { transform: rotate(360deg); }
 }
 
-.pollsDiv {
+.usersDiv {
   margin: 40px;
 }
 
-.pollsDiv .desc {
+.usersDiv .desc {
   padding: 20px;
   background-color: #bbb;
 }
 
-.pollsDiv .main {
+.usersDiv .main {
   padding: 20px;
   background-color: white;
 }

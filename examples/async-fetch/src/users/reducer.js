@@ -1,9 +1,9 @@
 import { handleActions } from 'redux-actions';
-import { key, pollsFetch, pollsFetchCancel, pollsFetchFulfilled,
-         pollsFetchRejected } from './actions';
+import { key, usersFetch, usersFetchCancel, usersFetchFulfilled,
+         usersFetchRejected } from './actions';
 
 export const selectors = {
-  polls: state => state[key].list,
+  users: state => state[key].list,
   fetchStatus: state => state[key].fetchStatus
 };
 
@@ -13,27 +13,27 @@ const initialState = {
 };
 
 export default handleActions({
-  [pollsFetch]: (state, action) => {
+  [usersFetch]: (state, action) => {
     return {
       ...state,
       fetchStatus: `fetching... ${(new Date()).toLocaleString()}`,
       list: []
     };
   },
-  [pollsFetchFulfilled]: (state, action) => {
+  [usersFetchFulfilled]: (state, action) => {
     return {
       ...state,
       list: action.payload,
       fetchStatus: `Results from ${(new Date()).toLocaleString()}`
     };
   },
-  [pollsFetchRejected]: (state, action) => {
+  [usersFetchRejected]: (state, action) => {
     return {
       ...state,
       fetchStatus: `errored: ${action.payload}`
     };
   },
-  [pollsFetchCancel]: (state, action) => {
+  [usersFetchCancel]: (state, action) => {
     return {
       ...state,
       fetchStatus: 'user cancelled'
