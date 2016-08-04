@@ -56,4 +56,4 @@ npm start # builds and runs dev server
 
 Click fetch button which dispatches a simple `users/FETCH` action, that the logicMiddleware picks up, hands to fetchUsersLogic and runs the code in the process hook creating async fetch which eventually resolves and is handed to `usersFetchFullfilled` action creator or `usersFetchRejected` error action creator before being dispatched.
 
-Note: To slow things down so you can interactively cancel and test the take latest functionality, I have used a delay feature of reqres.in by adding a delay query parameter with the number of seconds to delay the response by. I have used `?delay=4` to add a 4 second delay. This allows you time to click cancel or to click fetch multiple times to see that it will only result in the latest result being fulfilled.
+Note: To slow things down so you can interactively cancel and test the take latest functionality, I have added in a setTimeout to delay the resolution by 4 seconds. This allows you time to click cancel or to click fetch multiple times to see that it will only result in the latest result being fulfilled.
