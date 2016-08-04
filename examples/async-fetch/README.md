@@ -12,7 +12,7 @@ Finally we are also showcasing that runtime dependencies can be injected rather 
 ```js
 // in src/users/logic.js
 
-export const fetchUsersLogic = createLogic({
+export const usersFetchLogic = createLogic({
   type: usersFetch,
   cancelType: usersFetchCancel,
   latest: true, // take latest only
@@ -46,7 +46,7 @@ export const fetchUsersLogic = createLogic({
 
  - `src/App.js` - App component which uses redux connect to provide the users state and bound action handlers as props
 
- - `test/fetch-users-logic.spec.js` - testing usersFetch logic in isolation
+ - `test/users-fetch-logic.spec.js` - testing users fetch logic in isolation
 
 ## Usage
 
