@@ -14,3 +14,5 @@ cache:
   directories:
   - $HOME/.npm
   - examples/async-fetch/node_modules
+  - examples/async-fetch-vanilla/node_modules
+  - examples/countdown/node_modules
