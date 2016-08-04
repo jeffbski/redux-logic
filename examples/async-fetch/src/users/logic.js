@@ -4,7 +4,7 @@ import { usersFetch, usersFetchCancel, usersFetchFulfilled,
 
 const delay = 4; // 4s delay for interactive use of cancel/take latest
 
-export const fetchUsersLogic = createLogic({
+export const usersFetchLogic = createLogic({
   type: usersFetch,
   cancelType: usersFetchCancel,
   latest: true, // take latest only
@@ -24,5 +24,5 @@ export const fetchUsersLogic = createLogic({
 
 
 export default [
-  fetchUsersLogic
+  usersFetchLogic
 ];

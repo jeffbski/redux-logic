@@ -1,8 +1,8 @@
 
 import expect from 'expect';
-import { fetchUsersLogic } from '../src/users/logic';
+import { usersFetchLogic } from '../src/users/logic';
 
-describe('fetchUsersLogic', () => {
+describe('usersFetchLogic', () => {
   describe('using valid url', () => {
     let dispatch;
     beforeEach((done) => {
@@ -21,7 +21,7 @@ describe('fetchUsersLogic', () => {
 
       dispatch = expect.createSpy().andCall(() => done());
 
-      fetchUsersLogic.process({ httpClient }, dispatch);
+      usersFetchLogic.process({ httpClient }, dispatch);
     });
 
     it('should dispatch action users/FETCH_FULFILLED with users', () => {
@@ -46,7 +46,7 @@ describe('fetchUsersLogic', () => {
 
       dispatch = expect.createSpy().andCall(() => done());
 
-      fetchUsersLogic.process({ httpClient }, dispatch);
+      usersFetchLogic.process({ httpClient }, dispatch);
     });
 
     it('should dispatch action users/FETCH_REJECTED', () => {
