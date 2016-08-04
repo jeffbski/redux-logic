@@ -13,8 +13,8 @@ Finally we are also showcasing that runtime dependencies can be injected rather 
 // in src/users/logic.js
 
 export const usersFetchLogic = createLogic({
-  type: usersFetch,
-  cancelType: usersFetchCancel,
+  type: USERS_FETCH,
+  cancelType: USERS_FETCH_CANCEL,
   latest: true, // take latest only
 
   // use axios injected as httpClient from configureStore logic deps
