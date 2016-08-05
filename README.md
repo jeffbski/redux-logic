@@ -60,7 +60,7 @@ const fetchPollsLogic = createLogic({
  - <a href="#usage">Usage</a>
  - <a href="#full-api">Full API</a>
  - <a href="#examples">Full Examples</a>
- - <a href="#comparisons">Comparisons</a> to <a href="#compared-to-fat-action-creators">Fat action creators</a>, <a href="#compared-to-redux-thunk">thunks</a>, <a href="#compared-to-redux-observable">redux-observable</a>, <a href="#compared-to-redux-saga">redux-saga</a>, <a href="#compared-to-custom-redux-middleware">custom middleware</a>, <a href="#compared-to-sam-or-pal-pattern">SAM/PAL pattern</a>
+ - <a href="#comparison-summaries">Comparison summaries</a> to <a href="#compared-to-fat-action-creators">fat action creators</a>, <a href="#compared-to-redux-thunk">thunks</a>, <a href="#compared-to-redux-observable">redux-observable</a>, <a href="#compared-to-redux-saga">redux-saga</a>, <a href="#compared-to-custom-redux-middleware">custom middleware</a>, <a href="#compared-to-sam-or-pal-pattern">SAM/PAL pattern</a>
 
 ## Goals
 
@@ -239,7 +239,12 @@ logicMiddleware.replaceLogic(arrReplacementLogic);
  - [countdown](./examples/countdown) - a countdown timer
  - [form-validation](./examples/form-validation) - form validation and async post to server using axios, displays updated user list
 
-## Comparisons
+## Comparison summaries
+
+Following are just short summaries to compare redux-logic to other approaches.
+
+For a more detailed comparison with examples, see by article in docs, [Where do I put my business logic in a React-Redux application?](./docs/where-business-logic.md).
+
 
 ### Compared to fat action creators
 
