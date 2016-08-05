@@ -27,11 +27,11 @@ Built-in declarative functionality
 ## Table of contents
 
  - <a href="#quick-example">Quick Example</a>
- - <a href="#goals>Goals</a>
- - <a href="#usage>Usage</a>
- - <a href="#full-api>Full API</a>
- - <a href="#examples>Full Examples</a>
- - <a href="#comparisons>Comparisons</a>
+ - <a href="#goals">Goals</a>
+ - <a href="#usage">Usage</a>
+ - <a href="#full-api">Full API</a>
+ - <a href="#examples">Full Examples</a>
+ - <a href="#comparisons">Comparisons</a>
 
 
 ## Quick Example
