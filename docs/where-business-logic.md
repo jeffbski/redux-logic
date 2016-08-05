@@ -10,14 +10,14 @@ Finally I will propose a new library, **redux-logic**, which combines power and 
 
 Approaches for implementing business logic that I cover:
 
- - fat action creators
- - reducers
- - thunks
- - sagas
- - epics
- - effects
- - custom middleware
- - redux-logic - a new approach
+ - [fat action creators](#fat-action-creators)
+ - [reducers](#reducers)
+ - [thunks](#thunks)
+ - [sagas](#sagas) - redux-saga
+ - [epics](#epics) - redux-observable
+ - [effects](#effects) - redux-loop
+ - [custom middleware](#custom-middleware)
+ - [redux-logic](#redux-logic) - a new approach
 
 
 ## The journey to enlightenment
@@ -45,6 +45,8 @@ Most business logic could probably be categorized into these three main categori
  - processing - asynchronous orchestration
 
 Note that you can also model your action flow such that you don’t need to intercept actions for validation, verification, and auth. You would instead listen for end user actions, perform the validation, auth, etc then dispatch different reducer actions to actually make the state changes or if a there was an error, you dispatch error actions instead. This is a workable solution but it increases the number of actions and handlers you are dealing with. I think it is nice to have the ability to intercept actions directly if you desire to do so.
+
+<a name="fat-action-creators"></a>
 
 ### Dispatching from action creators (fat action creators)
 
@@ -76,6 +78,8 @@ Limitations:
 
 So this was a good start. Many people can get by pretty well with this choice.
 
+<a name="reducers"></a>
+
 ### Reducers
 
 Another approach that only works for synchronous business logic is to simply perform it in your reducers.
@@ -96,6 +100,9 @@ Disadvantages:
  - Access is limited to partial state if reducers are being combined
  - No ability to replace or dispatch a different error action
  - No global interception of actions
+
+
+<a name="thunks"></a>
 
 ### Thunks - functions and promise
 
@@ -128,6 +135,9 @@ Limitations:
  - Testing components and thunked action creators may require running the code (possibly mocked).
 
 Promise thunks are similar in that instead of returning a function you return a promise.
+
+
+<a name="sagas"></a>
 
 ### Sagas - redux-saga
 
@@ -220,6 +230,9 @@ Limitations:
  - Fair amount of code to setup watch loops and implement cancellation
  - No interception - sagas always run after actions have been given to the reducers
 
+
+<a name="epics"></a>
+
 ### Epics redux-observable
 
 Epics are the redux-observable approach to Sagas. They use RxJS Observables to allow for filtering, limiting, cancellation, and asynchronous orchestration.
@@ -271,6 +284,8 @@ Limitations:
  - Testing can require a bit of setup
 
 
+<a name="effects"></a>
+
 ### Effects - redux-loop
 
 redux-loop is a way to deal with side effects using an elm inspired approach. The idea is that your reducer can return a structure of effects to run, then the redux-loop middleware runs it and dispatches the results.
@@ -303,6 +318,9 @@ Limitations:
  - Reducers no longer return just state but possibly effects
  - No cancellation or limiting functionality
  - No global interception of actions
+
+
+<a name="custom-middleware"></a>
 
 ### Custom Middleware
 
@@ -340,6 +358,8 @@ Limitations:
  - Remember to pass on actions that you aren't concerned with
  - Need to mock things to test your code
 
+
+<a name="redux-logic"></a>
 
 ### redux-logic - A new approach
 
