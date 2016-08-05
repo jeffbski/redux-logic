@@ -271,7 +271,6 @@ For a more detailed comparison with examples, see by article in docs, [Where do 
  - redux-logic doesn't require you to code with generators
  - redux-saga relies on pulling data (usually in a never ending loop) while redux-logic and logic are reactive, responding to data as it is available
  - redux-saga runs after reducers have been run, redux-logic can intercept and allow/reject/modify before reducers run also as well as after
- - redux-saga doesn't support dynamic loading of code
 
 
 ### Compared to custom redux middleware
