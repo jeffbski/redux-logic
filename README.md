@@ -24,15 +24,6 @@ Built-in declarative functionality
 
  - filtering, cancellation, takeLatest, throttling, debouncing
 
-## Table of contents
-
- - <a href="#quick-example">Quick Example</a>
- - <a href="#goals">Goals</a>
- - <a href="#usage">Usage</a>
- - <a href="#full-api">Full API</a>
- - <a href="#examples">Full Examples</a>
- - <a href="#comparisons">Comparisons</a>
-
 
 ## Quick Example
 
@@ -62,6 +53,14 @@ const fetchPollsLogic = createLogic({
   }
 });
 ```
+
+## Table of contents
+
+ - <a href="#goals">Goals</a>
+ - <a href="#usage">Usage</a>
+ - <a href="#full-api">Full API</a>
+ - <a href="#examples">Full Examples</a>
+ - <a href="#comparisons">Comparisons</a> to <a href="#compared-to-fat-action-creators">Fat action creators</a>, <a href="#compared-to-redux-thunk">thunks</a>, <a href="#compared-to-redux-observable">redux-observable</a>, <a href="#compared-to-redux-saga">redux-saga</a>, <a href="#compared-to-custom-redux-middleware">custom middleware</a>, <a href="#compared-to-sam-or-pal-pattern">SAM/PAL pattern</a>
 
 ## Goals
 
