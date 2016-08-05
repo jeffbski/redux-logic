@@ -10,7 +10,7 @@ export default function createLogic({ name, type, cancelType,
   }
 
   if (latest && (debounce || throttle)) {
-    throw new Error('logic cannot use latest and debounce/throttle');
+    throw new Error('logic cannot use both latest and debounce/throttle');
   }
 
   return {
