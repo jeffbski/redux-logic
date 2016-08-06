@@ -1,8 +1,6 @@
 import expect from 'expect';
 import { createLogic, createLogicMiddleware } from '../src/index';
 
-const noop = () => {};
-
 describe('createLogicMiddleware-add-replace', () => {
   describe('createLogicMiddleware()', () => {
     let mw;
