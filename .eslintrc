@@ -10,6 +10,8 @@
     "no-use-before-define": [2, { "functions": false, "classes": true }],
     // Disable until Flow supports let and const
     "no-var": 0,
+    "object-property-newline": 0,
+    "padded-blocks": 0,
     "react/jsx-uses-react": 1,
     "react/jsx-no-undef": 2,
     "react/wrap-multilines": 2,
