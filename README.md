@@ -92,7 +92,7 @@ npm install redux-logic --save
 
 ```js
 // in configureStore.js
-import { createLogicMiddleware } from './redux-logic';
+import { createLogicMiddleware } from 'redux-logic';
 import rootReducer from './rootReducer';
 import logic from './logic';
 
