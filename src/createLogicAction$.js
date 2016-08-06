@@ -115,7 +115,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
         .observeOn(asap)
         .subscribe(() => {
           // if action provided is null, give process orig
-          if (!act) { depObj.action = action; }
+          depObj.action = act || action;
           processFn(depObj, dispatch);
         });
     } else { // not processing, must have been a reject

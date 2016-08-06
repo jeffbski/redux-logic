@@ -41,6 +41,7 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
     logicSub = sub;
     logicCount = cnt;
     debug('added logic');
+    return { logicCount: cnt };
   };
 
   // existing state in the logic is reset,
@@ -53,6 +54,7 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
     logicSub = sub;
     logicCount = cnt;
     debug('replaced logic');
+    return { logicCount: cnt };
   };
 
   return mw;
