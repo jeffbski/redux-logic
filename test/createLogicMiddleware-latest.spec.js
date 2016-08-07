@@ -345,7 +345,7 @@ describe('createLogicMiddleware-latest', () => {
               ...action,
               type: 'BAR'
             });
-          }, 10);
+          }, 20);
         }
       });
       mw = createLogicMiddleware([logicA]);
