@@ -359,7 +359,4 @@ describe('createLogicMiddleware-process', () => {
       expect(dispatch.calls[4].arguments[0]).toEqual(actionFig);
     });
   });
-
-
-
 });

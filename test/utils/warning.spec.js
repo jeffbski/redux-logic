@@ -9,7 +9,7 @@ describe('Utils', () => {
       const spy = expect.spyOn(console, 'error');
       try {
         warning('Test');
-        expect(spy.calls[0].arguments[0]).toBe('Test')
+        expect(spy.calls[0].arguments[0]).toBe('Test');
       } finally {
         spy.restore();
       }

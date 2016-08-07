@@ -340,8 +340,6 @@ describe('createLogicMiddleware', () => {
   });
 
 
-
-
   describe('[logicA] validate allow', () => {
     let mw;
     let logicA;
@@ -685,7 +683,7 @@ describe('createLogicMiddleware', () => {
     });
   });
 
-  describe('[logicA] validate+transform+process allow diff shouldDispatch=false next same shouldDispatch=true', () => {
+  describe('[logicA] v+t+p allow diff shouldDisp=false next same shouldDisp=true', () => {
     let mw;
     let logicA;
     let next;
@@ -744,7 +742,7 @@ describe('createLogicMiddleware', () => {
     });
   });
 
-  describe('[logicA] validate+transform+process allow diff shouldDispatch=false next same shouldDispatch=false', () => {
+  describe('[logicA] v+t+p allow diff shouldDispatch=false next same shouldDispatch=false', () => {
     let mw;
     let logicA;
     let next;
@@ -802,8 +800,6 @@ describe('createLogicMiddleware', () => {
       expect(dispatch.calls[0].arguments[0]).toEqual(actionBar);
     });
   });
-
-
 
   describe('[logicA] validate+transform+process allow diff', () => {
     let mw;
@@ -1190,8 +1186,6 @@ describe('createLogicMiddleware', () => {
       expect(dispatch.calls.length).toBe(0);
     });
   });
-
-
 
   describe('[logicA] validate+transform+process reject diff', () => {
     let mw;
