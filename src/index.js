@@ -7,7 +7,7 @@ import warning from './utils/warning';
  * If the function has been minified and NODE_ENV !== 'production', warn the user.
  */
 function isCrushed() {}
-
+/* istanbul ignore next */
 if (
   process.env.NODE_ENV !== 'production' &&
   typeof isCrushed.name === 'string' &&

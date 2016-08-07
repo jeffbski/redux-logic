@@ -9,6 +9,37 @@ describe('createLogicMiddleware-add-replace', () => {
       mw = createLogicMiddleware();
     });
 
+    describe('no store, mw.addLogic([logic1])', () => {
+      const action2 = { type: 'FOO', tid: 1 };
+      it('should throw with error store is not defined', () => {
+        const logic = createLogic({
+          type: 'FOO',
+          transform(deps, next) {
+            next(action2);
+          }
+        });
+        expect(() => {
+          mw.addLogic([logic]);
+        }).toThrow('store is not defined');
+      });
+    });
+
+    describe('no next fn, mw.addLogic([logic1])', () => {
+      const action2 = { type: 'FOO', tid: 1 };
+      it('should throw with error store is not defined', () => {
+        expect(() => {
+          mw({})(undefined); // shouldn't really happen
+          const logic = createLogic({
+            type: 'FOO',
+            transform(deps, next) {
+              next(action2);
+            }
+          });
+          mw.addLogic([logic]);
+        }).toThrow('store is not defined');
+      });
+    });
+
     describe('mw.addLogic([logic1])', () => {
       let logicCount;
       let next;

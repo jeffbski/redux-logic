@@ -364,6 +364,31 @@ redux-logic was inspired from these projects:
  - [redux-saga](http://yelouafi.github.io/redux-saga/)
  - [redux middleware](http://redux.js.org/docs/advanced/Middleware.html)
 
+## Minimized/gzipped size with all deps
+
+(redux-logic only includes the modules of RxJS 5 that it uses)
+```
+redux-logic.min.js.gz 11KB
+```
+
+Note: If you are already including RxJS 5 into your project then the resulting delta will be much smaller.
+
+## Code Coverage
+
+```bash
+npm run test:cov
+```
+
+Currently reports:
+```
+100%   Statements 282/282
+97.1%  Branches 134/138
+98.11% Functions 52/53
+100%   Lines 184/184
+
+14 statements, 2 functions, 12 branches Ignored
+```
+
 ## TODO
 
  - more tests

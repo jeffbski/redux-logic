@@ -5,7 +5,6 @@ import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/share';
 import 'rxjs/add/operator/throttleTime';
-import compose from './utils/compose';
 import createLogicAction$ from './createLogicAction$';
 
 export default function logicWrapper(logic, store, deps) {
@@ -24,10 +23,8 @@ export default function logicWrapper(logic, store, deps) {
         act$ => act$.throttleTime(throttle) :
         act$ => act$;
 
-  const limiting = compose(
-    debouncing,
-    throttling
-  );
+  const limiting = act =>
+        debouncing(throttling(act));
 
   return function wrappedLogic(actionIn$) {
     // we want to share the same copy amongst all here
@@ -53,6 +50,7 @@ export default function logicWrapper(logic, store, deps) {
 }
 
 function matchesType(tStrArrRe, type) {
+  /* istanbul ignore if  */
   if (!tStrArrRe) { return false; } // nothing matches none
   if (typeof tStrArrRe === 'string') {
     return (tStrArrRe === type || tStrArrRe === '*');
