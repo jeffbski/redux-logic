@@ -61,6 +61,7 @@ const fetchPollsLogic = createLogic({
  - <a href="#full-api">Full API</a>
  - <a href="#examples">Full Examples</a>
  - <a href="#comparison-summaries">Comparison summaries</a> to <a href="#compared-to-fat-action-creators">fat action creators</a>, <a href="#compared-to-redux-thunk">thunks</a>, <a href="#compared-to-redux-observable">redux-observable</a>, <a href="#compared-to-redux-saga">redux-saga</a>, <a href="#compared-to-custom-redux-middleware">custom middleware</a>, <a href="#compared-to-sam-or-pal-pattern">SAM/PAL pattern</a>
+ - <a href="#other">Other</a> - features under consideration, todo, coverage, inspiration, license
 
 ## Goals
 
@@ -285,6 +286,7 @@ For a more detailed comparison with examples, see by article in docs, [Where do 
  - With redux-logic you can implement the SAM / PAL pattern without giving up React and Redux. Namely you can separate out your business logic from your action creators and reducers keeping them thin. redux-logic provides a nice place to accept, reject, and transform actions before your reducers are run. You have access to the full state to make decisions and you can trigger actions based on the updated state as well.
  - Implementing the SAM/PAL pattern on your own requires lots of boilerplate code
 
+<a name="other"></a>
 
 ## Other possible feature additions
 
@@ -292,15 +294,19 @@ Some features under consideration.
 
 ### Timeout
 
+Additional `createLogic` properties introducing new timeout behavior
+
  - timeout N ms, default 0 (disables)
  - timeoutType - action type to use in the event of a timeout
 
 ### Predetermined type or action creators for dispatch
 
- - successType - dispatch this action type using contents of dispatch as the payload (also would work with with promise or observable passed to dispatch)
- - failedType - dispatch this action type using contents of error as the payload, sets error: true (would also work for rejects of promises or error from observable)
+Introduce new `processOptions` with these properties
 
-The successType and failedType would enable this type of code, where you can simply dispatch a promise or observable that resolves to the payload and rejects on error.
+ - successType - dispatch this action type using contents of dispatch as the payload (also would work with with promise or observable passed to dispatch)
+ - failureType - dispatch this action type using contents of error as the payload, sets error: true (would also work for rejects of promises or error from observable)
+
+The successType and failureType would enable this type of code, where you can simply dispatch a promise or observable that resolves to the payload and rejects on error.
 
 ```js
 const fetchPollsLogic = createLogic({
@@ -309,9 +315,11 @@ const fetchPollsLogic = createLogic({
   type: FETCH_POLLS, // only apply this logic to this type
   cancelType: CANCEL_FETCH_POLLS, // cancel on this type
   latest: true, // only take latest
-  successType: FETCH_POLLS_SUCCESS, // dispatch this success action type
-  failedType: FETCH_POLLS_FAILED, // dispatch this failed action type
 
+  processOptions: {
+    successType: FETCH_POLLS_SUCCESS, // dispatch this success act type
+    failureType: FETCH_POLLS_FAILED // dispatch this failed action type
+  },
   process({ getState, action }, dispatch) {
     dispatch( // can just dispatch promise which resolves to payload
       axios.get('https://survey.codewinds.com/polls')
@@ -325,12 +333,14 @@ const fetchPollsLogic = createLogic({
 
 This allows us to get much of the action details out of the code leaving mostly just business logic. Instead of using dispatch return promise or observable.
 
-Either you wouldn't provide the second argument or maybe it would be a different execution phase hook like `processReturn` indicating that we will be returning something rather than using dispatch.
+Introduce new `processOptions` with these properties
 
- - successType - dispatch this action type/action creator using contents of dispatch as the payload (also would work with with promise or observable passed to dispatch)
- - failedType - dispatch this action type/action creator using contents of error as the payload, sets error: true (would also work for rejects of promises or error from observable)
+ - useReturn - the returned value of the process function will be dispatched or if it is a promise or observable then the resolve, reject, or observable values will be dispatched applying any successType or failureType logic if defined.
+ - successType - dispatch this action type using contents of dispatch as the payload (also would work with with promise or observable)
+ - failureType - dispatch this action type using contents of error as the payload, sets error: true (would also work for rejects of promises or error from observable)
 
-The successType and failedType would enable this type of code, where you can simply return a promise or observable that resolves to the payload and rejects on error.
+
+The successType and failureType would enable this type of code, where you can simply return a promise or observable that resolves to the payload and rejects on error.
 
 ```js
 const fetchPollsLogic = createLogic({
@@ -340,13 +350,17 @@ const fetchPollsLogic = createLogic({
   cancelType: CANCEL_FETCH_POLLS, // cancel on this type
   latest: true, // only take latest
 
-  // provide action types or action creator functions to be used
-  // with the resolved/rejected values from promise/observable returned
-  successType: FETCH_POLLS_SUCCESS, // dispatch this success action type
-  failedType: FETCH_POLLS_FAILED, // dispatch this failed action type
+  processOptions: {
+    useReturn: true, // use returned value instead of dispatch function
+    // provide action types or action creator functions to be used
+    // with the resolved/rejected values from promise/observable returned
+    successType: FETCH_POLLS_SUCCESS, // dispatch this success act type
+    failureType: FETCH_POLLS_FAILED, // dispatch this failed action type
+  },
 
-  // processReturn instead of process so we will use the resolved return
-  processReturn({ getState, action }) {
+  // useReturn option allows you to simply return obj, promise, obs
+  // not needing to use dispatch directly
+  process({ getState, action }) {
     return axios.get('https://survey.codewinds.com/polls')
       .then(resp => resp.data.polls);
     )
