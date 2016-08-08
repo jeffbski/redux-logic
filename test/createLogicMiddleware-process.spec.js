@@ -83,7 +83,7 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         process(deps, dispatch) {
-          dispatch(actionBar, true); // allowMore
+          dispatch(actionBar, { allowMore: true });
           dispatch(actionCat);
         }
       });
@@ -122,7 +122,7 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         process(deps, dispatch) {
-          dispatch(actionBar, true); // allowMore
+          dispatch(actionBar, { allowMore: true });
           dispatch();
         }
       });
@@ -201,7 +201,7 @@ describe('createLogicMiddleware-process', () => {
         type: 'FOO',
         process(deps, dispatch) {
           dispatch(Rx.Observable.of(actionBar, actionCat),
-                   true); // allowMore = true
+                   { allowMore: true });
           dispatch();
         }
       });
@@ -243,7 +243,7 @@ describe('createLogicMiddleware-process', () => {
         type: 'FOO',
         process(deps, dispatch) {
           dispatch(Rx.Observable.of(actionBar, actionCat),
-                   true); // allowMore = true
+                   { allowMore: true });
           dispatch(actionDog);
         }
       });
@@ -287,9 +287,9 @@ describe('createLogicMiddleware-process', () => {
         type: 'FOO',
         process(deps, dispatch) {
           dispatch(Rx.Observable.of(actionBar, actionCat),
-                   true); // allowMore = true
+                   { allowMore: true });
           dispatch(Rx.Observable.of(actionDog, actionEgg),
-                   true); // allowMore = true
+                   { allowMore: true });
           dispatch();
         }
       });
@@ -335,9 +335,9 @@ describe('createLogicMiddleware-process', () => {
         type: 'FOO',
         process(deps, dispatch) {
           dispatch(Rx.Observable.of(actionBar, actionCat),
-                   true); // allowMore = true
+                   { allowMore: true });
           dispatch(Rx.Observable.of(actionDog, actionEgg),
-                   true); // allowMore = true
+                   { allowMore: true });
           dispatch(actionFig);
         }
       });

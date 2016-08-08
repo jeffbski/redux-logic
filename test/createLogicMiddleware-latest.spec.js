@@ -393,7 +393,7 @@ describe('createLogicMiddleware-latest', () => {
           dispatch({
             ...action,
             type: 'BAR'
-          }, true); // allowMore
+          }, { allowMore: true });
 
           // followed by later async dispatch
           setTimeout(() => {

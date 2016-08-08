@@ -39,7 +39,12 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
     }
   });
 
-  function dispatch(act, allowMore = false) {
+  const DispatchDefaults = {
+    allowMore: false
+  };
+
+  function dispatch(act, options = DispatchDefaults) {
+    const { allowMore } = applyDispatchDefaults(options);
     if (act) { // ignore empty action
       dispatch$.next( // create obs for mergeAll
         (isObservable(act)) ?
@@ -50,10 +55,16 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
     if (!allowMore) { dispatch$.complete(); }
   }
 
+  function applyDispatchDefaults(options) {
+    return {
+      ...DispatchDefaults,
+      ...options
+    };
+  }
 
-  // passed into each execution phase hook
+  // passed into each execution phase hook as first argument
   const depObj = {
-      ...deps,
+    ...deps,
     cancelled$,
     ctx: {}, // for sharing data between hooks
     getState,
@@ -68,42 +79,56 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
     return (useDispatch); // otherwise forced truthy/falsy
   }
 
-  function allow(act, useDispatch = 'auto') {
+  const AllowRejectNextDefaults = {
+    useDispatch: 'auto'
+  };
+
+  function allow(act, options = AllowRejectNextDefaults) {
+    const { useDispatch } = applyAllowRejectNextDefaults(options);
     if (shouldDispatch(act, useDispatch)) {
-      dispatch(act, true); // allow more
+      dispatch(act, { allowMore: true }); // allow more
       epicAction$.complete();
-      // skip transform since nothing to transform
-      return next(true, undefined);
+      // skipping transform and calling next since nothing to transform
+      return next(true, undefined, undefined);
     }
 
     // normal next
     depObj.action = act;
-    // bind next with shouldProcess = true
-    function boundNext(nextAction, useDisp = useDispatch) {
-      return next(true, nextAction, useDisp);
+    // bind next's default options to be that of allow
+    function boundNext(nextAction, opt = options) {
+      return next(true, nextAction, opt);
     }
     return transform(depObj, boundNext);
   }
 
-  function reject(act, useDispatch = 'auto') {
+  function applyAllowRejectNextDefaults(options) {
+    return {
+      ...AllowRejectNextDefaults,
+      ...options
+    };
+  }
+
+  function reject(act, options = AllowRejectNextDefaults) {
+    const { useDispatch } = applyAllowRejectNextDefaults(options);
     if (shouldDispatch(act, useDispatch)) {
-      dispatch(act, true); // allow more, will be completed later
+      dispatch(act, { allowMore: true }); // will be completed later
       epicAction$.complete();
       return;
     }
 
     // normal next
     depObj.action = act;
-    // bind next with shouldProcess = false
-    function boundNext(nextAction, useDisp = useDispatch) {
-      return next(false, nextAction, useDisp);
+    // bind next's defaults to use the reject options
+    function boundNext(nextAction, opt = options) {
+      return next(false, nextAction, opt);
     }
     transform(depObj, boundNext);
   }
 
-  function next(shouldProcess, act, useDispatch = 'auto') {
+  function next(shouldProcess, act, options = AllowRejectNextDefaults) {
+    const { useDispatch } = applyAllowRejectNextDefaults(options);
     if (shouldDispatch(act, useDispatch)) {
-      dispatch(act, true); // allow more, will be completed later
+      dispatch(act, { allowMore: true }); // will be completed later
       epicAction$.complete();
     } else { // normal next
       postIfDefinedOrComplete(act, epicAction$);

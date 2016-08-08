@@ -461,7 +461,7 @@ describe('createLogicMiddleware', () => {
     });
   });
 
-  describe('[logicA] validate+transform+process allow same shouldDispatch=true', () => {
+  describe('[logicA] validate+transform+process allow same useDispatch=true', () => {
     let mw;
     let logicA;
     let next;
@@ -483,7 +483,7 @@ describe('createLogicMiddleware', () => {
             allow({
                 ...action,
               allowed: ['a']
-            }, true); // shouldDispatch = true
+            }, { useDispatch: true });
           } else {
             reject(action);
           }
@@ -502,7 +502,7 @@ describe('createLogicMiddleware', () => {
       mw({ dispatch })(next)(actionAllow);
     });
 
-    it('allow will not call next since shouldDispatch=true', () => {
+    it('allow will not call next since useDispatch=true', () => {
       expect(next.calls.length).toBe(0);
     });
 
@@ -513,7 +513,7 @@ describe('createLogicMiddleware', () => {
     });
   });
 
-  describe('[logicA] validate+transform+process allow same shouldDispatch=false', () => {
+  describe('[logicA] validate+transform+process allow same useDispatch=false', () => {
     let mw;
     let logicA;
     let next;
@@ -533,7 +533,7 @@ describe('createLogicMiddleware', () => {
             allow({
                 ...action,
               allowed: ['a']
-            }, false); // shouldDispatch = false
+            }, { useDispatch: false });
           } else {
             reject(action);
           }
@@ -567,7 +567,7 @@ describe('createLogicMiddleware', () => {
     });
   });
 
-  describe('[logicA] validate+transform+process allow next same shouldDispatch=true', () => {
+  describe('[logicA] validate+transform+process allow next same useDispatch=true', () => {
     let mw;
     let logicA;
     let next;
@@ -600,7 +600,7 @@ describe('createLogicMiddleware', () => {
           next({
             ...action,
             trans: ['a']
-          }, true);  // shouldDispatch = true
+          }, { useDispatch: true });
         },
         process({ action }, dispatch) {
           dispatch({
@@ -614,7 +614,7 @@ describe('createLogicMiddleware', () => {
       mw({ dispatch })(next)(actionAllow);
     });
 
-    it('next had shouldDispatch = true, no next calls', () => {
+    it('next had useDispatch = true, no next calls', () => {
       expect(next.calls.length).toBe(0);
     });
 
@@ -625,7 +625,7 @@ describe('createLogicMiddleware', () => {
     });
   });
 
-  describe('[logicA] validate+transform+process allow next same shouldDispatch=false', () => {
+  describe('[logicA] validate+transform+process allow next same useDispatch=false', () => {
     let mw;
     let logicA;
     let next;
@@ -658,7 +658,7 @@ describe('createLogicMiddleware', () => {
           next({
             ...action,
             trans: ['a']
-          }, false);  // shouldDispatch = false
+          }, { useDispatch: false });
         },
         process({ action }, dispatch) {
           dispatch({
@@ -672,7 +672,7 @@ describe('createLogicMiddleware', () => {
       mw({ dispatch })(next)(actionAllow);
     });
 
-    it('next had shouldDispatch = false, calls next', () => {
+    it('next had useDispatch = false, calls next', () => {
       expect(next.calls.length).toBe(1);
       expect(next.calls[0].arguments[0]).toEqual(actionA);
     });
@@ -683,7 +683,7 @@ describe('createLogicMiddleware', () => {
     });
   });
 
-  describe('[logicA] v+t+p allow diff shouldDisp=false next same shouldDisp=true', () => {
+  describe('[logicA] v+t+p allow diff useDisp=false next same useDisp=true', () => {
     let mw;
     let logicA;
     let next;
@@ -708,7 +708,7 @@ describe('createLogicMiddleware', () => {
                 ...action,
               type: 'CAT', // change type
               allowed: ['a']
-            }, false); // shouldDispatch=false
+            }, { useDispatch: false });
           } else {
             reject(action);
           }
@@ -717,7 +717,7 @@ describe('createLogicMiddleware', () => {
           next({
             ...action,
             trans: ['a']
-          }, true);  // shouldDispatch = true
+          }, { useDispatch: true });
         },
         process({ action }, dispatch) {
           dispatch({
@@ -731,7 +731,7 @@ describe('createLogicMiddleware', () => {
       mw({ dispatch })(next)(actionAllow);
     });
 
-    it('next had shouldDispatch = true, no next', () => {
+    it('next had useDispatch = true, no next', () => {
       expect(next.calls.length).toBe(0);
     });
 
@@ -742,7 +742,7 @@ describe('createLogicMiddleware', () => {
     });
   });
 
-  describe('[logicA] v+t+p allow diff shouldDispatch=false next same shouldDispatch=false', () => {
+  describe('[logicA] v+t+p allow diff useDispatch=false next same useDispatch=false', () => {
     let mw;
     let logicA;
     let next;
@@ -767,7 +767,7 @@ describe('createLogicMiddleware', () => {
                 ...action,
               type: 'CAT', // change type
               allowed: ['a']
-            }, false); // shouldDispatch=false
+            }, { useDispatch: false });
           } else {
             reject(action);
           }
@@ -776,7 +776,7 @@ describe('createLogicMiddleware', () => {
           next({
             ...action,
             trans: ['a']
-          }, false);  // shouldDispatch = false
+          }, { useDispatch: false });
         },
         process({ action }, dispatch) {
           dispatch({
@@ -790,7 +790,7 @@ describe('createLogicMiddleware', () => {
       mw({ dispatch })(next)(actionAllow);
     });
 
-    it('next had shouldDispatch = false, next called', () => {
+    it('next had useDispatch = false, next called', () => {
       expect(next.calls.length).toBe(1);
       expect(next.calls[0].arguments[0]).toEqual(actionA);
     });
@@ -854,7 +854,7 @@ describe('createLogicMiddleware', () => {
     });
   });
 
-  describe('[logicA] validate+transform+process allow diff shouldDispatch=true', () => {
+  describe('[logicA] validate+transform+process allow diff useDispatch=true', () => {
     let mw;
     let logicA;
     let next;
@@ -877,7 +877,7 @@ describe('createLogicMiddleware', () => {
                 ...action,
               type: 'CAT', // changing type
               allowed: ['a']
-            }, true);  // shouldDispatch = true
+            }, { useDispatch: true });
           } else {
             reject(action);
           }
@@ -896,7 +896,7 @@ describe('createLogicMiddleware', () => {
       mw({ dispatch })(next)(actionAllow);
     });
 
-    it('allow will not call next since shouldDispatch = true', () => {
+    it('allow will not call next since useDispatch = true', () => {
       expect(next.calls.length).toBe(0);
     });
 
@@ -907,7 +907,7 @@ describe('createLogicMiddleware', () => {
     });
   });
 
-  describe('[logicA] validate+transform+process allow diff shouldDispatch=false', () => {
+  describe('[logicA] validate+transform+process allow diff useDispatch=false', () => {
     let mw;
     let logicA;
     let next;
@@ -930,7 +930,7 @@ describe('createLogicMiddleware', () => {
                 ...action,
               type: 'CAT', // changing type
               allowed: ['a']
-            }, false);  // shouldDispatch = false
+            }, { useDispatch: false });
           } else {
             reject(action);
           }
@@ -949,7 +949,7 @@ describe('createLogicMiddleware', () => {
       mw({ dispatch })(next)(actionAllow);
     });
 
-    it('allow will call next since shouldDispatch = false', () => {
+    it('allow will call next since useDispatch = false', () => {
       expect(next.calls.length).toBe(1);
       expect(next.calls[0].arguments[0]).toEqual(actionA);
     });
@@ -1073,7 +1073,7 @@ describe('createLogicMiddleware', () => {
     });
   });
 
-  describe('[logicA] validate+transform+process reject same next shouldDispatch=true', () => {
+  describe('[logicA] validate+transform+process reject same next useDispatch=true', () => {
     let mw;
     let logicA;
     let next;
@@ -1107,7 +1107,7 @@ describe('createLogicMiddleware', () => {
           next({
               ...action,
             trans: ['a']
-          }, true);  // shouldDispatch=true
+          }, { useDispatch: true });
         },
         process({ action }, dispatch) {
           dispatch({
@@ -1131,8 +1131,8 @@ describe('createLogicMiddleware', () => {
     });
   });
 
-// [logicA] validate+transform+process reject same next shouldDispatch=false - 1
-  describe('[logicA] validate+transform+process reject same next shouldDispatch=false', () => {
+// [logicA] validate+transform+process reject same next useDispatch=false - 1
+  describe('[logicA] validate+transform+process reject same next useDispatch=false', () => {
     let mw;
     let logicA;
     let next;
@@ -1163,7 +1163,7 @@ describe('createLogicMiddleware', () => {
             ...action,
             type: 'CAT', // changed type
             trans: ['a']
-          }, false);  // shouldDispatch=false
+          }, { useDispatch: false });
         },
         process({ action }, dispatch) {
           dispatch({
@@ -1177,7 +1177,7 @@ describe('createLogicMiddleware', () => {
       mw({ dispatch })(next)(actionReject);
     });
 
-    it('next shouldDispatch=false, next call', () => {
+    it('next useDispatch=false, next call', () => {
       expect(next.calls.length).toBe(1);
       expect(next.calls[0].arguments[0]).toEqual(actionA);
     });
