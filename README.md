@@ -381,17 +381,16 @@ npm run test:cov
 
 Currently reports:
 ```
-100%   Statements 282/282
-97.1%  Branches 134/138
-98.11% Functions 52/53
-100%   Lines 184/184
+100%   Statements 284/284
+98.45% Branches 127/129
+100%   Functions 53/53
+100%   Lines 180/180
 
-14 statements, 2 functions, 12 branches Ignored
+13 statements, 2 functions, 11 branches Ignored
 ```
 
 ## TODO
 
- - more tests
  - more docs
  - more examples
  - evaulate additional features as outlined above
