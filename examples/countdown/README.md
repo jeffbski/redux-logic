@@ -42,7 +42,8 @@ const timerStartLogic = createLogic({
 
   process({ cancelled$ }, dispatch) {
     const interval = setInterval(() => {
-      dispatch(timerDecrement(), true); // true to allow more dispatches
+      // passing allowMore: true option to keep open for more dispatches
+      dispatch(timerDecrement(), { allowMore: true });
     }, 1000);
 
     // if cancelled, stop the time interval
