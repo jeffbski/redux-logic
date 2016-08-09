@@ -401,7 +401,7 @@ describe('createLogicMiddleware-latest', () => {
               ...action,
               type: 'CAT'
             });
-          }, 10);
+          }, 20);
         }
       });
       mw = createLogicMiddleware([logicA]);
