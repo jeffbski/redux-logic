@@ -330,11 +330,16 @@ describe('createLogicMiddleware-latest', () => {
     const actionFoo2 = { type: 'FOO', id: 2 };
     const actionResultFoo2 = { type: 'BAR', id: 2 };
     beforeEach(done => {
-      next = expect.createSpy();
-      dispatch = expect.createSpy().andCall(cb);
+      next = expect.createSpy().andCall(() => cb({ next: true }));
+      dispatch = expect.createSpy().andCall(() => cb({ dispatch: true }));
+      let nextCount = 0;
       let dispatchCount = 0;
-      function cb() {
-        if (++dispatchCount >= 1) { done(); }
+      function cb(obj) {
+        if (obj.next) { nextCount++; }
+        if (obj.dispatch) { dispatchCount++; }
+        if (nextCount >= 2 && dispatchCount >= 1) {
+          done();
+        }
       }
       logicA = createLogic({
         type: 'FOO',
