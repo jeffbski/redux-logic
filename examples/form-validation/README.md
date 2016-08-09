@@ -94,21 +94,21 @@ export const usersAddLogic = createLogic({
 
 ## Files of interest
 
- - `src/configureStore.js` - logicMiddleware is created with the combined array of logic for the app. Also the dependencies are defined that will be made available to all logic, so axios is defined as httpClient.
+ - [src/configureStore.js](./src/configureStore.js) - logicMiddleware is created with the combined array of logic for the app. Also the dependencies are defined that will be made available to all logic, so axios is defined as httpClient.
 
- - `src/rootLogic.js` - combines logic from all other parts of the app and defines the order they appear in the logic pipeline. Shows how you can structure large apps to easily combine logic.
+ - [src/rootLogic.js](./src/rootLogic.js) - combines logic from all other parts of the app and defines the order they appear in the logic pipeline. Shows how you can structure large apps to easily combine logic.
 
- - `src/users/logic.js` - the logic specific to the users part of the app, this contains our async fetch logic
+ - [src/users/logic.js](./src/users/logic.js) - the logic specific to the users part of the app, this contains our async fetch logic
 
- - `src/users/actions.js` - contains the action creators
+ - [src/users/actions.js](./src/users/actions.js) - contains the action creators
 
- - `src/users/reducer.js` - contains a reducer which handles all the users specific state. Also contains the users related selectors. By collocating the reducer and the selectors we only have to update this one file to change the shape of our reducer state.
+ - [src/users/reducer.js](./src/users/reducer.js) - contains a reducer which handles all the users specific state. Also contains the users related selectors. By collocating the reducer and the selectors we only have to update this one file to change the shape of our reducer state.
 
- - `src/users/component.js` - Users React.js component for displaying the status, fetch + cancel buttons, and the list of users
+ - [src/users/component.js](./src/users/component.js) - Users React.js component for displaying the status, fetch + cancel buttons, and the list of users
 
- - `src/App.js` - App component which uses redux connect to provide the users state and bound action handlers as props
+ - [src/App.js](./src/App.js) - App component which uses redux connect to provide the users state and bound action handlers as props
 
- - `test/users-field-updated-logic.spec.js` - testing usersFieldUpdated logic in isolation
+ - [test/users-field-updated-logic.spec.js](./test/users-field-updated-logic.spec.js) - testing usersFieldUpdated logic in isolation
 
 ## Usage
 
