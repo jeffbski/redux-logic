@@ -16,7 +16,7 @@ It builds action creators and reducers without using any helper libraries.
 
 It showcases some of the declarative functionality built into redux-logic, so simply by specifying a cancelType, we enable this code to be cancellable. No code had to be written by us to leverage that functionality.
 
-Finally this also shows how to use dispatch for a long running task with multiple dispatches. To perform multiple dispatches, pass a true for the second argument allowMore. Alternatively you can simply dispatch an observable.
+Finally this also shows how to use dispatch for a long running task with multiple dispatches. To perform multiple dispatches, pass `{ allowMore: true }` for the second argument `options`. Alternatively you can simply dispatch an observable. See [Advanced usage in the API docs](../../docs/api.md#advanced-usage)
 
 
 ```js
@@ -81,21 +81,21 @@ const timerDecrementLogic = createLogic({
 
 ## Files of interest
 
- - `src/configureStore.js` - logicMiddleware is created with the combined array of logic for the app.
+ - [src/configureStore.js](./src/configureStore.js) - logicMiddleware is created with the combined array of logic for the app.
 
- - `src/rootLogic.js` - combines logic from all other parts of the app and defines the order they appear in the logic pipeline. Shows how you can structure large apps to easily combine logic.
+ - [src/rootLogic.js](./src/rootLogic.js) - combines logic from all other parts of the app and defines the order they appear in the logic pipeline. Shows how you can structure large apps to easily combine logic.
 
- - `src/timer/logic.js` - the logic specific to the timer part of the app, this contains our timer logic
+ - [src/timer/logic.js](./src/timer/logic.js) - the logic specific to the timer part of the app, this contains our timer logic
 
- - `src/timer/actions.js` - contains the action creators
+ - [src/timer/actions.js](./src/timer/actions.js) - contains the action creators
 
- - `src/timer/reducer.js` - contains a reducer which handles all the timer specific state. Also contains the timer related selectors. By collocating the reducer and the selectors we only have to update this one file to change the shape of our reducer state.
+ - [src/timer/reducer.js](./src/timer/reducer.js) - contains a reducer which handles all the timer specific state. Also contains the timer related selectors. By collocating the reducer and the selectors we only have to update this one file to change the shape of our reducer state.
 
- - `src/timer/component.js` - Timer React.js component for displaying the status, timer value, and buttons (start, stop, reset)
+ - [src/timer/component.js](./src/timer/component.js) - Timer React.js component for displaying the status, timer value, and buttons (start, stop, reset)
 
- - `src/App.js` - App component which uses redux connect to provide the polls state and bound action handlers as props
+ - [src/App.js](./src/App.js) - App component which uses redux connect to provide the polls state and bound action handlers as props
 
- - `test/timer-start-logic.spec.js` - testing timer start validation logic in isolation
+ - [test/timer-start-logic.spec.js](./test/timer-start-logic.spec.js) - testing timer start validation logic in isolation
 
 ## Usage
 
