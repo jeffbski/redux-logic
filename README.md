@@ -189,7 +189,8 @@ See the [docs for the full api](./docs/api.md)
 
  - [async-fetch-vanilla](./examples/async-fetch-vanilla) - async fetch example using axios
  - [async-fetch](./examples/async-fetch) - async fetch example using axios and redux-actions
- - [countdown](./examples/countdown) - a countdown timer
+ - [countdown](./examples/countdown) - a countdown timer implemented with setInterval
+ - [countdown-obs](./examples/countdown-obs) - a countdown timer implemented with Rx.Observable.interval
  - [form-validation](./examples/form-validation) - form validation and async post to server using axios, displays updated user list
 
 ## Comparison summaries
