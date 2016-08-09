@@ -345,7 +345,7 @@ describe('createLogicMiddleware-latest', () => {
               ...action,
               type: 'BAR'
             });
-          }, 20);
+          }, 100); // needs to be delayed so we can check next calls
         }
       });
       mw = createLogicMiddleware([logicA]);
