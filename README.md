@@ -62,7 +62,7 @@ const fetchPollsLogic = createLogic({
  - <a href="./docs/api.md">Full API</a>
  - <a href="#examples">Full Examples</a>
  - <a href="#comparison-summaries">Comparison summaries</a> to <a href="#compared-to-fat-action-creators">fat action creators</a>, <a href="#compared-to-redux-thunk">thunks</a>, <a href="#compared-to-redux-observable">redux-observable</a>, <a href="#compared-to-redux-saga">redux-saga</a>, <a href="#compared-to-custom-redux-middleware">custom middleware</a>, <a href="#compared-to-sam-or-pal-pattern">SAM/PAL pattern</a>
- - <a href="#other">Other</a> - features under consideration, todo, coverage, inspiration, license
+ - <a href="#other">Other</a> - features under consideration, todo, inspiration, license
 
 ## Goals
 
@@ -338,22 +338,6 @@ redux-logic.min.js.gz 11KB
 ```
 
 Note: If you are already including RxJS 5 into your project then the resulting delta will be much smaller.
-
-## Code Coverage
-
-```bash
-npm run test:cov
-```
-
-Currently reports:
-```
-100%   Statements 284/284
-98.45% Branches 127/129
-100%   Functions 53/53
-100%   Lines 180/180
-
-13 statements, 2 functions, 11 branches Ignored
-```
 
 ## TODO
 
