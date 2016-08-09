@@ -95,7 +95,7 @@ npm install redux-logic --save
 // in configureStore.js
 import { createLogicMiddleware } from 'redux-logic';
 import rootReducer from './rootReducer';
-import logic from './logic';
+import arrLogic from './logic';
 
 const deps = { // optional injected dependencies for logic
   // anything you need to have available in your logic
@@ -103,7 +103,7 @@ const deps = { // optional injected dependencies for logic
   firebase: firebaseInstance
 };
 
-const logicMiddleware = createLogicMiddleware(logic, deps);
+const logicMiddleware = createLogicMiddleware(arrLogic, deps);
 
 const middleware = applyMiddleware(
   logicMiddleware
