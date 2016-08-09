@@ -1,3 +1,4 @@
+import Rx from 'rxjs';
 import expect from 'expect';
 import { createLogic, createLogicMiddleware } from '../src/index';
 
@@ -187,7 +188,7 @@ describe('createLogicMiddleware-deps', () => {
       const next = expect.createSpy();
       const dispatch = expect.createSpy();
       const logicA = createLogic({
-        type: '*',
+        type: 'FOO',
         cancelType: 'FOO_CANCEL',
         process({ cancelled$ }, dispatch) {
           cancelled$.subscribe({
@@ -212,7 +213,7 @@ describe('createLogicMiddleware-deps', () => {
       const next = expect.createSpy();
       const dispatch = expect.createSpy();
       const logicA = createLogic({
-        type: '*',
+        type: 'FOO',
         cancelType: 'FOO_CANCEL',
         process({ cancelled$ }, dispatch) {
           cancelled$.subscribe({
@@ -229,4 +230,42 @@ describe('createLogicMiddleware-deps', () => {
     });
   });
 
+  describe('cancelled$ dispatch(obs)', () => {
+    it('should not dispatch after cancelled', done => {
+      const getState = () => {};
+      const origDeps = undefined;
+      const next = expect.createSpy();
+      let cancelFired = false;
+      const dispatch = expect.createSpy().andCall(cb);
+      function cb() {
+        if (cancelFired) {
+          done(new Error('dispatched after cancelled'));
+        }
+      }
+      const logicA = createLogic({
+        type: 'FOO',
+        cancelType: 'FOO_CANCEL',
+        process({ cancelled$ }, dispatch) {
+          cancelled$.subscribe({
+            next: () => {
+              cancelFired = true;
+              // let's delay to see if any dispatches occur
+              setTimeout(() => {
+                done();
+              }, 10);
+            }
+          });
+          const ob$ = Rx.Observable.interval(1)
+                .map(x => ({ type: 'BAR', payload: x }));
+          dispatch(ob$);
+        }
+      });
+      const mw = createLogicMiddleware([logicA], origDeps);
+      const storeFn = mw({ getState, dispatch })(next);
+      storeFn(actionFoo);
+      setTimeout(() => {
+        storeFn({ type: 'FOO_CANCEL' });
+      }, 0);
+    });
+  });
 });
