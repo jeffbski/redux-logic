@@ -5,3 +5,8 @@ export {
   createLogic,
   createLogicMiddleware
 };
+
+export default {
+  createLogic,
+  createLogicMiddleware
+};
