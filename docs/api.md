@@ -3,9 +3,8 @@
 Contents:
 
  - [Main usage](#main-usage)
- - [Execution phase hooks](#execution-phase-hooks) - [validate](#validate-hook), [transform](#transform-hook), [process](#process-hook)
+ - [Execution phase hooks](#execution-phase-hooks---validate-transform-process) - [validate](#validate-hook), [transform](#transform-hook), [process](#process-hook)
  - [Advanced usage](#advanced-usage)
-
 
 ## Main usage
 
@@ -151,10 +150,10 @@ Supplying dependencies to createLogicMiddleware makes it easy to create testable
 
 There are also built-in properties supplied to the execution hooks regardless of whether you supply any dendencies or not. These are merged in at runtime.
 
- - getState - the `store.getState` function is provided so logic can get access to the full state of the app. In the validate and transform hooks this will be the state before the reducers have updated anything for this action. For the process hook, the reducers should have been run (unless there are other middleware introducing async delays).
- - action - in validate hook this is the action that triggered the logic to run. In transform it will be the action that validation had passed on via allow or reject. In the process hook it will be the action passed on by the transform hook, or if it was falsey then the original action will be provided.
- - ctx - initially an empty object representing a shared place that you can use to pass data between the validate, transform, and process hooks if you have implemented more than one of them. For instance if you set the `ctx.foo = { a: 1}` in your validate hook, then transform hook, and process hook can read the previous value and potentially update.
- - cancelled$ - an observable that emits if the logic is cancelled. This osbservable will also complete when the hooks have finished, regardless of whether it was cancelled. Subscribing to the cancelled$.next allows you to respond to a cancellation performing any additional cleanup that you need to do. For instance if you had a long running web socket connection, you might close it. Normally you won't need to use this unless you are using a long running connection that you need to close from your end.
+ - `getState` - the `store.getState` function is provided so logic can get access to the full state of the app. In the validate and transform hooks this will be the state before the reducers have updated anything for this action. For the process hook, the reducers should have been run (unless there are other middleware introducing async delays).
+ - `action` - in validate hook this is the action that triggered the logic to run. In transform it will be the action that validation had passed on via allow or reject. In the process hook it will be the action passed on by the transform hook, or if it was falsey then the original action will be provided.
+ - `ctx` - initially an empty object representing a shared place that you can use to pass data between the validate, transform, and process hooks if you have implemented more than one of them. For instance if you set the `ctx.foo = { a: 1}` in your validate hook, then transform hook, and process hook can read the previous value and potentially update.
+ - `cancelled$` - an observable that emits if the logic is cancelled. This osbservable will also complete when the hooks have finished, regardless of whether it was cancelled. Subscribing to the cancelled$.next allows you to respond to a cancellation performing any additional cleanup that you need to do. For instance if you had a long running web socket connection, you might close it. Normally you won't need to use this unless you are using a long running connection that you need to close from your end.
 
 ### allow, reject, next - optional second argument options
 
