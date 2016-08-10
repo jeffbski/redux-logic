@@ -16,21 +16,8 @@ const USERS_FETCH_FULFILLED = 'USERS_FETCH_FULFILLED';
 const USERS_FETCH_REJECTED = 'USERS_FETCH_REJECTED';
 function usersFetch() { return { type: USERS_FETCH }; }
 function usersFetchCancel() { return { type: USERS_FETCH_CANCEL }; }
-function usersFetchFulfilled(users) {
-  return {
-    type: USERS_FETCH_FULFILLED,
-    payload: users
-  };
-}
-function usersFetchRejected(err) {
-  return {
-    type: USERS_FETCH_REJECTED,
-    payload: err,
-    error: true
-  };
-}
 
-const delay = 4; // 4s delay for interactive use of cancel/take latest
+const delay = 2; // 2s delay for interactive use of cancel/take latest
 const usersFetchLogic = createLogic({
   type: USERS_FETCH,
   cancelType: USERS_FETCH_CANCEL,
@@ -43,9 +30,15 @@ const usersFetchLogic = createLogic({
     // the delay query param adds arbitrary delay to the response
     httpClient.get(`http://reqres.in/api/users?delay=${delay}`)
       .then(resp => resp.data.data) // use data property of payload
-      .then(users => dispatch(usersFetchFulfilled(users)))
-      .catch((err) =>
-             dispatch(usersFetchRejected(err)));
+      .then(users => dispatch({
+        type: USERS_FETCH_FULFILLED,
+        payload: users
+      }))
+      .catch((err) => dispatch({
+        type: USERS_FETCH_REJECTED,
+        payload: err,
+        error: true
+      }));
   }
 });
 

@@ -1,8 +1,8 @@
-# One page example
+# Single file - Async Fetch example
 
 This is an example of using redux-logic for async fetching with axios triggered by a `USERS_FETCH` action type.
 
-It is built in one file so you can see everything together in one place.
+It is built in a single file so you can see everything together in one place.
 
 It showcases some of the declarative functionality built into redux-logic, so simply by specifying a cancelType and setting latest to true, we enable this code to be cancellable and also enable it to only take the latest request if multiple come in. No code had to be written by us to leverage that functionality.
 
@@ -40,6 +40,6 @@ const usersFetchLogic = createLogic({
 npm start # builds and runs dev server
 ```
 
-Click fetch button which dispatches a simple `USERS_FETCH` action, that the logicMiddleware picks up, hands to fetchUsersLogic and runs the code in the process hook creating async fetch which eventually resolves and is handed to `usersFetchFullfilled` action creator or `usersFetchRejected` error action creator before being dispatched.
+Click fetch button which dispatches a simple `USERS_FETCH` action, that the logicMiddleware picks up, hands to fetchUsersLogic and runs the code in the process hook creating async fetch which eventually resolves and then dispatches a `USERS_FETCH_FULFILLED` or `USERS_FETCH_REJECTED` action.
 
-Note: To slow things down so you can interactively cancel and test the take latest functionality, I have added in a setTimeout to delay the resolution by 4 seconds. This allows you time to click cancel or to click fetch multiple times to see that it will only result in the latest result being fulfilled.
+Note: To slow things down so you can interactively cancel and test the take latest functionality, I have added in a setTimeout to delay the resolution by 2 seconds. This allows you time to click cancel or to click fetch multiple times to see that it will only result in the latest result being fulfilled.
