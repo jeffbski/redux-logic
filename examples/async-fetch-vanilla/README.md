@@ -46,7 +46,7 @@ export const usersFetchLogic = createLogic({
 
  - [src/App.js](./src/App.js) - App component which uses redux connect to provide the users state and bound action handlers as props
 
- - [test/fetch-users-logic.spec.js](./test/fetch-users-logic.spec.js) - testing usersFetch logic in isolation
+ - [test/users-fetch-logic.spec.js](./test/users-fetch-logic.spec.js) - testing usersFetch logic in isolation
 
 ## Usage
 

@@ -9,6 +9,11 @@ Contents:
 ## Main usage
 
 ```js
+/* returns a logic object that resembles the same structure of the
+   input except that some defaults are applied and values were
+   validated. You can directly access your hook functions from the
+   object to perform isolated testing. Use the validate, transform,
+   and process properties of the returned logic object */
 const fooLogic = createLogic({
   // filtering/canceling
   type, // required string, regex, array of str/regex, use '*' for all
@@ -68,7 +73,7 @@ The execution phase hooks are the places where you can hook your business logic 
  2. transform(depObj, next)
  3. process(depObj, dispatch)
 
-`depObj` contains `getState`, `action`, along with any user injected deps and a few other advanced properties. See advanced section for full details.
+`depObj` contains `getState`, `action`, along with any user injected deps and a few other advanced properties. See [advanced section](#additional-properties-available-to-execution-hooks) for full details.
 
 ### validate hook
 
@@ -153,7 +158,7 @@ There are also built-in properties supplied to the execution hooks regardless of
  - `getState` - the `store.getState` function is provided so logic can get access to the full state of the app. In the validate and transform hooks this will be the state before the reducers have updated anything for this action. For the process hook, the reducers should have been run (unless there are other middleware introducing async delays).
  - `action` - in validate hook this is the action that triggered the logic to run. In transform it will be the action that validation had passed on via allow or reject. In the process hook it will be the action passed on by the transform hook, or if it was falsey then the original action will be provided.
  - `ctx` - initially an empty object representing a shared place that you can use to pass data between the validate, transform, and process hooks if you have implemented more than one of them. For instance if you set the `ctx.foo = { a: 1}` in your validate hook, then transform hook, and process hook can read the previous value and potentially update.
- - `cancelled$` - an observable that emits if the logic is cancelled. This osbservable will also complete when the hooks have finished, regardless of whether it was cancelled. Subscribing to the cancelled$.next allows you to respond to a cancellation performing any additional cleanup that you need to do. For instance if you had a long running web socket connection, you might close it. Normally you won't need to use this unless you are using a long running connection that you need to close from your end.
+ - `cancelled$` - an observable that emits if the logic is cancelled. This osbservable will also complete when the hooks have finished, regardless of whether it was cancelled. Subscribing to the cancelled$.next allows you to respond to a cancellation performing any additional cleanup that you need to do. For instance if you had a long running web socket connection, you might close it. Normally you won't need to use this unless you are using a long running connection that you need to close from your end. Even without using `cancelled$` future dispatching is stopped, so use of this is only necessary for cleanup or termination of resources you created.
 
 ### allow, reject, next - optional second argument options
 

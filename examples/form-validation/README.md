@@ -32,7 +32,9 @@ export function validateFields(fields) {
  Checks that the updated user is valid. If valid then it allows the
  USERS_FIELD_UPDATED action to go through, otherwise it sends a
  USERS_FIELD_INVALID action with errors and the update.
- Reducers will watch for these actions to know how to update the UI state, the won't have to deal with validation logic since that is handled here.
+ Reducers will watch for these actions to know how to update the
+ UI state, the won't have to deal with validation logic since that
+ is handled here.
  */
 export const usersUpdateValidationLogic = createLogic({
   type: USERS_FIELD_UPDATED,

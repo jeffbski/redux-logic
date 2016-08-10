@@ -14,7 +14,7 @@ If you try to start the timer when the value is already zero, the timerStartLogi
 
 It builds action creators and reducers without using any helper libraries.
 
-It showcases some of the declarative functionality built into redux-logic, so simply by specifying a cancelType, we enable this code to be cancellable. No code had to be written by us to leverage that functionality.
+It showcases some of the declarative functionality built into redux-logic, so simply by specifying a cancelType, we enable this code to be cancellable. No code had to be written by us to leverage that functionality. Just be declaring the `cancelType`, when a cancellation action is received future dispatching is disabled, however to be a good citizen we should cleanup any resourses that we created, in this case we should stop the timer we started. We can listen to the cancelled$ observable and if it fires we can perform our cleanup.
 
 Finally this also shows how to use dispatch for a long running task with multiple dispatches. To perform multiple dispatches, pass `{ allowMore: true }` for the second argument `options`. Alternatively you can simply dispatch an observable. See [Advanced usage in the API docs](../../docs/api.md#advanced-usage)
 
@@ -46,7 +46,9 @@ const timerStartLogic = createLogic({
       dispatch(timerDecrement(), { allowMore: true });
     }, 1000);
 
-    // if cancelled, stop the time interval
+    // The declarative cancellation already stops future dispatches
+    // but we should go ahead and stop the timer we created.
+    // If cancelled, stop the time interval
     cancelled$.subscribe(() => {
       clearInterval(interval);
       dispatch(); // dispatch nothing to tell logic we are done
