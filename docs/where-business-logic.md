@@ -132,7 +132,7 @@ Limitations:
 
  - No easy way to cancel pending requests or only take the latest if multiple requests are made
  - No interception. I also have no easy way to create business logic that applies across many actions, so if I wanted to augment all actions to have a timestamp or unique ID, I'd have to include a call to that code in all action creators.
- - Testing components and thunked action creators may require running the code (possibly mocked).
+ - Testing components and thunked action creators may require running the code (possibly mocked). When you have a thunk (function or promise) you don't know what it does unless you execute it.
 
 Promise thunks are similar in that instead of returning a function you return a promise.
 
@@ -216,7 +216,7 @@ export default function* rootSaga() {
 }
 ```
 
-So while this brings us additional power we didn't have before, the code has become somewhat more complex. It requires a good grasp of generators to use effectively.
+So while this brings us additional power we didn't have before, the code has become more complex. It requires a good grasp of generators to use effectively.
 
 Advantages:
 
@@ -508,4 +508,7 @@ So that's redux-logic in a nutshell.
 
 I'm excited about how this unifies and simplifies business logic code letting us focus on the important details.
 
-I'd love to hear what you think.
+
+I’d love to hear what you think, my twitter handle is [@jeffbski](https://twitter.com/jeffbski) or you can contact me through my training site: https://codewinds.com/
+
+You can find the code, docs, and examples at [redux-logic repo](https://github.com/jeffbski/redux-logic)

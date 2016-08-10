@@ -212,14 +212,14 @@ For a more detailed comparison with examples, see by article in docs, [Where do 
  - no easy way to cancel or do limiting like take latest with fat action creators
  - action creators would not have access to the full global state so you might have to pass down lots of extra data that isn't needed for rendering. Every time business logic changes might require new data to be made available
  - no global interception using just action creators - applying logic or transformations across all or many actions
- -  Testing components and fat action creators may require running the code (possibly mocked).
+ -  Testing components and fat action creators may require running the code (possibly mocked API calls).
 
 ### Compared to redux-thunk
 
  - With thunks business logic is spread over action creators
- - With thunks there is not an easy way to cancel async work nor to perform limiting (take latest, throttling, debouncing)
+ - With thunks there is not an easy way to cancel async work nor to perform (take latest) limiting
  - no global interception with thunks - applying logic or transformations across all or many actions
- - Testing components and thunked action creators may require running the code (possibly mocked).
+ - Testing components and thunked action creators may require running the code (possibly mocked API calls). When you have a thunk (function or promise) you don't know what it does unless you execute it.
 
 
 ### Compared to redux-observable
