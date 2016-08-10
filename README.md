@@ -189,7 +189,7 @@ See the [docs for the full api](./docs/api.md)
 
 ### JSFiddle live examples
 
-<script async src="http://jsfiddle.net/jeffbski/954g5n7h/5/embed/"></script>
+ - [async fetch - single page](http://jsfiddle.net/jeffbski/954g5n7h/5/)
 
 ### Full examples
 
