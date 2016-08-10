@@ -187,6 +187,12 @@ See the [docs for the full api](./docs/api.md)
 
 ## Examples
 
+### JSFiddle live examples
+
+<script async src="http://jsfiddle.net/jeffbski/954g5n7h/5/embed/"></script>
+
+### Full examples
+
  - [async-fetch-vanilla](./examples/async-fetch-vanilla) - async fetch example using axios
  - [async-fetch](./examples/async-fetch) - async fetch example using axios and redux-actions
  - [countdown](./examples/countdown) - a countdown timer implemented with setInterval
