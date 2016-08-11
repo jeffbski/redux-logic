@@ -198,6 +198,7 @@ See the [docs for the full api](./docs/api.md)
  - [countdown](./examples/countdown) - a countdown timer implemented with setInterval
  - [countdown-obs](./examples/countdown-obs) - a countdown timer implemented with Rx.Observable.interval
  - [form-validation](./examples/form-validation) - form validation and async post to server using axios, displays updated user list
+ - [notification](./examples/notification) - notification message example showing at most N messages for X amount of time, rotating queued messages in as others expire
  - [single-file](./examples/single-file) - async fetch example with all code in a single file
 
 ## Comparison summaries
