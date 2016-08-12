@@ -21,3 +21,4 @@ cache:
   - examples/form-validation/node_modules
   - examples/notification/node_modules
   - examples/single-file/node_modules
+  - examples/single-file-redux/node_modules

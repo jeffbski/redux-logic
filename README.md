@@ -189,7 +189,8 @@ See the [docs for the full api](./docs/api.md)
 
 ### JSFiddle live examples
 
- - [async fetch - single page](http://jsfiddle.net/jeffbski/954g5n7h/)
+ - [async fetch - single page](http://jsfiddle.net/jeffbski/954g5n7h/) - displayed using React
+ - [async fetch - single page redux only](http://jsfiddle.net/jeffbski/yzy8w4ve/) - just the redux and redux-logic code
 
 ### Full examples
 
@@ -199,7 +200,9 @@ See the [docs for the full api](./docs/api.md)
  - [countdown-obs](./examples/countdown-obs) - a countdown timer implemented with Rx.Observable.interval
  - [form-validation](./examples/form-validation) - form validation and async post to server using axios, displays updated user list
  - [notification](./examples/notification) - notification message example showing at most N messages for X amount of time, rotating queued messages in as others expire
- - [single-file](./examples/single-file) - async fetch example with all code in a single file
+ - [single-file](./examples/single-file) - async fetch example with all code in a single file and displayed with React
+ - [single-file-redux](./examples/single-file-redux) - async fetch example with all code in a single file and appended to the container div. Only redux and redux-logic code.
+
 
 ## Comparison summaries
 
