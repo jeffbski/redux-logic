@@ -125,7 +125,7 @@ export const notifyDisplayQueuedLogic = createLogic({
 
  - [src/App.js](./src/App.js) - App component which uses redux connect to provide the notify component state and bound action handlers as props
 
- - [test/notify-create-logic.spec.js](./test/notify-create-logic-spec.js) - test for the validate hook of notifyCreateLogic.
+ - [test/notify-create-logic.spec.js](./test/notify-create-logic.spec.js) - test for the validate hook of notifyCreateLogic.
 
 ## Usage
 
