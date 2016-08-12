@@ -18,6 +18,8 @@ const fooLogic = createLogic({
   // filtering/canceling
   type, // required string, regex, array of str/regex, use '*' for all
   cancelType, // string, regex, array of strings or regexes
+  // type and cancelType also support redux-actions fns for which
+  //   the fn.toString() returns the associated action type
 
   // limiting - optionally define one of these
   latest, // only take latest, default false
