@@ -1,4 +1,4 @@
-# Countdown
+# Notification
 
 This is an example of using redux-logic to govern the logic for a notification feature. Specifically the busines requirement is that there would be N number of notifications on the screen at one time. They would be displayed for a set period of time and as slots become available any pending notifcations would take their place.
 
