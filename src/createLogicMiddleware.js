@@ -3,6 +3,25 @@ import wrapper from './logicWrapper';
 
 const debug = (/* ...args */) => {};
 
+/**
+   Builds a redux middleware for handling logic (created with
+   createLogic). It also provides a way to inject runtime dependencies
+   that will be provided to the logic for use during its execution hooks.
+
+   This middleware has two additional methods:
+     - `addLogic(arrLogic)` adds additional logic dynamically
+     - `replaceLogic(arrLogic)` replaces all logic, existing logic should still complete
+
+   @param {array} arrLogic array of logic items (each created with
+     createLogic) used in the middleware. The order in the array
+     indicates the order they will be called in the middleware.
+   @param {object} deps optional runtime dependencies that will be
+     injected into the logic hooks. Anything from config to instances
+     of objects or connections can be provided here. This can simply
+     testing. Reserved property names: getState, action, and ctx.
+   @returns {function} redux middleware with additional methods
+     addLogic and replaceLogic
+ */
 export default function createLogicMiddleware(arrLogic = [], deps = {}) {
   const actionSrc$ = new Subject();
   let savedStore;
