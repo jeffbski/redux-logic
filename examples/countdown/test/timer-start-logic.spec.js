@@ -8,7 +8,6 @@ describe('timerStartLogic', () => {
   describe('initial state, timerStart.validate', () => {
     let allow;
     let reject;
-    let dispatch;
     beforeEach((done) => {
       const getState = () => ({
         timer: {
