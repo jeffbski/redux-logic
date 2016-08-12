@@ -194,7 +194,7 @@ describe('createLogicMiddleware-debounce', () => {
       }
       logicA = createLogic({
         type: 'FOO',
-        debounce: 20,
+        debounce: 30,
         process({ action }, dispatch) {
           // immediate dispatch
           dispatch({
@@ -208,7 +208,7 @@ describe('createLogicMiddleware-debounce', () => {
               ...action,
               type: 'CAT'
             });
-          }, 20);
+          }, 50);
         }
       });
       mw = createLogicMiddleware([logicA]);
@@ -216,7 +216,7 @@ describe('createLogicMiddleware-debounce', () => {
       storeFn(actionFoo1);
       setTimeout(() => {
         storeFn(actionFoo2);
-      }, 10);
+      }, 15);
     });
 
     it('passes only actionFoo2', () => {
