@@ -196,15 +196,17 @@ describe('createLogicMiddleware-deps', () => {
           });
           setTimeout(() => {
             dispatch({ type: 'BAR' });
-          }, 10);
+          }, 30);
+          fireNextAction();
         }
       });
       const mw = createLogicMiddleware([logicA], origDeps);
       const storeFn = mw({ getState, dispatch })(next);
       storeFn(actionFoo);
-      setTimeout(() => {
+      // next action will be triggered once logicA is ready
+      function fireNextAction() {
         storeFn({ type: 'FOO_CANCEL' });
-      }, 0);
+      }
     });
 
     it('should indicate completion even if not cancelled', done => {
