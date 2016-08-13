@@ -219,14 +219,17 @@ describe('createLogicMiddleware-deps', () => {
           const ob$ = Rx.Observable.interval(1)
                 .map(x => ({ type: 'BAR', payload: x }));
           dispatch(ob$);
+
+          fireNextAction(); // manually triggering to get timing right
         }
       });
       const mw = createLogicMiddleware([logicA], origDeps);
       const storeFn = mw({ getState, dispatch })(next);
       storeFn(actionFoo);
-      setTimeout(() => {
+      // called in logicA to get timing right
+      function fireNextAction() {
         storeFn({ type: 'FOO_CANCEL' });
-      }, 0);
+      }
     });
   });
 });
