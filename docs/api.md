@@ -79,32 +79,32 @@ The execution phase hooks are the places where you can hook your business logic 
 
 The validate and transform hooks are just aliases for the same hook internally named validtrans. The two names are just to help convey intent, you can do the same things in either including validation and transformation.
 
-validate/transform happen before the other middleware and reducers have had a chance to see the action so you may check the state of your app and decide to allow it as is, modify or augment it, change it to a different action, or choose to pass nothing along. You call allow, reject, or next once with the action to pass along or empty to pass nothing. If you call reject then the process execution hook will not be executed.
+`validate/transform` happen before the other middleware and reducers have had a chance to see the action so you may check the state of your app and decide to allow the action as is, modify or augment it, change it to a different action, or choose to pass nothing along. You call `allow`, `reject`, or `next` once with the action to pass along or empty to pass nothing (like `allow()`). If you call `reject` then the process execution hook will not be executed.
 
-The process hook only runs if allow or next was called. It happens after the action from allow/next was passed onto the other logic, middleware, and reducers. Assuming there was no delays or asynchronicity created from other logic or middleware then the `getState()` will return the state after the actions have been processed by the reducers.
+The `process` hook only runs if `allow` or `next` was called. It happens after the action from `allow/next` was passed onto the other logic, middleware, and reducers. Assuming there was no delays or asynchronicity created from other logic or middleware then the `getState()` will return the state after the actions have been processed by the reducers.
 
 You may implement one or more hooks depending on your business logic. The lifecycle is as follows:
 
  1. validate(depObj, allow, reject) OR transform(depObj, next /*, reject */)
- 2. Action from allow/reject/next is passed along.
+ 2. Action from allow/reject/next is passed along to other logic, middleware, and reducers
 
  3. process(depObj, dispatch) // only called if allow/next was called
 
-`depObj` contains `getState`, `action`, along with any user injected deps and a few other advanced properties. See [advanced section](#additional-properties-available-to-execution-hooks) for full details.
+Each `depObj` contains `getState`, `action`, along with any user injected deps and a few other advanced properties. See [advanced section](#additional-properties-available-to-execution-hooks) for full details.
 
 ### validate hook
 
 This hook is run first and it allows your business logic to access the full state (prior to reducers updating state for this action), `getState()` and the `action`.
 
-You may perform sync or async business logic and when ready call allow or reject. `allow(action)` or `reject(action)`. Allow or reject must be called exactly once when you are done validating or verifying.
+You may perform sync or async business logic and when ready call `allow` or `reject`. `allow(action)` or `reject(action)`. `allow` or `reject` must be called exactly once when you are done validating or verifying.
 
-Calling allow or reject influences whether the process hook will be run. If reject was called then process hook will not be run.
+Calling `allow` or `reject` influences whether the process hook will be run. If `reject` was called then `process` hook will not be run.
 
-Not that you pass an action to allow and reject as the first argument. You may also call it with undefined if you do not wish to have anything propogate further. `action()` or `reject()`. Process hook would still be executed for `action()` but not `reject()`.
+Note that you pass an action to `allow` and `reject` as the first argument. You may also call it with `undefined` if you do not wish to have anything propogate further. `action()` or `reject()`. Process hook would still be executed for `action()` but not `reject()`.
 
-You can augment, modify, change actions however you want in your allow or reject call.
+You can augment, modify, change actions however you want in your `allow` or `reject` call.
 
-By default, allow and reject will pass whatever action they are given to the next middleware or reducer unless the type has changed from the original action type. If it has changed then it will instead by dispatched so that all middleware will have an opportunity to see it prior to it hitting reducers. This should be fine for most types of uses, however if you need to override this automatic mechanism, see the advanced section.
+By default, `allow` and `reject` will pass whatever action they are given to the next middleware or reducer unless the type has changed from the original action type. If it has changed then the action will instead by dispatched so that all middleware will have an opportunity to see it prior to it hitting reducers. This should be fine for most types of uses, however if you need to override this automatic mechanism, see the advanced section.
 
 The default validation hook if not provided is:
 
@@ -116,13 +116,13 @@ validate({ getState, action }, allow, reject) {
 
 ### transform hook (alias for validate hook)
 
-The transform hook is just another alias for the validate hook which helps you convey the intent of your business logic. Since it is the same step it can do the same things validating, transforming, etc. Allow is named next since that is what makes more sense in a transformation type logic. Normally you wouldn't need the reject but it is also available.
+The `transform` hook is just another alias for the validate hook which helps you convey the intent of your business logic. Since it is the same step it can do the same things validating, transforming, etc. `allow` is named `next` since that is what makes more sense in a transformation type logic. Normally you wouldn't need the `reject` but it is also available.
 
-The transform hook is typically used to modify or augument actions (like adding a unique ID, timestamp, looking up data and including, etc).
+You might use transformations to modify or augument actions (like adding a unique ID, timestamp, looking up data and including, etc).
 
-Just like with the validate hook you are expected to call the next function (or reject function) one time passing it the modified action or empty `next()` to pass nothing. Calling next will enable the process hook to eventually run, but calling reject would prevent process hook from running the same as explained in the validate hook. See the validate hook for the details about how it decides whether to pass along the action or dispatch. The advanced section discusses how that can be overridden too.
+Just like with the `validate` hook you are expected to call the `next` function (or `reject` function) one time passing it the modified action or empty `next()` to pass nothing. Calling `next` will enable the `process` hook to eventually run, but calling `reject` would prevent `process` hook from running the same as explained in the validate hook. See the `validate` hook for the details about how it decides whether to pass along the action or to dispatch it. The advanced section discusses how that can be overridden.
 
-The default transform hook is:
+The default `transform` hook is (same as default validation hook):
 
 ```js
 transform({ getState, action }, next /*, reject */) {
@@ -132,17 +132,17 @@ transform({ getState, action }, next /*, reject */) {
 
 ### process hook
 
-The process hook is run asynchronously after the middlware calls next, so typically this means that the state will have been updated by the reducers (unless there are any other async middleware or logic delaying execution). Thus the process hook's getState will refer to recently updated state.
+The `process` hook is run asynchronously after the middlware calls `next`, so typically this means that the state will have been updated by the reducers (unless there are any other async middleware or logic delaying execution). Thus the process hook's getState will refer to recently updated state.
 
-The process hook is only executed if the validate/transform hook allow was called. If reject was called then the process hook will not be executed.
+The `process` hook is only executed if the `validate/transform` hook allow was called. If `reject` was called then the `process` hook will not be executed.
 
-The process hook is an ideal place to make async requests and then dispatch the results or an error.
+The `process` hook is an ideal place to make async requests and then dispatch the results or an error.
 
-Since the most common use case is to do a single dispatch, that's what process expects by default. You would call dispatch exactly one time passing whatever success or failure action. If you decide in your logic that you don't want to dispatch anything call dispatch empty `dispatch()` to complete the loogic.
+Since the most common use case is to do a single dispatch, that's what `process` expects by default. You would call `dispatch` exactly one time passing whatever success or failure action. If you decide in your logic that you don't want to dispatch anything call `dispatch` empty `dispatch()` to complete the loogic.
 
-If you want to perform multiple dispatches for a long running subscription or to dispatch many different things then there are a couple ways to do it. You may dispatch an observable and for every result it will dispatch. There is also a way to perform multiple dispatches by using dispatch's options argument. See advanced section for more details.
+If you want to perform multiple dispatches for a long running subscription or to dispatch many different things then there are a couple ways to do it. You may dispatch an observable and for every result it will dispatch. There is also a way to perform multiple dispatches by using dispatch's options 2nd argument. See advanced section for more details.
 
-The default process hook if none is provided is:
+The default `process` hook if none is provided is:
 
 ```js
 process({ getState, action }, dispatch) {
@@ -168,36 +168,36 @@ Supplying dependencies to createLogicMiddleware makes it easy to create testable
 
 There are also built-in properties supplied to the execution hooks regardless of whether you supply any dendencies or not. These are merged in at runtime.
 
- - `getState` - the `store.getState` function is provided so logic can get access to the full state of the app. In the validate and transform hooks this will be the state before the reducers have updated anything for this action. For the process hook, the reducers should have been run (unless there are other middleware introducing async delays).
- - `action` - in validate/transform hook this is the action that triggered the logic to run. In the process hook it will be the action passed on by the transform hook, or if it was falsey then the original action will be provided.
- - `ctx` - initially an empty object representing a shared place that you can use to pass data between the validate/transform and process hooks if you have implemented more than one of them. For instance if you set the `ctx.foo = { a: 1}` in your validate hook, then the process hook can read the previous value and potentially update.
- - `cancelled$` - an observable that emits if the logic is cancelled. This osbservable will also complete when the hooks have finished, regardless of whether it was cancelled. Subscribing to the cancelled$.next allows you to respond to a cancellation performing any additional cleanup that you need to do. For instance if you had a long running web socket connection, you might close it. Normally you won't need to use this unless you are using a long running connection that you need to close from your end. Even without using `cancelled$` future dispatching is stopped, so use of this is only necessary for cleanup or termination of resources you created.
+ - `getState` - the `store.getState` function is provided so logic can get access to the full state of the app. In the `validate` and `transform` hooks this will be the state before the reducers have updated anything for this action. For the `process` hook, the reducers should have been run (unless there are other middleware introducing async delays).
+ - `action` - in `validate/transform` hook this is the action that triggered the logic to run. In the `process` hook it will be the action passed on by the `transform` hook, or if it was falsey then the original action will be provided.
+ - `ctx` - initially an empty object representing a shared place that you can use to pass data between the `validate/transform` and `process` hooks if you have implemented more than one of them. For instance if you set the `ctx.foo = { a: 1}` in your `validate` hook, then the `process` hook can read the previous value and potentially update.
+ - `cancelled$` - an observable that emits if the logic is cancelled. This osbservable will also complete when the hooks have finished, regardless of whether it was cancelled. Subscribing to the cancelled$.next allows you to respond to a cancellation performing any additional cleanup that you need to do. For instance if you had a long running web socket connection, you might close it. Normally you won't need to use this unless there is something you need to close from your end. Even without using `cancelled$` future dispatching is stopped, so use of this is only necessary for cleanup or termination of resources you created.
 
 ### allow, reject, next - optional second argument options
 
-allow, reject, and next all support an optional second argument `options` which can change its operation.
+`allow`, `reject`, and `next` all support an optional second argument `options` which can change its operation.
 
-By default the second argument defaults to: `{ useDispatch: 'auto' }`.
+By default the second argument, `options`, defaults to: `{ useDispatch: 'auto' }`.
 
-For most use cases this is the appropriate setting, it basically checks to see if the action type of the new action provided to allow, reject, or next has the same action type of the original action. If it matches the original then the allow, reject, or next call will pass the action down to the next logic or middleware.
+For most use cases this is the appropriate setting, it basically checks to see if the action type of the new action provided to `allow`, `reject`, or `next` has the same action type of the original action. If it matches the original then the `allow`, `reject`, or `next` call will pass the action down to the next logic or middleware.
 
-If the action type was different then it will instead perform a dispatch. Most likely if the action type was changed then it really needs to go back to dispatch starting at the top so all middleware and any other logic have an opportunity to see it before going down the chain to the reducers. If the action type was the same then most likely we want to just let it continue down the stack (otherwise we'd have to be careful not to create a loop).
+If the action type was different then it will instead perform a dispatch. Most likely if the action type was changed then it really needs to go back to dispatch starting at the top so all middleware and any other logic have an opportunity to see it before going down the chain to the reducers. If the action type was the same then most likely we want to just let it continue down the stack (otherwise if we force it to dispatch, we better be careful not to create a loop).
 
-If you want to force a dispatch, you may provide as your options `{ useDispatch: true }`, so your all would look like `allow(action, { useDispatch: true })` or similarly for reject or next.
+If you want to force a dispatch, you may provide as your options `{ useDispatch: true }`, for example: `allow(action, { useDispatch: true })` or similarly for reject or next.
 
-Alternatively if you want to force a next call instead `{ useDispatch: false }`, just note that in doing so previous logic and middleware won't have another opportunity to see this action.
+Alternatively if you just want to force the action being passed down (not dispatched regardless of type) use `{ useDispatch: false }`, just note that in doing so previous logic and middleware won't have another opportunity to see this action.
 
 In most situations the default options `{ useDefault: 'auto' }` is the proper choice.
 
 ### dispatch - optional second argument options - multi-dispatching
 
-The `process`'s dispatch function accepts a second options argument which changes its behavior slightly. It defaults to `{ allowMore: false }`.
+The `process`'s `dispatch` function accepts a second `options` argument which changes its behavior slightly. It defaults to `{ allowMore: false }`.
 
-The `allowMore` option controls whether dispatch will complete or not after being called. By default, allowMore is set to false so that means that process is only expecting to be called exactly one time, typically with its results on success or the failure if it errored. Thus it will complete the underlying wrapping observable after dispatch is called. If the logic decided it didn't want to dispatch anything it should be called empty like `dispatch()`.
+The `allowMore` option controls whether `dispatch` will complete our underlying wrapping observable after being called. By default, allowMore is set to false so that means that `process` is only expecting to be called exactly one time, typically with its results on success or the failure if it errored. Thus it will complete the underlying wrapping observable after dispatch is called. If the logic decided it didn't want to dispatch anything it should be called empty like `dispatch()`.
 
-If dispatch was given an observable then the underlying wrapping observable will stay alive until the dispatched observable completes. So dispatching an observable allows long running subscription type dispatching regardles of using allowMore.
+If you dispatch an observable instead of an action, then the underlying wrapping observable will stay alive until the dispatched observable completes. So dispatching an observable allows long running subscription type dispatching regardles of using allowMore. Process will dispatch each value that comes from the observable continuing until it completes.
 
-If you don't want to deal with creating observables of your own, the allowMore option allows you to perform multiple dispatch as well. Set `{ allowMore: true }` to keep open the dispatching until you are ready to complete, then call dispatch one final time with allowMore: false or just using the default options `dispatch(action)` or `dispatch()`.
+If you don't want to deal with creating observables of your own, the allowMore option allows you to perform multiple dispatch as well. Set `{ allowMore: true }` to keep open the dispatching until you are ready to complete, then call `dispatch` one final time with `{allowMore: false}` or just using the default options `dispatch(action)` or `dispatch()`.
 
 An example of performing multiple dispatches without using an observable:
 
@@ -209,4 +209,33 @@ process({ getState, action }, dispatch) {
 }
 ```
 
-You could instead dispatch an observable and perform any number of dispatches inside of it. It controls when things complete or whether they stay open for a long running subscription.
+Alternatively you could dispatch an observable and perform any number of dispatches inside it.
+
+```js
+process({ getState, action }, dispatch) {
+  const ob$ = Observable.of(  // from rxjs
+    { type: 'BAR' },
+    { type: 'CAT' },
+    { type: 'DOG' }
+  );
+  dispatch(ob$);
+}
+```
+
+Or if dispatching things over time
+
+```js
+process({ getState, action }, dispatch) {
+  const ob$ = Observable.create(obs => {
+    // in parallel fire multiple requests and dispatch the results
+    // when they arrive, then complete when done
+    Promise.all([
+      axios.get('http://server/users')
+        .then(users => obs.next({ type: USERS, payload: users })),
+      axios.get('http://server/categories')
+        .then(categories => obs.next({ type: CAT, payload: categories }))
+     ]).then(values => obs.complete()); // values already dispatched
+  });
+  dispatch(ob$);
+}
+```
