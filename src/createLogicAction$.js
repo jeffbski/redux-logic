@@ -15,7 +15,9 @@ const debug = (/* ...args */) => {};
 
 export default function createLogicAction$({ action, logic, store, deps, cancel$ }) {
   const { getState } = store;
-  const { name, validate, transform, process: processFn } = logic;
+  const { name, process: processFn } = logic;
+  const validtrans = logic.validate || logic.transform; // aliases
+
   debug('createLogicAction$', name, action);
 
   const logicAction$ = Observable.create(logicActionObs => {
@@ -80,24 +82,6 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
       useDispatch: 'auto'
     };
 
-    function allow(act, options = AllowRejectNextDefaults) {
-      const { useDispatch } = applyAllowRejectNextDefaults(options);
-      if (shouldDispatch(act, useDispatch)) {
-        dispatch(act, { allowMore: true }); // allow more
-        logicActionObs.complete();
-        // skipping transform and calling next since nothing to transform
-        return next(true, undefined, undefined);
-      }
-
-      // normal next
-      depObj.action = act;
-      // bind next's default options to be that of allow
-      function boundNext(nextAction, opt = options) {
-        return next(true, nextAction, opt);
-      }
-      return transform(depObj, boundNext);
-    }
-
     function applyAllowRejectNextDefaults(options) {
       return {
         ...AllowRejectNextDefaults,
@@ -105,24 +89,15 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
       };
     }
 
-    function reject(act, options = AllowRejectNextDefaults) {
-      const { useDispatch } = applyAllowRejectNextDefaults(options);
-      if (shouldDispatch(act, useDispatch)) {
-        dispatch(act, { allowMore: true }); // will be completed later
-        logicActionObs.complete();
-        return;
-      }
-
-      // normal next
-      depObj.action = act;
-      // bind next's defaults to use the reject options
-      function boundNext(nextAction, opt = options) {
-        return next(false, nextAction, opt);
-      }
-      transform(depObj, boundNext);
+    function allow(act, options = AllowRejectNextDefaults) {
+      handleNextOrDispatch(true, act, options);
     }
 
-    function next(shouldProcess, act, options = AllowRejectNextDefaults) {
+    function reject(act, options = AllowRejectNextDefaults) {
+      handleNextOrDispatch(false, act, options);
+    }
+
+    function handleNextOrDispatch(shouldProcess, act, options) {
       const { useDispatch } = applyAllowRejectNextDefaults(options);
       if (shouldDispatch(act, useDispatch)) {
         dispatch(act, { allowMore: true }); // will be completed later
@@ -136,7 +111,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
         Observable.of(true)
           .observeOn(asap)
           .subscribe(() => {
-            // if action provided is null, give process orig
+            // if action provided is empty, give process orig
             depObj.action = act || action;
             processFn(depObj, dispatch);
           });
@@ -156,7 +131,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
 
     // start use of the action
     function start() {
-      validate(depObj, allow, reject);
+      validtrans(depObj, allow, reject);
     }
 
     start();

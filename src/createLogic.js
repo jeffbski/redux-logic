@@ -36,21 +36,22 @@
      an identity fn which allows the original action.
    @param {function} logicOptions.transform hook that will be executed
      before an action has been sent to other logic, middleware, and the
-     reducers. Must call one of the provided callback function next to
+     reducers. This is an alias for the validate hook. Call the
+     provided callback function `next` (or `reject`) to
      signal completion. Expected to be called exactly once. Pass
      undefined as an object to forward nothing. Defaults to an identity
      transform which forwards the original action.
    @param {function} logicOptions.process hook that will be invoked
      after the original action (or that returned by validate/transform
      step) has been forwarded to other logic, middleware, and reducers.
-     This hook will not be run if the validate hook called reject. This
-     code is expected to perform any additional processing or async
+     This hook will not be run if the validate/transform hook called
+     reject. This hook is ideal for any additional processing or async
      fetching and then to call dispatch once with the results. Dispatch
      is expected to be called exactly once. You can call with undefined
      if you do not need to dispatch anything. To make multiple
      dispatches you can dispatch an observable or call with the option
      `{ allowMore: true }` to allow any number of calls, see advanced
-     section of API docs.
+     section of API docs for details.
    @returns {object} validated logic object which can be used in
      logicMiddleware contains the same properties as logicOptions but
      has defaults applied.
@@ -59,8 +60,8 @@ export default function createLogic({ name, type, cancelType,
                                      latest = false,
                                      debounce = 0,
                                      throttle = 0,
-                                     validate = identityValidation,
-                                     transform = identityTransform,
+                                     validate,
+                                     transform,
                                      process = emptyProcess }) {
   if (!type) {
     throw new Error('type is required, use \'*\' to match all actions');
@@ -68,6 +69,14 @@ export default function createLogic({ name, type, cancelType,
 
   if (latest && (debounce || throttle)) {
     throw new Error('logic cannot use both latest and debounce/throttle');
+  }
+
+  if (validate && transform) {
+    throw new Error('logic cannot define both the validate and transform hooks they are aliases');
+  }
+
+  if (!validate && !transform) {
+    validate = identityValidation; // eslint-disable-line no-param-reassign
   }
 
   return {
@@ -94,10 +103,6 @@ function typeToStrFns(type) {
 
 function identityValidation({ action }, allow /* , reject */) {
   allow(action);
-}
-
-function identityTransform({ action }, next) {
-  return next(action);
 }
 
 function emptyProcess(_, dispatch) {

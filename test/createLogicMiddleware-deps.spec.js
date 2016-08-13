@@ -8,8 +8,6 @@ function createAndGatherDeps(origState, origDeps, cb) {
   let valState;
   let valDeps;
   let valCtx;
-  let transDeps;
-  let transCtxData;
   let procDeps;
   const getState = () => origState;
   const next = expect.createSpy();
@@ -19,8 +17,6 @@ function createAndGatherDeps(origState, origDeps, cb) {
       valState,
       valDeps,
       valCtx,
-      transDeps,
-      transCtxData,
       procDeps
     });
   }
@@ -34,14 +30,6 @@ function createAndGatherDeps(origState, origDeps, cb) {
       valCtx = { ...deps.ctx };
       deps.ctx.data = ['v']; // eslint-disable-line no-param-reassign
       allow(deps.action);
-    },
-    transform(deps, next) {
-      transDeps = {
-        ...deps
-      };
-      transCtxData = deps.ctx.data;
-      deps.ctx.data = [...deps.ctx.data, 't']; // eslint-disable-line no-param-reassign
-      next(deps.action);
     },
     process(deps, dispatch) {
       procDeps = {
@@ -67,7 +55,7 @@ describe('createLogicMiddleware-deps', () => {
       });
     });
 
-    it('validate deps should have getState, action, cancelled$, ctx', () => {
+    it('validate/transform deps should have getState, action, cancelled$, ctx', () => {
       const { valState } = allDeps;
       const { action, cancelled$, ctx } = allDeps.valDeps;
       const valCtx = allDeps.valCtx;
@@ -80,24 +68,13 @@ describe('createLogicMiddleware-deps', () => {
       expect(valCtx).toEqual({}); // check ctx before trans/proc
     });
 
-    it('transform deps should have getState, action, cancelled$, ctx', () => {
-      const { action, cancelled$, ctx } = allDeps.transDeps;
-      const transCtxData = allDeps.transCtxData;
-      expect(Object.keys(allDeps.transDeps).sort())
-        .toEqual(['action', 'cancelled$', 'ctx', 'getState']);
-      expect(action).toEqual(actionFoo);
-      expect(cancelled$).toExist();
-      expect(ctx).toExist();
-      expect(transCtxData).toEqual(['v']); // check ctx in trans
-    });
-
     it('process deps should have getState, action, cancelled$, ctx', () => {
       const { action, cancelled$, ctx } = allDeps.procDeps;
       expect(Object.keys(allDeps.procDeps).sort())
         .toEqual(['action', 'cancelled$', 'ctx', 'getState']);
       expect(action).toEqual(actionFoo);
       expect(cancelled$).toExist();
-      expect(ctx).toEqual({ data: ['v', 't'] }); // updated in val+trans
+      expect(ctx).toEqual({ data: ['v'] }); // updated in validate
     });
   });
 
@@ -127,26 +104,13 @@ describe('createLogicMiddleware-deps', () => {
       expect(z).toBe('hello');
     });
 
-    it('transform deps should have getState, action, cancelled$, ctx, y, z', () => {
-      const { action, cancelled$, ctx, y, z } = allDeps.transDeps;
-      const transCtxData = allDeps.transCtxData;
-      expect(Object.keys(allDeps.transDeps).sort())
-        .toEqual(['action', 'cancelled$', 'ctx', 'getState', 'y', 'z']);
-      expect(action).toEqual(actionFoo);
-      expect(cancelled$).toExist();
-      expect(ctx).toExist();
-      expect(transCtxData).toEqual(['v']); // check ctx in trans
-      expect(y).toBe(42);
-      expect(z).toBe('hello');
-    });
-
     it('process deps should have getState, action, cancelled$, ctx, y, z', () => {
       const { action, cancelled$, ctx, y, z } = allDeps.procDeps;
       expect(Object.keys(allDeps.procDeps).sort())
         .toEqual(['action', 'cancelled$', 'ctx', 'getState', 'y', 'z']);
       expect(action).toEqual(actionFoo);
       expect(cancelled$).toExist();
-      expect(ctx).toEqual({ data: ['v', 't'] }); // updated in val+trans
+      expect(ctx).toEqual({ data: ['v'] }); // updated in validate
       expect(y).toBe(42);
       expect(z).toBe('hello');
     });
@@ -165,13 +129,8 @@ describe('createLogicMiddleware-deps', () => {
           ctx.data = ['v']; // eslint-disable-line no-param-reassign
           allow(action);
         },
-        transform({ action, ctx }, next) {
-          expect(ctx).toEqual({ data: ['v'] });
-          ctx.data = [...ctx.data, 't']; // eslint-disable-line no-param-reassign
-          next(action);
-        },
         process({ ctx }, dispatch) {
-          expect(ctx).toEqual({ data: ['v', 't'] });
+          expect(ctx).toEqual({ data: ['v'] });
           dispatch({ type: 'BAR' });
         }
       });

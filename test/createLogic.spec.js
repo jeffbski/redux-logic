@@ -34,6 +34,22 @@ describe('createLogic', () => {
     });
   });
 
+  describe('validate and transform', () => {
+    it('throws cannot define both error', () => {
+      expect(() => {
+        createLogic({
+          type: 'FOO',
+          validate({ action }, allow /* , reject */) {
+            allow(action);
+          },
+          transform({ action }, next /* , reject */) {
+            next(action);
+          }
+        });
+      }).toThrow('cannot define both');
+    });
+  });
+
   describe('name given fn', () => {
     it('converts name to fn.toString()', () => {
       const fn = () => {};

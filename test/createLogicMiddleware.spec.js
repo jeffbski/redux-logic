@@ -31,8 +31,8 @@ describe('createLogicMiddleware', () => {
     let next;
     let dispatch;
     const actionA = { type: 'FOO' };
-    const actionAResult = { type: 'FOO', allowed: ['a'], trans: ['a'] };
-    const actionADispatch = { type: 'BAR', allowed: ['a'], trans: ['a'] };
+    const actionAResult = { type: 'FOO', allowed: ['a'] };
+    const actionADispatch = { type: 'BAR', allowed: ['a'] };
     const actionIgnore = { type: 'CAT' };
     beforeEach(done => {
       next = expect.createSpy();
@@ -43,12 +43,6 @@ describe('createLogicMiddleware', () => {
           allow({
             ...action,
             allowed: ['a']
-          });
-        },
-        transform({ action }, next) {
-          next({
-            ...action,
-            trans: ['a']
           });
         },
         process({ action }, dispatch) {
@@ -82,8 +76,8 @@ describe('createLogicMiddleware', () => {
     let next;
     let dispatch;
     const actionA = { type: 'FOO' };
-    const actionAResult = { type: 'FOO', allowed: ['a'], trans: ['a'] };
-    const actionADispatch = { type: 'BAR', allowed: ['a'], trans: ['a'] };
+    const actionAResult = { type: 'FOO', allowed: ['a'] };
+    const actionADispatch = { type: 'BAR', allowed: ['a'] };
     const actionIgnore = { type: 'CAT' };
     beforeEach(done => {
       next = expect.createSpy();
@@ -94,12 +88,6 @@ describe('createLogicMiddleware', () => {
           allow({
             ...action,
             allowed: ['a']
-          });
-        },
-        transform({ action }, next) {
-          next({
-            ...action,
-            trans: ['a']
           });
         },
         process({ action }, dispatch) {
@@ -133,8 +121,8 @@ describe('createLogicMiddleware', () => {
     let next;
     let dispatch;
     const actionA = { type: 'FOO' };
-    const actionAResult = { type: 'FOO', allowed: ['a'], trans: ['a'] };
-    const actionADispatch = { type: 'BAR', allowed: ['a'], trans: ['a'] };
+    const actionAResult = { type: 'FOO', allowed: ['a'] };
+    const actionADispatch = { type: 'BAR', allowed: ['a'] };
     const actionIgnore = { type: 'CAT' };
     beforeEach(done => {
       next = expect.createSpy();
@@ -145,12 +133,6 @@ describe('createLogicMiddleware', () => {
           allow({
             ...action,
             allowed: ['a']
-          });
-        },
-        transform({ action }, next) {
-          next({
-            ...action,
-            trans: ['a']
           });
         },
         process({ action }, dispatch) {
@@ -185,8 +167,8 @@ describe('createLogicMiddleware', () => {
     let next;
     let dispatch;
     const actionA = { type: 'FOO' };
-    const actionAResult = { type: 'FOO', allowed: ['a'], trans: ['a'] };
-    const actionADispatch = { type: 'BAR', allowed: ['a'], trans: ['a'] };
+    const actionAResult = { type: 'FOO', allowed: ['a'] };
+    const actionADispatch = { type: 'BAR', allowed: ['a'] };
     const actionIgnore = { type: 'CAT' };
     beforeEach(done => {
       next = expect.createSpy();
@@ -197,12 +179,6 @@ describe('createLogicMiddleware', () => {
           allow({
             ...action,
             allowed: ['a']
-          });
-        },
-        transform({ action }, next) {
-          next({
-            ...action,
-            trans: ['a']
           });
         },
         process({ action }, dispatch) {
@@ -236,8 +212,8 @@ describe('createLogicMiddleware', () => {
     let next;
     let dispatch;
     const actionA = { type: 'FOO' };
-    const actionAResult = { type: 'FOO', allowed: ['a'], trans: ['a'] };
-    const actionADispatch = { type: 'BAR', allowed: ['a'], trans: ['a'] };
+    const actionAResult = { type: 'FOO', allowed: ['a'] };
+    const actionADispatch = { type: 'BAR', allowed: ['a'] };
     const actionIgnore = { type: 'CAT' };
     beforeEach(done => {
       next = expect.createSpy();
@@ -248,12 +224,6 @@ describe('createLogicMiddleware', () => {
           allow({
             ...action,
             allowed: ['a']
-          });
-        },
-        transform({ action }, next) {
-          next({
-            ...action,
-            trans: ['a']
           });
         },
         process({ action }, dispatch) {
@@ -287,11 +257,11 @@ describe('createLogicMiddleware', () => {
     let next;
     let dispatch;
     const actionA = { type: 'FOO' };
-    const actionAResult = { type: 'FOO', allowed: ['a'], trans: ['a'] };
-    const actionADispatch = { type: 'BAR', allowed: ['a'], trans: ['a'] };
+    const actionAResult = { type: 'FOO', allowed: ['a'] };
+    const actionADispatch = { type: 'BAR', allowed: ['a'] };
     const actionCat = { type: 'CAT', id: 2 };
-    const actionCatResult = { type: 'CAT', id: 2, allowed: ['a'], trans: ['a'] };
-    const actionCatDispatch = { type: 'BAR', id: 2, allowed: ['a'], trans: ['a'] };
+    const actionCatResult = { type: 'CAT', id: 2, allowed: ['a'] };
+    const actionCatDispatch = { type: 'BAR', id: 2, allowed: ['a'] };
     beforeEach(done => {
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
@@ -305,12 +275,6 @@ describe('createLogicMiddleware', () => {
           allow({
             ...action,
             allowed: ['a']
-          });
-        },
-        transform({ action }, next) {
-          next({
-            ...action,
-            trans: ['a']
           });
         },
         process({ action }, dispatch) {
@@ -407,16 +371,78 @@ describe('createLogicMiddleware', () => {
     });
   });
 
-  describe('[logicA] validate+transform+process allow same', () => {
+  describe('[logicA] validate allow undefined', () => {
+    let mw;
+    let logicA;
+    let next;
+    const actionAllow = { type: 'FOO', allowMe: true };
+    beforeEach(done => {
+      next = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        validate({ action, cancelled$ }, allow, reject) {
+          cancelled$.subscribe({
+            complete: () => done()
+          });
+          if (action.allowMe) {
+            allow();
+          } else {
+            reject(action);
+          }
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw({})(next)(actionAllow);
+    });
+
+    it('allow and augment action', () => {
+      expect(next.calls.length).toBe(0);
+    });
+  });
+
+  describe('[logicA] validate reject undefined', () => {
+    let mw;
+    let logicA;
+    let next;
+    const actionReject = { type: 'FOO', allowMe: false };
+    beforeEach(done => {
+      next = expect.createSpy();
+      logicA = createLogic({
+        name: 'logicA',
+        type: 'FOO',
+        validate({ action, cancelled$ }, allow, reject) {
+          cancelled$.subscribe({
+            complete: () => done()
+          });
+          if (action.allowMe) {
+            allow({
+              ...action,
+              allowed: ['a']
+            });
+          } else {
+            reject();
+          }
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw({})(next)(actionReject);
+    });
+
+    it('reject and augment action', () => {
+      expect(next.calls.length).toBe(0);
+    });
+  });
+
+  describe('[logicA] validate+process allow same', () => {
     let mw;
     let logicA;
     let next;
     let dispatch;
     const actionAllow = { type: 'FOO', allowMe: true };
     const actionA = { type: 'FOO', allowMe: true,
-                      allowed: ['a'], trans: ['a'] };
+                      allowed: ['a'] };
     const actionBar = { type: 'BAR', allowMe: true,
-                      allowed: ['a'], trans: ['a'], processed: ['a'] };
+                      allowed: ['a'], processed: ['a'] };
     beforeEach(done => {
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(() => done());
@@ -431,12 +457,6 @@ describe('createLogicMiddleware', () => {
           } else {
             reject(action);
           }
-        },
-        transform({ action }, next) {
-          next({
-            ...action,
-            trans: ['a']
-          });
         },
         process({ action }, dispatch) {
           dispatch({
@@ -461,7 +481,7 @@ describe('createLogicMiddleware', () => {
     });
   });
 
-  describe('[logicA] validate+transform+process allow same useDispatch=true', () => {
+  describe('[logicA] validate+process allow same useDispatch=true', () => {
     let mw;
     let logicA;
     let next;
@@ -488,12 +508,6 @@ describe('createLogicMiddleware', () => {
             reject(action);
           }
         },
-        transform({ action }, next) {
-          next({
-            ...action,
-            trans: ['a']
-          });
-        },
         process({ action }, dispatch) {
           dispatch(actionProcess);
         }
@@ -513,16 +527,16 @@ describe('createLogicMiddleware', () => {
     });
   });
 
-  describe('[logicA] validate+transform+process allow same useDispatch=false', () => {
+  describe('[logicA] validate+process allow same useDispatch=false', () => {
     let mw;
     let logicA;
     let next;
     let dispatch;
     const actionAllow = { type: 'FOO', allowMe: true };
     const actionA = { type: 'FOO', allowMe: true,
-                      allowed: ['a'], trans: ['a'] };
+                      allowed: ['a'] };
     const actionBar = { type: 'BAR', allowMe: true,
-                      allowed: ['a'], trans: ['a'], processed: ['a'] };
+                      allowed: ['a'], processed: ['a'] };
     beforeEach(done => {
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(() => done());
@@ -537,12 +551,6 @@ describe('createLogicMiddleware', () => {
           } else {
             reject(action);
           }
-        },
-        transform({ action }, next) {
-          next({
-            ...action,
-            trans: ['a']
-          });
         },
         process({ action }, dispatch) {
           dispatch({
@@ -567,241 +575,7 @@ describe('createLogicMiddleware', () => {
     });
   });
 
-  describe('[logicA] validate+transform+process allow next same useDispatch=true', () => {
-    let mw;
-    let logicA;
-    let next;
-    let dispatch;
-    const actionAllow = { type: 'FOO', allowMe: true };
-    const actionA = { type: 'FOO', allowMe: true,
-                      allowed: ['a'], trans: ['a'] };
-    const actionBar = { type: 'BAR', allowMe: true,
-                      allowed: ['a'], trans: ['a'], processed: ['a'] };
-    beforeEach(done => {
-      next = expect.createSpy();
-      dispatch = expect.createSpy().andCall(cb);
-      let dispatchCalls = 0;
-      function cb() {
-        if (++dispatchCalls === 2) { done(); }
-      }
-      logicA = createLogic({
-        type: 'FOO',
-        validate({ action }, allow, reject) {
-          if (action.allowMe) {
-            allow({
-                ...action,
-              allowed: ['a']
-            });
-          } else {
-            reject(action);
-          }
-        },
-        transform({ action }, next) {
-          next({
-            ...action,
-            trans: ['a']
-          }, { useDispatch: true });
-        },
-        process({ action }, dispatch) {
-          dispatch({
-            ...action,
-            type: 'BAR',
-            processed: ['a']
-          });
-        }
-      });
-      mw = createLogicMiddleware([logicA]);
-      mw({ dispatch })(next)(actionAllow);
-    });
-
-    it('next had useDispatch = true, no next calls', () => {
-      expect(next.calls.length).toBe(0);
-    });
-
-    it('dispatch will be called for trans.next and process', () => {
-      expect(dispatch.calls.length).toBe(2);
-      expect(dispatch.calls[0].arguments[0]).toEqual(actionA);
-      expect(dispatch.calls[1].arguments[0]).toEqual(actionBar);
-    });
-  });
-
-  describe('[logicA] validate+transform+process allow next same useDispatch=false', () => {
-    let mw;
-    let logicA;
-    let next;
-    let dispatch;
-    const actionAllow = { type: 'FOO', allowMe: true };
-    const actionA = { type: 'FOO', allowMe: true,
-                      allowed: ['a'], trans: ['a'] };
-    const actionBar = { type: 'BAR', allowMe: true,
-                      allowed: ['a'], trans: ['a'], processed: ['a'] };
-    beforeEach(done => {
-      next = expect.createSpy();
-      dispatch = expect.createSpy().andCall(cb);
-      let dispatchCalls = 0;
-      function cb() {
-        if (++dispatchCalls === 1) { done(); }
-      }
-      logicA = createLogic({
-        type: 'FOO',
-        validate({ action }, allow, reject) {
-          if (action.allowMe) {
-            allow({
-                ...action,
-              allowed: ['a']
-            });
-          } else {
-            reject(action);
-          }
-        },
-        transform({ action }, next) {
-          next({
-            ...action,
-            trans: ['a']
-          }, { useDispatch: false });
-        },
-        process({ action }, dispatch) {
-          dispatch({
-            ...action,
-            type: 'BAR',
-            processed: ['a']
-          });
-        }
-      });
-      mw = createLogicMiddleware([logicA]);
-      mw({ dispatch })(next)(actionAllow);
-    });
-
-    it('next had useDispatch = false, calls next', () => {
-      expect(next.calls.length).toBe(1);
-      expect(next.calls[0].arguments[0]).toEqual(actionA);
-    });
-
-    it('dispatch will be called for process', () => {
-      expect(dispatch.calls.length).toBe(1);
-      expect(dispatch.calls[0].arguments[0]).toEqual(actionBar);
-    });
-  });
-
-  describe('[logicA] v+t+p allow diff useDisp=false next same useDisp=true', () => {
-    let mw;
-    let logicA;
-    let next;
-    let dispatch;
-    const actionAllow = { type: 'FOO', allowMe: true };
-    const actionA = { type: 'CAT', allowMe: true,
-                      allowed: ['a'], trans: ['a'] };
-    const actionBar = { type: 'BAR', allowMe: true,
-                      allowed: ['a'], trans: ['a'], processed: ['a'] };
-    beforeEach(done => {
-      next = expect.createSpy();
-      dispatch = expect.createSpy().andCall(cb);
-      let dispatchCalls = 0;
-      function cb() {
-        if (++dispatchCalls === 2) { done(); }
-      }
-      logicA = createLogic({
-        type: 'FOO',
-        validate({ action }, allow, reject) {
-          if (action.allowMe) {
-            allow({
-                ...action,
-              type: 'CAT', // change type
-              allowed: ['a']
-            }, { useDispatch: false });
-          } else {
-            reject(action);
-          }
-        },
-        transform({ action }, next) {
-          next({
-            ...action,
-            trans: ['a']
-          }, { useDispatch: true });
-        },
-        process({ action }, dispatch) {
-          dispatch({
-            ...action,
-            type: 'BAR',
-            processed: ['a']
-          });
-        }
-      });
-      mw = createLogicMiddleware([logicA]);
-      mw({ dispatch })(next)(actionAllow);
-    });
-
-    it('next had useDispatch = true, no next', () => {
-      expect(next.calls.length).toBe(0);
-    });
-
-    it('dispatch will be called for trans.next and process', () => {
-      expect(dispatch.calls.length).toBe(2);
-      expect(dispatch.calls[0].arguments[0]).toEqual(actionA);
-      expect(dispatch.calls[1].arguments[0]).toEqual(actionBar);
-    });
-  });
-
-  describe('[logicA] v+t+p allow diff useDispatch=false next same useDispatch=false', () => {
-    let mw;
-    let logicA;
-    let next;
-    let dispatch;
-    const actionAllow = { type: 'FOO', allowMe: true };
-    const actionA = { type: 'CAT', allowMe: true,
-                      allowed: ['a'], trans: ['a'] };
-    const actionBar = { type: 'BAR', allowMe: true,
-                      allowed: ['a'], trans: ['a'], processed: ['a'] };
-    beforeEach(done => {
-      next = expect.createSpy();
-      dispatch = expect.createSpy().andCall(cb);
-      let dispatchCalls = 0;
-      function cb() {
-        if (++dispatchCalls === 1) { done(); }
-      }
-      logicA = createLogic({
-        type: 'FOO',
-        validate({ action }, allow, reject) {
-          if (action.allowMe) {
-            allow({
-                ...action,
-              type: 'CAT', // change type
-              allowed: ['a']
-            }, { useDispatch: false });
-          } else {
-            reject(action);
-          }
-        },
-        transform({ action }, next) {
-          next({
-            ...action,
-            trans: ['a']
-          }, { useDispatch: false });
-        },
-        process({ action }, dispatch) {
-          dispatch({
-            ...action,
-            type: 'BAR',
-            processed: ['a']
-          });
-        }
-      });
-      mw = createLogicMiddleware([logicA]);
-      mw({ dispatch })(next)(actionAllow);
-    });
-
-    it('next had useDispatch = false, next called', () => {
-      expect(next.calls.length).toBe(1);
-      expect(next.calls[0].arguments[0]).toEqual(actionA);
-    });
-
-    it('dispatch will be called for process', () => {
-      expect(dispatch.calls.length).toBe(1);
-      expect(dispatch.calls[0].arguments[0]).toEqual(actionBar);
-    });
-  });
-
-  describe('[logicA] validate+transform+process allow diff', () => {
+  describe('[logicA] validate+process allow diff', () => {
     let mw;
     let logicA;
     let next;
@@ -829,12 +603,6 @@ describe('createLogicMiddleware', () => {
             reject(action);
           }
         },
-        transform({ action }, next) {
-          next({
-            ...action,
-            trans: ['a']
-          });
-        },
         process({ action }, dispatch) {
           dispatch(actionProcess);
         }
@@ -854,7 +622,7 @@ describe('createLogicMiddleware', () => {
     });
   });
 
-  describe('[logicA] validate+transform+process allow diff useDispatch=true', () => {
+  describe('[logicA] validate+process allow diff useDispatch=true', () => {
     let mw;
     let logicA;
     let next;
@@ -882,12 +650,6 @@ describe('createLogicMiddleware', () => {
             reject(action);
           }
         },
-        transform({ action }, next) {
-          next({
-            ...action,
-            trans: ['a']
-          });
-        },
         process({ action }, dispatch) {
           dispatch(actionProcess);
         }
@@ -907,13 +669,13 @@ describe('createLogicMiddleware', () => {
     });
   });
 
-  describe('[logicA] validate+transform+process allow diff useDispatch=false', () => {
+  describe('[logicA] validate+process allow diff useDispatch=false', () => {
     let mw;
     let logicA;
     let next;
     let dispatch;
     const actionAllow = { type: 'FOO', allowMe: true };
-    const actionA = { type: 'CAT', allowMe: true, allowed: ['a'], trans: ['a'] };
+    const actionA = { type: 'CAT', allowMe: true, allowed: ['a'] };
     const actionProcess = { type: 'DOG' };
     beforeEach(done => {
       next = expect.createSpy();
@@ -935,12 +697,6 @@ describe('createLogicMiddleware', () => {
             reject(action);
           }
         },
-        transform({ action }, next) {
-          next({
-            ...action,
-            trans: ['a']
-          });
-        },
         process({ action }, dispatch) {
           dispatch(actionProcess);
         }
@@ -960,13 +716,13 @@ describe('createLogicMiddleware', () => {
     });
   });
 
-  describe('[logicA] validate+transform+process reject same', () => {
+  describe('[logicA] validate+process reject same', () => {
     let mw;
     let logicA;
     let next;
     let dispatch;
     const actionReject = { type: 'FOO', allowMe: false };
-    const actionA = { type: 'FOO', allowMe: false, rejected: ['a'], trans: ['a'] };
+    const actionA = { type: 'FOO', allowMe: false, rejected: ['a'] };
     beforeEach(done => {
       next = expect.createSpy().andCall(() => done());
       dispatch = expect.createSpy()
@@ -985,12 +741,6 @@ describe('createLogicMiddleware', () => {
               rejected: ['a']
             });
           }
-        },
-        transform({ action }, next) {
-          next({
-            ...action,
-            trans: ['a']
-          });
         },
         process({ action }, dispatch) {
           dispatch({
@@ -1014,180 +764,7 @@ describe('createLogicMiddleware', () => {
     });
   });
 
-  describe('[logicA] validate+transform+process reject same next diff', () => {
-    let mw;
-    let logicA;
-    let next;
-    let dispatch;
-    const actionReject = { type: 'FOO', allowMe: false };
-    const actionA = { type: 'CAT', allowMe: false, rejected: ['a'], trans: ['a'] };
-    beforeEach(done => {
-      next = expect.createSpy()
-        .andCall(() => done(new Error('should not call')));
-      dispatch = expect.createSpy().andCall(cb);
-      let dispatchCount = 0;
-      function cb() {
-        if (++dispatchCount === 1) { done(); }
-      }
-      logicA = createLogic({
-        type: 'FOO',
-        validate({ action }, allow, reject) {
-          if (action.allowMe) {
-            allow({
-                ...action,
-              allowed: ['a']
-            });
-          } else {
-            reject({
-              ...action,
-              rejected: ['a']
-            });
-          }
-        },
-        transform({ action }, next) {
-          next({
-              ...action,
-            type: 'CAT', // changed type
-            trans: ['a']
-          });
-        },
-        process({ action }, dispatch) {
-          dispatch({
-            ...action,
-            type: 'BAR',
-            processed: ['a']
-          });
-        }
-      });
-      mw = createLogicMiddleware([logicA]);
-      mw({ dispatch })(next)(actionReject);
-    });
-
-    it('next diff, no next call', () => {
-      expect(next.calls.length).toBe(0);
-    });
-
-    it('dispatch for trans.next, no process on reject', () => {
-      expect(dispatch.calls.length).toBe(1);
-      expect(dispatch.calls[0].arguments[0]).toEqual(actionA);
-    });
-  });
-
-  describe('[logicA] validate+transform+process reject same next useDispatch=true', () => {
-    let mw;
-    let logicA;
-    let next;
-    let dispatch;
-    const actionReject = { type: 'FOO', allowMe: false };
-    const actionA = { type: 'FOO', allowMe: false, rejected: ['a'], trans: ['a'] };
-    beforeEach(done => {
-      next = expect.createSpy()
-        .andCall(() => done(new Error('should not call')));
-      dispatch = expect.createSpy().andCall(cb);
-      let dispatchCount = 0;
-      function cb() {
-        if (++dispatchCount === 1) { done(); }
-      }
-      logicA = createLogic({
-        type: 'FOO',
-        validate({ action }, allow, reject) {
-          if (action.allowMe) {
-            allow({
-                ...action,
-              allowed: ['a']
-            });
-          } else {
-            reject({
-              ...action,
-              rejected: ['a']
-            });
-          }
-        },
-        transform({ action }, next) {
-          next({
-              ...action,
-            trans: ['a']
-          }, { useDispatch: true });
-        },
-        process({ action }, dispatch) {
-          dispatch({
-            ...action,
-            type: 'BAR',
-            processed: ['a']
-          });
-        }
-      });
-      mw = createLogicMiddleware([logicA]);
-      mw({ dispatch })(next)(actionReject);
-    });
-
-    it('next diff, no next call', () => {
-      expect(next.calls.length).toBe(0);
-    });
-
-    it('dispatch for trans.next, no process on reject', () => {
-      expect(dispatch.calls.length).toBe(1);
-      expect(dispatch.calls[0].arguments[0]).toEqual(actionA);
-    });
-  });
-
-// [logicA] validate+transform+process reject same next useDispatch=false - 1
-  describe('[logicA] validate+transform+process reject same next useDispatch=false', () => {
-    let mw;
-    let logicA;
-    let next;
-    let dispatch;
-    const actionReject = { type: 'FOO', allowMe: false };
-    const actionA = { type: 'CAT', allowMe: false, rejected: ['a'], trans: ['a'] };
-    beforeEach(done => {
-      next = expect.createSpy().andCall(() => done());
-      dispatch = expect.createSpy()
-        .andCall(() => done(new Error('should not call')));
-      logicA = createLogic({
-        type: 'FOO',
-        validate({ action }, allow, reject) {
-          if (action.allowMe) {
-            allow({
-                ...action,
-              allowed: ['a']
-            });
-          } else {
-            reject({
-                ...action,
-              rejected: ['a']
-            });
-          }
-        },
-        transform({ action }, next) {
-          next({
-            ...action,
-            type: 'CAT', // changed type
-            trans: ['a']
-          }, { useDispatch: false });
-        },
-        process({ action }, dispatch) {
-          dispatch({
-            ...action,
-            type: 'BAR',
-            processed: ['a']
-          });
-        }
-      });
-      mw = createLogicMiddleware([logicA]);
-      mw({ dispatch })(next)(actionReject);
-    });
-
-    it('next useDispatch=false, next call', () => {
-      expect(next.calls.length).toBe(1);
-      expect(next.calls[0].arguments[0]).toEqual(actionA);
-    });
-
-    it('no dispatches on reject', () => {
-      expect(dispatch.calls.length).toBe(0);
-    });
-  });
-
-  describe('[logicA] validate+transform+process reject diff', () => {
+  describe('[logicA] validate+process reject diff', () => {
     let mw;
     let logicA;
     let next;
@@ -1215,12 +792,6 @@ describe('createLogicMiddleware', () => {
             });
           }
         },
-        transform({ action }, next) {
-          next({
-            ...action,
-            trans: ['a']
-          });
-        },
         process({ action }, dispatch) {
           dispatch({
             ...action,
@@ -1238,91 +809,6 @@ describe('createLogicMiddleware', () => {
     });
 
     it('reject diff type should dispatch, no process dispatch', () => {
-      expect(dispatch.calls.length).toBe(1);
-      expect(dispatch.calls[0].arguments[0]).toEqual(actionA);
-    });
-  });
-
-  describe('[logicA] valid+trans reject same type', () => {
-    let mw;
-    let logicA;
-    let next;
-    const actionReject = { type: 'FOO', allowMe: false };
-    const actionA = { type: 'FOO', allowMe: false,
-                      rejected: ['a'], trans: ['a'] };
-    beforeEach(done => {
-      next = expect.createSpy().andCall(() => done());
-      logicA = createLogic({
-        type: 'FOO',
-        validate({ action }, allow, reject) {
-          if (action.allowMe) {
-            allow({
-              ...action,
-              allowed: ['a']
-            });
-          } else {
-            reject({
-              ...action,
-              rejected: ['a']
-            });
-          }
-        },
-        transform({ action }, next) {
-          next({
-            ...action,
-            trans: ['a']
-          });
-        }
-      });
-      mw = createLogicMiddleware([logicA]);
-      mw({})(next)(actionReject);
-    });
-
-    it('reject and augment action', () => {
-      expect(next.calls.length).toBe(1);
-      expect(next.calls[0].arguments[0]).toEqual(actionA);
-    });
-  });
-
-  describe('[logicA] valid+trans reject other type', () => {
-    let mw;
-    let logicA;
-    let next;
-    let dispatch;
-    const actionReject = { type: 'FOO', allowMe: false };
-    const actionA = { type: 'BAR' };
-    beforeEach(done => {
-      next = expect.createSpy();
-      dispatch = expect.createSpy().andCall(() => done());
-      logicA = createLogic({
-        type: 'FOO',
-        validate({ action }, allow, reject) {
-          if (action.allowMe) {
-            allow({
-              ...action,
-              allowed: ['a']
-            });
-          } else {
-            reject(actionA); // rejecting with diff type, will dispatch
-          }
-        },
-        // since dispatched won't do transform
-        transform({ action }, next) {
-          next({
-            ...action,
-            trans: ['a']
-          });
-        }
-      });
-      mw = createLogicMiddleware([logicA]);
-      mw({ dispatch })(next)(actionReject);
-    });
-
-    it('next should not be called', () => {
-      expect(next.calls.length).toBe(0);
-    });
-
-    it('dispatch will be called with actionA', () => {
       expect(dispatch.calls.length).toBe(1);
       expect(dispatch.calls[0].arguments[0]).toEqual(actionA);
     });
