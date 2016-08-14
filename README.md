@@ -108,7 +108,7 @@ const logicMiddleware = createLogicMiddleware(arrLogic, deps);
 
 const middleware = applyMiddleware(
   logicMiddleware
-);
+\);
 
 const enhancer = middleware; // could compose in dev tools too
 
@@ -191,11 +191,15 @@ See the [docs for the full api](./docs/api.md)
 
  - [async fetch - single page](http://jsfiddle.net/jeffbski/954g5n7h/) - displayed using React
  - [async fetch - single page redux only](http://jsfiddle.net/jeffbski/yzy8w4ve/) - just the redux and redux-logic code
+ - [async await - react](http://jsfiddle.net/jeffbski/rfc7oz9p/) - using ES7 async functions (async/await) displaying with React
+ - [async await - redux only](http://jsfiddle.net/jeffbski/h485f6h5/) - using ES7 async functions (async/await) - just redux and redux-logic code
+
 
 ### Full examples
 
  - [async-fetch-vanilla](./examples/async-fetch-vanilla) - async fetch example using axios
  - [async-fetch](./examples/async-fetch) - async fetch example using axios and redux-actions
+ - [async-await - ES7 async functions](./examples/async-await) - async fetch example using axios and ES7 async functions (async/await)
  - [countdown](./examples/countdown) - a countdown timer implemented with setInterval
  - [countdown-obs](./examples/countdown-obs) - a countdown timer implemented with Rx.Observable.interval
  - [form-validation](./examples/form-validation) - form validation and async post to server using axios, displays updated user list
