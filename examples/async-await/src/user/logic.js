@@ -14,31 +14,33 @@ export const userProfFetchLogic = createLogic({
   // but they were not needed for this particular code
   process({ httpClient, action }, dispatch) {
     const uid = action.payload;
-
-    async function fetchUserAndProfile() {
-      try {
-        // the delay query param adds arbitrary delay to the response
-        const user =
-          await httpClient.get(`http://reqres.in/api/users/${uid}?delay=${delay}`)
-            .then(resp => resp.data.data); // use data property of payload
-
-        // we can use data from user to fetch fake profile
-        const profile =
-          await httpClient.get(`http://reqres.in/api/profile/${user.id}`)
-            .then(resp => resp.data.data);
-
-        user.profile = profile; // combine profile into user object
-        dispatch(userProfileFetchFulfilled(user)); // user with profile
-      } catch(err) {
-        dispatch(userProfileFetchRejected(err));
-      }
-    }
-
-    // now run it
-    fetchUserAndProfile();
+    fetchUserWithProfile(httpClient, uid)
+      .then(user => dispatch(userProfileFetchFulfilled(user)))
+      .catch(err => dispatch(userProfileFetchRejected(err)));
   }
 });
 
+/**
+  Makes request to get user, then requests profile and merges them.
+  Note: async function returns a promise which resolves to the user.
+  @param {object} httpClient - axios like client
+  @return {promise} userPromise - promise resolving to user with profile
+  @throws {error} fetchError - any fetching error
+ */
+async function fetchUserWithProfile(httpClient, uid) {
+  // the delay query param adds arbitrary delay to the response
+  const user =
+    await httpClient.get(`http://reqres.in/api/users/${uid}?delay=${delay}`)
+      .then(resp => resp.data.data); // use data property of payload
+
+  // we can use data from user to fetch fake profile
+  const profile =
+    await httpClient.get(`http://reqres.in/api/profile/${user.id}`)
+      .then(resp => resp.data.data);
+
+  user.profile = profile; // combine profile into user object
+  return user;
+}
 
 
 export default [
