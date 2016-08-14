@@ -13,7 +13,7 @@ export const DISPLAY_TIME = 3000;
 export const notifyCreateLogic = createLogic({
   type: NOTIFY_CREATE,
 
-  // check to see if it is valid to start, > 0
+  // check to see if we can add directly
   validate({ getState, action }, allow, reject) {
     const state = getState();
     const current = notifySel.messages(state);
@@ -25,6 +25,7 @@ export const notifyCreateLogic = createLogic({
     }
   },
 
+  // if we had added directly then schedule remove
   process({ action }, dispatch) {
     const msg = action.payload;
     setTimeout(() => {
@@ -36,6 +37,7 @@ export const notifyCreateLogic = createLogic({
 export const notifyRemoveLogic = createLogic({
   type: NOTIFY_REMOVE,
 
+  // everytime we remove an item, if queued, send action to display one
   process({ getState, action }, dispatch) {
     // unless other middleware/logic introduces async behavior, the
     // state will have been updated by the reducers before process runs
@@ -53,6 +55,8 @@ export const notifyRemoveLogic = createLogic({
 export const notifyQueuedLogic = createLogic({
   type: NOTIFY_QUEUE,
 
+  // after we queue an item, if display is already clear
+  // we add in a displayQueued to ensure things aren't stuck
   process({ getState }, dispatch) {
     // just in case things had already cleared out,
     // check to see if can display yet, normally
@@ -72,6 +76,8 @@ export const notifyQueuedLogic = createLogic({
 
 export const notifyDisplayQueuedLogic = createLogic({
   type: NOTIFY_DISPLAY_QUEUED,
+
+  // if we have opening(s) and queued, display them
   validate({ getState, action }, allow, reject) {
     const state = getState();
     const current = notifySel.messages(state);
@@ -87,6 +93,7 @@ export const notifyDisplayQueuedLogic = createLogic({
     }
   },
 
+  // schedule removes for those displayed
   process({ action }, dispatch) {
     const arrMsgs = action.payload;
     setTimeout(() => {
