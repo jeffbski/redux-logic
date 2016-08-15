@@ -241,6 +241,7 @@ See the [docs for the full api](./docs/api.md)
  - [async-fetch](./examples/async-fetch) - async fetch example using axios and redux-actions
  - [async-fetch-proc-options](./examples/async-fetch-proc-options) - async fetch example using axios and the new processOptions feature
  - [async-await - ES7 async functions](./examples/async-await) - async fetch example using axios and ES7 async functions (async/await)
+ - [async-await - ES7 async functions with processOptions](./examples/async-await-proc-options) - async fetch example using axios and ES7 async functions (async/await) and using the new processOptions feature
  - [countdown](./examples/countdown) - a countdown timer implemented with setInterval
  - [countdown-obs](./examples/countdown-obs) - a countdown timer implemented with Rx.Observable.interval
  - [form-validation](./examples/form-validation) - form validation and async post to server using axios, displays updated user list

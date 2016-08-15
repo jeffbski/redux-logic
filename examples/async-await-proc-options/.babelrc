@@ -1,0 +1,13 @@
+{
+  "presets": [
+    "es2015",
+    "es2016",
+    "react"
+  ],
+  "plugins": [
+    "syntax-async-functions",
+    "transform-class-properties",
+    "transform-regenerator",
+    "transform-object-rest-spread"
+  ]
+}
