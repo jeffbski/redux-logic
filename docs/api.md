@@ -53,11 +53,11 @@ const fooLogic = createLogic({
   // options influencing the process hook, defaults to {}
   processOptions: {
     // dispatch return value, or if returns promise/observable, dispatch resolved/next values
-    dispatchReturn: true, // default false
+    dispatchReturn: false, // default false
     // string or action creator fn wrapping dispatched value
-    successType: ST, // default undefined
+    successType: undefined, // default undefined
     // string or action creator fn wrapping dispatched, rejected, or thrown errors
-    failType: FT // default undefined
+    failType: undefined // default undefined
   }
 
   // If validate/transform reject was used then this hook will not be
