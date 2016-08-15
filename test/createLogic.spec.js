@@ -85,4 +85,13 @@ describe('createLogic', () => {
       expect(logic.type).toEqual(['myType', 'myType2']);
     });
   });
+
+  describe('unknown or misspelled option', () => {
+    it('throws an error', () => {
+      expect(() => {
+        createLogic({ foo: true });
+      }).toThrow('unknown or misspelled option');
+    });
+  });
+
 });

@@ -1,10 +1,23 @@
+
+const allowedOptions = [
+  'name',
+  'type',
+  'cancelType',
+  'latest',
+  'debounce',
+  'throttle',
+  'validate',
+  'transform',
+  'process'
+];
+
 /**
    Validate and augment logic object to be used in logicMiddleware.
    The returned object has the same structure as the supplied
    logicOptions argument but it will have been validated and defaults
    will be applied
 
-   @param {object} [logicOptions] object defining logic operation
+   @param {object} logicOptions object defining logic operation
    @param {string} logicOptions.name optional string name, defaults
      to generated name from type and idx
    @param {string | regex | function | array} logicOptions.type action
@@ -56,13 +69,17 @@
      logicMiddleware contains the same properties as logicOptions but
      has defaults applied.
  */
-export default function createLogic({ name, type, cancelType,
-                                     latest = false,
-                                     debounce = 0,
-                                     throttle = 0,
-                                     validate,
-                                     transform,
-                                     process = emptyProcess }) {
+export default function createLogic(logicOptions = {}) {
+  const invalidOptions = Object.keys(logicOptions)
+        .filter(k => allowedOptions.indexOf(k) === -1);
+  if (invalidOptions.length) {
+    throw new Error(`unknown or misspelled option(s): ${invalidOptions}`);
+  }
+
+  const { name, type, cancelType,
+          latest = false, debounce = 0, throttle = 0,
+          validate, transform, process = emptyProcess } = logicOptions;
+
   if (!type) {
     throw new Error('type is required, use \'*\' to match all actions');
   }
@@ -75,9 +92,9 @@ export default function createLogic({ name, type, cancelType,
     throw new Error('logic cannot define both the validate and transform hooks they are aliases');
   }
 
-  if (!validate && !transform) {
-    validate = identityValidation; // eslint-disable-line no-param-reassign
-  }
+  const validateDefaulted = (!validate && !transform) ?
+        identityValidation :
+        validate;
 
   return {
     name: typeToStrFns(name),
@@ -86,7 +103,7 @@ export default function createLogic({ name, type, cancelType,
     latest,
     debounce,
     throttle,
-    validate,
+    validate: validateDefaulted,
     transform,
     process
   };
