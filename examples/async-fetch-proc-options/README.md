@@ -1,6 +1,6 @@
 # Async Fetch Process Options
 
-This is an example of using redux-logic for async fetching with axios triggered by a `USERS_FETCH` action type and using the new `processOptions` feature introduced in redux-logic@0.8.1.
+This is an example of using redux-logic for async fetching with axios triggered by a `USERS_FETCH` action type and using the new `processOptions` feature introduced in redux-logic@0.8.2.
 
 The new `processOptions` feature allows you to clean up your code even further by declaring that you want to use the return value and apply these action types. Then you can simply return a promise, observable, object, or error and redux-logic will dispatch the associated type.
 
