@@ -5,6 +5,7 @@ import { Subject } from 'rxjs/Subject';
 import { asap } from 'rxjs/scheduler/asap';
 import 'rxjs/add/observable/from';
 import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/map';
