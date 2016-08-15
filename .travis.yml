@@ -16,7 +16,9 @@ cache:
   - $HOME/.npm
   - examples/async-fetch/node_modules
   - examples/async-fetch-vanilla/node_modules
+  - examples/async-fetch-proc-options/node_modules
   - examples/async-await/node_modules
+  - examples/async-await-proc-options/node_modules
   - examples/countdown/node_modules
   - examples/countdown-obs/node_modules
   - examples/form-validation/node_modules

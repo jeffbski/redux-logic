@@ -181,7 +181,7 @@ export default [
 
 ```
 
-### processOptions introduced for redux-logic@0.8.1 allowing for even more streamlined code
+### processOptions introduced for redux-logic@0.8.2 allowing for even more streamlined code
 
 `processOptions` has these new properties which affect the process hook behavior:
 
@@ -230,15 +230,18 @@ See the [docs for the full api](./docs/api.md)
 
  - [async fetch - single page](http://jsfiddle.net/jeffbski/954g5n7h/) - displayed using React
  - [async fetch - single page redux only](http://jsfiddle.net/jeffbski/yzy8w4ve/) - just the redux and redux-logic code
+ - [async fetch - using processOptions](http://jsfiddle.net/jeffbski/oL6jmp52/) - using processOptions to streamline your code further with React
  - [async await - react](http://jsfiddle.net/jeffbski/rfc7oz9p/) - using ES7 async functions (async/await) displaying with React
  - [async await - redux only](http://jsfiddle.net/jeffbski/h485f6h5/) - using ES7 async functions (async/await) - just redux and redux-logic code
-
+ - [async await - react processOptions](http://jsfiddle.net/jeffbski/0rodyekn/) - using ES7 async functions (async/await) with processOptions, displayed with React
 
 ### Full examples
 
  - [async-fetch-vanilla](./examples/async-fetch-vanilla) - async fetch example using axios
  - [async-fetch](./examples/async-fetch) - async fetch example using axios and redux-actions
+ - [async-fetch-proc-options](./examples/async-fetch-proc-options) - async fetch example using axios and the new processOptions feature
  - [async-await - ES7 async functions](./examples/async-await) - async fetch example using axios and ES7 async functions (async/await)
+ - [async-await - ES7 async functions with processOptions](./examples/async-await-proc-options) - async fetch example using axios and ES7 async functions (async/await) and using the new processOptions feature
  - [countdown](./examples/countdown) - a countdown timer implemented with setInterval
  - [countdown-obs](./examples/countdown-obs) - a countdown timer implemented with Rx.Observable.interval
  - [form-validation](./examples/form-validation) - form validation and async post to server using axios, displays updated user list
