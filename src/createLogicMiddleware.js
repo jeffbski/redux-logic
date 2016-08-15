@@ -23,6 +23,10 @@ const debug = (/* ...args */) => {};
      addLogic and replaceLogic
  */
 export default function createLogicMiddleware(arrLogic = [], deps = {}) {
+  if (!Array.isArray(arrLogic)) {
+    throw new Error('createLogicMiddleware needs to be called with an array of logic items');
+  }
+
   const actionSrc$ = new Subject();
   let savedStore;
   let savedNext;
@@ -50,8 +54,12 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
     };
   }
 
-  // only call after createStore, relies on store
-  // existing state in the logic is preserved
+  /**
+    add logic after createStore has been run. Useful for dynamically
+    loading bundles at runtime. Existing state in logic is preserved.
+    @param {array} arrNewLogic array of logic items to add
+    @return {object} object with a property logicCount set to the count of logic items
+   */
   mw.addLogic = function addLogic(arrNewLogic) {
     const { action$, sub, logicCount: cnt } =
           applyLogic(arrNewLogic, savedStore, savedNext,
@@ -63,8 +71,12 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
     return { logicCount: cnt };
   };
 
-  // existing state in the logic is reset,
-  // in-flight requests should complete
+  /**
+   replace all existing logic with a new array of logic.
+   In-flight requests should complete. Logic state will be reset.
+   @param {array} arrRepLogic array of replacement logic items
+   @return {object} object with a property logicCount set to the count of logic items
+   */
   mw.replaceLogic = function replaceLogic(arrRepLogic) {
     const { action$, sub, logicCount: cnt } =
           applyLogic(arrRepLogic, savedStore, savedNext,

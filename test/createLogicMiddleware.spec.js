@@ -25,6 +25,14 @@ describe('createLogicMiddleware', () => {
     });
   });
 
+  describe('createLogicMiddleware(nonArray)', () => {
+    it('throws an error', () => {
+      expect(() => {
+        createLogicMiddleware({});
+      }).toThrow('called with an array');
+    });
+  });
+
   describe('[logicA] type is string, match only', () => {
     let mw;
     let logicA;
