@@ -8,7 +8,14 @@ const allowedOptions = [
   'throttle',
   'validate',
   'transform',
-  'process'
+  'process',
+  'processOptions'
+];
+
+const allowedProcessOptions = [
+  'dispatchReturn',
+  'successType',
+  'failType'
 ];
 
 /**
@@ -65,6 +72,14 @@ const allowedOptions = [
      dispatches you can dispatch an observable or call with the option
      `{ allowMore: true }` to allow any number of calls, see advanced
      section of API docs for details.
+   @param {object} logicOptions.processOptions options influencing
+     process hook, default {}
+   @param {boolean} logicOptions.processOptions.dispatchReturn dispatch
+     the return value or resolved/next promise/observable, default false
+   @param {string|function} logicOptions.processOptions.successType
+     action type or action creator fn, use value as payload
+   @param {string|function} logicOptions.processOptions.failType
+     action type or action creator fn, use value as payload
    @returns {object} validated logic object which can be used in
      logicMiddleware contains the same properties as logicOptions but
      has defaults applied.
@@ -78,7 +93,8 @@ export default function createLogic(logicOptions = {}) {
 
   const { name, type, cancelType,
           latest = false, debounce = 0, throttle = 0,
-          validate, transform, process = emptyProcess } = logicOptions;
+          validate, transform, process = emptyProcess,
+          processOptions = {} } = logicOptions;
 
   if (!type) {
     throw new Error('type is required, use \'*\' to match all actions');
@@ -90,6 +106,12 @@ export default function createLogic(logicOptions = {}) {
 
   if (validate && transform) {
     throw new Error('logic cannot define both the validate and transform hooks they are aliases');
+  }
+
+  const invalidProcessOptions = Object.keys(processOptions)
+        .filter(k => allowedProcessOptions.indexOf(k) === -1);
+  if (invalidProcessOptions.length) {
+    throw new Error(`unknown or misspelled processOption(s): ${invalidProcessOptions}`);
   }
 
   const validateDefaulted = (!validate && !transform) ?
@@ -105,7 +127,8 @@ export default function createLogic(logicOptions = {}) {
     throttle,
     validate: validateDefaulted,
     transform,
-    process
+    process,
+    processOptions
   };
 }
 

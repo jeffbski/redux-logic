@@ -1,7 +1,9 @@
 import isObservable from 'is-observable';
+import isPromise from 'is-promise';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { asap } from 'rxjs/scheduler/asap';
+import 'rxjs/add/observable/from';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/filter';
@@ -11,11 +13,15 @@ import 'rxjs/add/operator/observeOn';
 import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/takeUntil';
 
+const UNHANDLED_LOGIC_ERROR = 'UNHANDLED_LOGIC_ERROR';
+
 const debug = (/* ...args */) => {};
 
 export default function createLogicAction$({ action, logic, store, deps, cancel$ }) {
   const { getState } = store;
-  const { name, process: processFn } = logic;
+  const { name, process: processFn,
+          processOptions: { dispatchReturn,
+                            successType, failType } } = logic;
   const validtrans = logic.validate || logic.transform; // aliases
 
   debug('createLogicAction$', name, action);
@@ -31,12 +37,50 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
           .mergeAll()
           .takeUntil(cancel$);
     dispatch$.subscribe({
-      next: store.dispatch,
+      next: mapAndDispatch,
       complete: () => {
         cancelled$.complete();
         cancelled$.unsubscribe();
       }
     });
+
+    /* eslint-disable consistent-return */
+    function mapAndDispatch(actionOrValue) {
+      if (typeof actionOrValue === 'undefined') { return; }
+      if (failType) {
+        if (actionOrValue.useFailType) {
+          return store.dispatch(mapToAction(failType, actionOrValue.value, true));
+        }
+        if (actionOrValue instanceof Error) {
+          return store.dispatch(mapToAction(failType, actionOrValue, true));
+        }
+      }
+      // failType not defined, but we have an error with no action type
+      // let's console.error it and emit as an UNHANDLED_LOGIC_ERROR
+      if (actionOrValue instanceof Error && !actionOrValue.type) {
+        // eslint-disable-next-line no-console
+        console.error(`unhandled exception in logic named: ${logic.name}`);
+        return store.dispatch(mapToAction(UNHANDLED_LOGIC_ERROR,
+                                          actionOrValue,
+                                          true));
+      }
+
+      const act = (successType) ?
+            mapToAction(successType, actionOrValue, false) :
+            actionOrValue;
+      return store.dispatch(act);
+    }
+    /* eslint-enable consistent-return */
+
+    function mapToAction(type, payload, err) {
+      if (typeof type === 'function') { // action creator fn
+        return type(payload);
+      }
+      const act = { type, payload };
+      if (err) { act.error = true; }
+      return act;
+    }
+
 
     const DispatchDefaults = {
       allowMore: false
@@ -113,10 +157,36 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
           .subscribe(() => {
             // if action provided is empty, give process orig
             depObj.action = act || action;
-            processFn(depObj, dispatch);
+            try {
+              const retValue = processFn(depObj, dispatch);
+              if (dispatchReturn) { // processOption.dispatchReturn true
+                handleDispatchReturn(retValue);
+              }
+            } catch (err) {
+              dispatch(err);
+            }
           });
       } else { // not processing, must have been a reject
         dispatch$.complete();
+      }
+    }
+
+    function handleDispatchReturn(retValue) {
+      if (isPromise(retValue) || isObservable(retValue)) {
+        dispatch(
+          // convert promise to observable
+          // catch any errors and rejects, wrap them
+          Observable
+            .from(retValue)
+            .catch(err => { // eslint-disable-line arrow-body-style
+              return (failType) ?
+                     // wrap this value so we can apply failType later
+                     Observable.of({ useFailType: true, value: err }) :
+                     Observable.of(err);
+            })
+        );
+      } else {
+        dispatch(retValue);
       }
     }
 

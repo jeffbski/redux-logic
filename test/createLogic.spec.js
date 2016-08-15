@@ -2,6 +2,14 @@ import expect from 'expect';
 import { createLogic } from '../src/index';
 
 describe('createLogic', () => {
+  describe('createLogic()', () => {
+    it('throws type is required error', () => {
+      expect(() => {
+        createLogic();
+      }).toThrow(/type.*required/);
+    });
+  });
+
   describe('createLogic({})', () => {
     it('throws type is required error', () => {
       expect(() => {
@@ -91,6 +99,19 @@ describe('createLogic', () => {
       expect(() => {
         createLogic({ foo: true });
       }).toThrow('unknown or misspelled option');
+    });
+  });
+
+  describe('unknown or misspelled processOption', () => {
+    it('throws an error', () => {
+      expect(() => {
+        createLogic({
+          type: 'FOO',
+          processOptions: {
+            wrongOption: 32
+          }
+        });
+      }).toThrow('unknown or misspelled processOption(s)');
     });
   });
 

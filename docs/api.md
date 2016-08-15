@@ -16,18 +16,18 @@ Contents:
    and process properties of the returned logic object */
 const fooLogic = createLogic({
   // filtering/canceling
-  type, // required string, regex, array of str/regex, use '*' for all
-  cancelType, // string, regex, array of strings or regexes
+  type: T, // required string, regex, array of str/regex, use '*' for all
+  cancelType: CT, // string, regex, array of strings or regexes
   // type and cancelType also support redux-actions fns for which
   //   the fn.toString() returns the associated action type
 
   // limiting - optionally define one of these
-  latest, // only take latest, default false
-  debounce, // debounce for N ms, default 0
-  throttle, // throttle for N ms, default 0
+  latest: true, // only take latest, default false
+  debounce: 0, // debounce for N ms, default 0
+  throttle: 0, // throttle for N ms, default 0
 
   // Put your business logic into one or more of these
-  // execution phase hooks.
+  // execution phase hooks: validate, transform, process
   //
   // Note: If you provided any optional dependencies in your
   // createLogicMiddleware call, then these will be provided to
@@ -48,6 +48,17 @@ const fooLogic = createLogic({
     // perform any transformation and provide the new action to next
     next(action);
   }),
+
+
+  // options influencing the process hook, defaults to {}
+  processOptions: {
+    // dispatch return value, or if returns promise/observable, dispatch resolved/next values
+    dispatchReturn: true, // default false
+    // string or action creator fn wrapping dispatched value
+    successType: ST, // default undefined
+    // string or action creator fn wrapping dispatched, rejected, or thrown errors
+    failType: FT // default undefined
+  }
 
   // If validate/transform reject was used then this hook will not be
   // executed. Call dispatch exactly once or read the advanced api about
@@ -138,7 +149,13 @@ The `process` hook is only executed if the `validate/transform` hook allow was c
 
 The `process` hook is an ideal place to make async requests and then dispatch the results or an error.
 
-Since the most common use case is to do a single dispatch, that's what `process` expects by default. You would call `dispatch` exactly one time passing whatever success or failure action. If you decide in your logic that you don't want to dispatch anything call `dispatch` empty `dispatch()` to complete the loogic.
+If you set the `processOptions` object, you can further influence how process behaves streamlining your code.
+
+  - `processOptions.dispatchReturn` - if true, then process will use the returned value to dispatch. If you return a promise then it will use the resolve/reject values for dispatching. If you return an observable then it will use its values or error for dispatching. Returning an undefined, promise that resolves to undefined, or observable value of undefined will cause no dispatch. Default is false.
+  - `processOptions.successType` - if set to an action type string or an action creator function it will use this to create the action from the dispatched value. If the `successType` was a string then it will create an action of this type and set the payload to the dispatched value. If it was an action creator function then it will pass the value to the action creator and then dispatch that. Default undefined.
+  - `processOptions.failType` - if set to an action type string or an action creator function it will use this to create the action from the dispatched error or rejected promise value or errored observable similar to how `successType` works. If `failType` is not defined and an error is thrown or dispatched that does not itself have a `type` (action type), then an UNHANDLED_LOGIC_ERROR will be dispatched with the error as the payload. Default undefined.
+
+Since the most common use case is to do a single dispatch, that's what `process` expects by default. You would call `dispatch` exactly one time passing whatever success or failure action. If you decide in your logic that you don't want to dispatch anything call `dispatch` empty `dispatch()` to complete the logic.
 
 If you want to perform multiple dispatches for a long running subscription or to dispatch many different things then there are a couple ways to do it. You may dispatch an observable and for every result it will dispatch. There is also a way to perform multiple dispatches by using dispatch's options 2nd argument. See advanced section for more details.
 
@@ -149,6 +166,25 @@ process({ getState, action }, dispatch) {
   dispatch(); // dispatch nothing and complete
 }
 ```
+
+An example of using `processOptions`:
+
+```js
+const logic = createLogic({
+  type: FOO,
+  processOptions: {
+    dispatchReturn: true,       // use my return for dispatch
+    successType: 'FOO_SUCCESS', // my action type for success
+    failType: 'FOO_ERROR',      // my action type for failure
+  },
+  process({ getState, action }) {
+    // no need to dispatch when using dispatchReturn: true
+    // actions are created from the resolved or rejected promise
+    return axios.get('https://server/api/users')
+      .then(resp => resp.data.users); // select the data
+  }
+}
+
 
 ## Advanced Usage
 
