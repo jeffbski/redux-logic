@@ -109,7 +109,7 @@ const logicMiddleware = createLogicMiddleware(arrLogic, deps);
 
 const middleware = applyMiddleware(
   logicMiddleware
-\);
+);
 
 const enhancer = middleware; // could compose in dev tools too
 
