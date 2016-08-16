@@ -147,7 +147,7 @@ The triggering action is recognized by the sagaMiddleware, it lets the message c
 
 ```js
 // this action creator will be bound to dispatch
-const fetchUser = id => { type: USER_FETCH, payload: id };
+const fetchUser = id => ({ type: USER_FETCH, payload: id });
 
 // saga code elsewhere
 function* watchUserFetch() {
@@ -178,7 +178,7 @@ We could also handle cancellation using code similar to the following.
 
 ```js
 // this action creator will be bound to dispatch
-const fetchUser = id => { type: USER_FETCH, payload: id };
+const fetchUser = id => ({ type: USER_FETCH, payload: id });
 
 // saga code elsewhere
 function* watchUserFetch() {
@@ -241,7 +241,7 @@ Each epic is given an incoming action observable and it returns an observable of
 
 ```js
 // this action creator will be bound to dispatch
-const fetchUser = id => { type: USER_FETCH, payload: id };
+const fetchUser = id => ({ type: USER_FETCH, payload: id });
 
 // userEpics.js
 const fetchUserEpic = action$ =>
