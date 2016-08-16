@@ -61,7 +61,8 @@ const fetchPollsLogic = createLogic({
  - <a href="#usage">Usage</a>
  - <a href="./docs/api.md">Full API</a>
  - <a href="#examples">Examples</a> - [JSFiddle](#jsfiddle-live-examples) and [full examples](#full-examples)
- - <a href="#comparison-summaries">Comparison summaries</a> to <a href="#compared-to-fat-action-creators">fat action creators</a>, <a href="#compared-to-redux-thunk">thunks</a>, <a href="#compared-to-redux-observable">redux-observable</a>, <a href="#compared-to-redux-saga">redux-saga</a>, <a href="#compared-to-custom-redux-middleware">custom middleware</a>, <a href="#compared-to-sam-or-pal-pattern">SAM/PAL pattern</a>
+ - <a href="#comparison-summaries">Comparison summaries</a> to <a href="#compared-to-fat-action-creators">fat action creators</a>, <a href="#compared-to-redux-thunk">thunks</a>, <a href="#compared-to-redux-observable">redux-observable</a>, <a href="#compared-to-redux-saga">redux-saga</a>, <a href="#compared-to-custom-redux-middleware">custom middleware</a>
+ - <a href="#implementing-sam-pal-pattern">SAM/PAL pattern</a>
  - <a href="#other">Other</a> - todo, inspiration, license
 
 ## Goals
@@ -291,10 +292,23 @@ For a more detailed comparison with examples, see by article in docs, [Where do 
  - No safety net, if things break it could stop all of your future actions
  - Testing requires some mocking or setup
 
-### Compared to SAM or PAL Pattern
+### Implementing SAM/PAL Pattern
 
- - With redux-logic you can implement the SAM / PAL pattern without giving up React and Redux. Namely you can separate out your business logic from your action creators and reducers keeping them thin. redux-logic provides a nice place to accept, reject, and transform actions before your reducers are run. You have access to the full state to make decisions and you can trigger actions based on the updated state as well.
- - Implementing the SAM/PAL pattern on your own requires lots of boilerplate code
+The [SAM (State-Action-Model) pattern](http://sam.js.org) is a pattern introduced by Jean-Jacques Dubray.
+
+A few of the challenging parts of implemnting this with a React-Redux application are:
+
+ 1. where to perform the `accept` of the proposed action performing validation, verification, authentication against the current model state
+ 2. how to trigger actions based on the state after the model has finished updating, referred to as the `NAP` (next-action-predicate).
+
+With redux-logic you can implement the SAM / PAL pattern without giving up React and Redux.
+
+Namely you can separate out your business logic from your action creators and reducers keeping them thin. redux-logic provides a nice place to accept, reject, and transform actions before your reducers are run. You have access to the full state to make decisions and you can trigger actions based on the updated state as well.
+
+Solving those problems previously identified with redux-logic:
+
+ 1. perform acceptance in redux-logic `validate` hooks, you have access to the full state (model) of the app to make decisions. You can perform synchronous or asynchronous logic to determine whether to accept the action and you may augment, modify, use a different action, or suppress as desired.
+ 2. Perform NAP processing in redux-logic `process` hooks. The process hook runs after the actions have been sent down to the reducers so you have access to the full model (state) after the updates where you can make decisions and dispatch additional actions.
 
 <a name="other"></a>
 
