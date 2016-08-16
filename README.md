@@ -296,9 +296,9 @@ For a more detailed comparison with examples, see by article in docs, [Where do 
 
 The [SAM (State-Action-Model) pattern](http://sam.js.org) is a pattern introduced by Jean-Jacques Dubray. Also known as the PAL (proposer, acceptor, learner) pattern based on Paxos terminology.
 
-A few of the challenging parts of implemnting this with a React-Redux application are:
+A few of the challenging parts of implementing this with a React-Redux application are:
 
- 1. where to perform the `accept` (interception) of the proposed action performing validation, verification, authentication against the current model state. Based on the current state, it might be appropriate to modify the action, dispatch a differnt action, or simply suppress the action.
+ 1. where to perform the `accept` (interception) of the proposed action performing validation, verification, authentication against the current model state. Based on the current state, it might be appropriate to modify the action, dispatch a different action, or simply suppress the action.
  2. how to trigger actions based on the state after the model has finished updating, referred to as the `NAP` (next-action-predicate).
 
 Custom Redux middleware can be introduced to perform this logic, but you'll be implementing most everything on your own.
@@ -307,10 +307,10 @@ With `redux-logic` you can implement the SAM / PAL pattern easily in your React/
 
 Namely you can separate out your business logic from your action creators and reducers keeping them thin. redux-logic provides a nice place to accept, reject, and transform actions before your reducers are run. You have access to the full state to make decisions and you can trigger actions based on the updated state as well.
 
-Solving those problems previously identified with redux-logic:
+Solving those SAM challenges previously identified using redux-logic:
 
- 1. perform acceptance in redux-logic `validate` hooks, you have access to the full state (model) of the app to make decisions. You can perform synchronous or asynchronous logic to determine whether to accept the action and you may augment, modify, use a different action, or suppress as desired.
- 2. Perform NAP processing in redux-logic `process` hooks. The process hook runs after the actions have been sent down to the reducers so you have access to the full model (state) after the updates where you can make decisions and dispatch additional actions.
+ 1. perform acceptance in redux-logic `validate` hooks, you have access to the full state (model) of the app to make decisions. You can perform synchronous or asynchronous logic to determine whether to accept the action and you may augment, modify, substitute actions, or suppress as desired.
+ 2. Perform NAP processing in redux-logic `process` hooks. The process hook runs after the actions have been sent down to the reducers so you have access to the full model (state) after the updates where you can make decisions and dispatch additional actions based on the updated state.
 
 <a name="other"></a>
 
