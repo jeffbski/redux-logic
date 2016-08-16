@@ -58,7 +58,7 @@ const fooLogic = createLogic({
     successType: undefined, // default undefined
     // string or action creator fn wrapping dispatched, rejected, or thrown errors
     failType: undefined // default undefined
-  }
+  },
 
   // If validate/transform reject was used then this hook will not be
   // executed. Call dispatch exactly once or read the advanced api about

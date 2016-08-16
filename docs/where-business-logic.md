@@ -407,6 +407,31 @@ const fetchUserLogic = createLogic({
 });
 ```
 
+Another way to write this same code but using the new `processOptions` feature in redux-logic@0.8.2+ which cleans up the code further.
+
+```js
+const fetchUserLogic = createLogic({
+  // declarative behavior
+  type: USER_FETCH,  // filter for actions of this type
+  cancelType: USER_FETCH_CANCEL, // cancel when this action is dispatched
+  latest: true, // only provide the latest if fired many times
+
+  processOptions: { // options influencing the process hook, default {}
+    dispatchReturn: true // dispatch from the resolved/rejected promise
+    successType: USER_FETCH_SUCCESS,  // use this action type for success
+    failType: USER_FETCH_FAILED       // use this action type for errors
+  },
+
+  // No need to dispatch since we are using the returned promise
+  // and automatically applying the actions to the raw values which
+  // get mapped to the action payload
+  process({ getState, action }) {
+    return axios.get(`https://server/user/${action.payload}`)
+      .then(resp => resp.data);
+  }
+});
+```
+
 That's it. A small amount of declaration to get the advanced cancellation and take latest behavior, with concise business logic as code.
 
 I’m leveraging the power of RxJS observables without making developers write code with them. I can use whatever type of code I am familiar with in writing my business logic. I am of course free to use observables if I want, but I can focus on my main purpose. You may even dispatch an observable to create a long running subscription. It is entirely up to you, if you want to use callbacks, promises, async await, etc., use what you are comfortable with for your code.
@@ -482,6 +507,18 @@ const fooLogic = createLogic({
     // perform any transformation and provide the new action to next
     next(action);
   }),
+
+
+
+  // options influencing the process hook, defaults to {}
+  processOptions: {
+    // dispatch return value, or if returns promise/observable, dispatch resolved/next values
+    dispatchReturn: false, // default false
+    // string or action creator fn wrapping dispatched value
+    successType: undefined, // default undefined
+    // string or action creator fn wrapping dispatched, rejected, or thrown errors
+    failType: undefined // default undefined
+  },
 
   process({ getState, action, cancelled$ }, dispatch) {
     // Perform your processing then call dispatch with an action
