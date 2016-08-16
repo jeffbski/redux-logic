@@ -62,7 +62,7 @@ const fetchPollsLogic = createLogic({
  - <a href="./docs/api.md">Full API</a>
  - <a href="#examples">Examples</a> - [JSFiddle](#jsfiddle-live-examples) and [full examples](#full-examples)
  - <a href="#comparison-summaries">Comparison summaries</a> to <a href="#compared-to-fat-action-creators">fat action creators</a>, <a href="#compared-to-redux-thunk">thunks</a>, <a href="#compared-to-redux-observable">redux-observable</a>, <a href="#compared-to-redux-saga">redux-saga</a>, <a href="#compared-to-custom-redux-middleware">custom middleware</a>
- - <a href="#implementing-sam-pal-pattern">SAM/PAL pattern</a>
+ - <a href="#implementing-sampal-pattern">SAM/PAL pattern</a>
  - <a href="#other">Other</a> - todo, inspiration, license
 
 ## Goals
