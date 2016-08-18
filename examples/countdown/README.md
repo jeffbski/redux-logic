@@ -102,6 +102,7 @@ const timerDecrementLogic = createLogic({
 ## Usage
 
 ```bash
+npm install # install dependencies
 npm start # builds and runs dev server
 ```
 

@@ -212,11 +212,14 @@ There are also built-in properties supplied to the execution hooks regardless of
 
 ### Cancellation / take latest - XHR aborting
 
-Many libraries like axios and fetch don't support aborting/cancelling of an in-flight request, so the best we can do it to simply not dispatch the results for cancelled or outdated requests. Unfortunately some browsers could delay your additional requests until some of the previous ones have completed (they have limits for concurrent requests).
+Many libraries like axios and fetch don't support aborting/cancelling of an in-flight request, so the best that we can do is to simply not dispatch the results for cancelled or outdated requests. Unfortunately some browsers could delay your new requests while the previous ones are still outstanding (they have limits for concurrent requests).
 
-However if you use a library that returns an observable like RxJS DOM ajax, then you can dispatch the observable to redux-logic and XHR abort will be performed on in-flight requests if they are cancelled or in a take latest situation. Observables support cancellation and thus when redux-logic cancels the subscription it bubbles back to the source and causes an xhr abort like you would want. Thus if you need true xhr aborts, use RxJS DOM's ajax or similar API that returns an observable and dispatch that to redux-logic.
+However if you use a HTTP library that returns an observable like RxJS DOM ajax, then you can dispatch the observable to redux-logic and XHR abort will be performed on in-flight requests if they are cancelled or in a take latest situation. Observables support cancellation and thus when redux-logic cancels the subscription it bubbles back to the source and causes an xhr abort like you would want. Thus if you need true xhr aborts, use RxJS DOM's ajax or similar API that returns an observable and dispatch that to redux-logic.
 
 ```js
+import Rx from 'rxjs'; // or selectively import only what you need
+const ajax = Rx.Observable.ajax;
+
 const usersFetchLogic = createLogic({
   type: USERS_FETCH,
   cancelType: USERS_FETCH_CANCEL,
@@ -233,7 +236,7 @@ const usersFetchLogic = createLogic({
           type: USERS_FETCH_FULFILLED,
           payload: users
         }))
-        .catch((err) => ({
+        .catch((err) => Observable.of({
           type: USERS_FETCH_REJECTED,
           payload: err,
           error: true
@@ -246,6 +249,9 @@ const usersFetchLogic = createLogic({
 or using processOptions
 
 ```js
+import Rx from 'rxjs'; // or selectively import only what you need
+const ajax = Rx.Observable.ajax;
+
 const usersFetchLogic = createLogic({
   type: USERS_FETCH,
   cancelType: USERS_FETCH_CANCEL,

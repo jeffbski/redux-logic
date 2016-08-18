@@ -119,6 +119,7 @@ async function fetchUserWithProfile(httpClient, uid) {
 ## Usage
 
 ```bash
+npm install # install dependencies
 npm start # builds and runs dev server
 ```
 

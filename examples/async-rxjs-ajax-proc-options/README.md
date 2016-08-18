@@ -20,7 +20,7 @@ export const usersFetchLogic = createLogic({
   latest: true, // take latest only
 
   processOptions: {
-    dispatchReturn: true,
+    dispatchReturn: true, // use values from returned obs
     successType: usersFetchFulfilled,
     failType: usersFetchRejected
   },
@@ -31,7 +31,7 @@ export const usersFetchLogic = createLogic({
   process({ httpClient }) {
     // the delay query param adds arbitrary delay to the response
     // since dispatchReturn is true and successType and failType set
-    // our code becomes very clean, just return the promise
+    // our code becomes very clean, just return the observable
     return httpClient.getJSON(`http://reqres.in/api/users?delay=${delay}`)
       .map(payload => payload.data); // use data property of payload
   }
@@ -59,6 +59,7 @@ export const usersFetchLogic = createLogic({
 ## Usage
 
 ```bash
+npm install # install dependencies
 npm start # builds and runs dev server
 ```
 
