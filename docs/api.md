@@ -210,6 +210,64 @@ There are also built-in properties supplied to the execution hooks regardless of
  - `ctx` - initially an empty object representing a shared place that you can use to pass data between the `validate/transform` and `process` hooks if you have implemented more than one of them. For instance if you set the `ctx.foo = { a: 1}` in your `validate` hook, then the `process` hook can read the previous value and potentially update.
  - `cancelled$` - an observable that emits if the logic is cancelled. This osbservable will also complete when the hooks have finished, regardless of whether it was cancelled. Subscribing to the cancelled$.next allows you to respond to a cancellation performing any additional cleanup that you need to do. For instance if you had a long running web socket connection, you might close it. Normally you won't need to use this unless there is something you need to close from your end. Even without using `cancelled$` future dispatching is stopped, so use of this is only necessary for cleanup or termination of resources you created.
 
+### Cancellation / take latest - XHR aborting
+
+Many libraries like axios and fetch don't support aborting/cancelling of an in-flight request, so the best we can do it to simply not dispatch the results for cancelled or outdated requests. Unfortunately some browsers could delay your additional requests until some of the previous ones have completed (they have limits for concurrent requests).
+
+However if you use a library that returns an observable like RxJS DOM ajax, then you can dispatch the observable to redux-logic and XHR abort will be performed on in-flight requests if they are cancelled or in a take latest situation. Observables support cancellation and thus when redux-logic cancels the subscription it bubbles back to the source and causes an xhr abort like you would want. Thus if you need true xhr aborts, use RxJS DOM's ajax or similar API that returns an observable and dispatch that to redux-logic.
+
+```js
+const usersFetchLogic = createLogic({
+  type: USERS_FETCH,
+  cancelType: USERS_FETCH_CANCEL,
+  latest: true, // take latest only
+
+  process({ getState, action }, dispatch) {
+    // dispatch the values from this observable
+    // cancel and take latest will abort in-flight xhr requests
+    dispatch(
+      // the delay query param adds arbitrary delay to the response
+      ajax.getJSON(`http://reqres.in/api/users?delay=${delay}`)
+        .map(data => data.data) // use data property of payload
+        .map(users => ({
+          type: USERS_FETCH_FULFILLED,
+          payload: users
+        }))
+        .catch((err) => ({
+          type: USERS_FETCH_REJECTED,
+          payload: err,
+          error: true
+        }))
+    );
+  }
+});
+```
+
+or using processOptions
+
+```js
+const usersFetchLogic = createLogic({
+  type: USERS_FETCH,
+  cancelType: USERS_FETCH_CANCEL,
+  latest: true, // take latest only
+
+  processOptions: {
+    dispatchReturn: true,  // dispatch the values from returned obs
+    successType: USERS_FETCH_FULFILLED, // apply this action type
+    failType: USERS_FETCH_REJECTED // apply this action type on err
+  },
+
+  process({ getState, action }, dispatch) {
+    // dispatch the values from this returned observable
+    // cancel and take latest will abort in-flight xhr requests
+    // the delay query param adds arbitrary delay to the response
+    return ajax.getJSON(`http://reqres.in/api/users?delay=${delay}`)
+      .map(payload => payload.data); // use data property of payload
+  }
+});
+```
+
+
 ### allow, reject, next - optional second argument options
 
 `allow`, `reject`, and `next` all support an optional second argument `options` which can change its operation.
