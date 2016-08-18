@@ -184,6 +184,7 @@ const logic = createLogic({
       .then(resp => resp.data.users); // select the data
   }
 }
+```
 
 
 ## Advanced Usage
