@@ -1,0 +1,41 @@
+/* global devToolsExtension:false */
+
+import { compose, createStore, applyMiddleware } from 'redux';
+import { createLogicMiddleware } from 'redux-logic';
+import rootReducer  from './rootReducer';
+import logic from './rootLogic';
+
+import Rx from 'rxjs'; // can import everything or just what you need
+const ajax = Rx.Observable.ajax;
+
+// selectively just getting ajax and map from rxjs to keep size smaller
+// be sure to add everything you need in your logic
+// import { Observable } from 'rxjs/Observable';
+// import 'rxjs/add/observable/dom/ajax';
+// import 'rxjs/add/operator/catch';
+// import 'rxjs/add/operator/map';
+// const { ajax } = Observable;
+
+const deps = { // injected dependencies for logic
+  httpClient: ajax // RxJS ajax
+};
+
+const logicMiddleware = createLogicMiddleware(logic, deps);
+
+const middleware = applyMiddleware(
+  logicMiddleware
+);
+
+
+// using compose to allow for applyMiddleware, just add it in
+const enhancer = (typeof devToolsExtension !== 'undefined') ?
+      compose(
+        middleware,
+        devToolsExtension()
+      ) :
+      middleware;
+
+export default function configureStore() {
+  const store = createStore(rootReducer, enhancer);
+  return store;
+}

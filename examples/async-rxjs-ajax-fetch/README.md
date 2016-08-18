@@ -1,10 +1,12 @@
-# Async Fetch
+# Async RxJS ajax Fetch
 
-This is an example of using redux-logic for async fetching with axios triggered by a `users/FETCH` action type.
+This is an example of using redux-logic for async fetching with RxJS ajax triggered by a `users/FETCH` action type.
 
 It is built using redux-actions to help with creating simple action creators and reducers.
 
-It showcases some of the declarative functionality built into redux-logic, so simply by specifying a cancelType and setting latest to true, we enable this code to be cancellable and also enable it to only take the latest request if multiple come in. No code had to be written by us to leverage that functionality.
+Since RxJS ajax supports XHR abort on cancellation not only is redux-logic is able to fully cancel in-flight requests instantly. With other libraries like axios and fetch there is no mechanism to abort the request so the best that redux-logic can do is to ignore the response of a cancelled request. By dispatching the RxJS ajax observable to redux-logic, cancellation and take latest can abort the requests immediately.
+
+It showcases some of the declarative functionality built into redux-logic, so simply by specifying a cancelType and setting latest to true, we enable this code to be cancellable and also enable it to only take the latest request if multiple come in. No additional code had to be written by us to leverage that functionality.
 
 Finally we are also showcasing that runtime dependencies can be injected rather than hard coded into your logic. So while I could have used axios directly in this code, by injecting it I can now easily mock it out when testing.
 
@@ -17,22 +19,24 @@ export const usersFetchLogic = createLogic({
   cancelType: usersFetchCancel,
   latest: true, // take latest only
 
-  // use axios injected as httpClient from configureStore logic deps
-  // we also have access to getState and action in the first argument
-  // but they were not needed for this particular code
   process({ httpClient }, dispatch) {
-    httpClient.get(`http://reqres.in/api/users`)
-      .then(resp => resp.data.data) // use data property of payload
-      .then(users => dispatch(usersFetchFulfilled(users)))
-      .catch((err) =>
-             dispatch(usersFetchRejected(err)));
+    // dispatch the results of the observable
+    dispatch(
+      // httpClient is RxJS ajax injected in the src/configureStore.js
+      // as a dependency for logic hooks to use. It returns observable
+      // the delay query param adds arbitrary delay to the response
+      httpClient.getJSON(`http://reqres.in/api/users?delay=${delay}`)
+        .map(payload => payload.data) // use data property of payload
+        .map(users => usersFetchFulfilled(users))
+        .catch(err => Observable.of(usersFetchRejected(err)))
+    );
   }
 });
 ```
 
 ## Files of interest
 
- - [src/configureStore.js](./src/configureStore.js) - logicMiddleware is created with the combined array of logic for the app. Also the dependencies are defined that will be made available to all logic, so axios is defined as httpClient.
+ - [src/configureStore.js](./src/configureStore.js) - logicMiddleware is created with the combined array of logic for the app. Also the dependencies are defined that will be made available to all logic, so RxJS ajax is defined as httpClient.
 
  - [src/rootLogic.js](./src/rootLogic.js) - combines logic from all other parts of the app and defines the order they appear in the logic pipeline. Shows how you can structure large apps to easily combine logic.
 

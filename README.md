@@ -229,9 +229,11 @@ See the [docs for the full api](./docs/api.md)
 
 ### JSFiddle live examples
 
- - [async fetch - single page](http://jsfiddle.net/jeffbski/954g5n7h/) - displayed using React
- - [async fetch - single page redux only](http://jsfiddle.net/jeffbski/yzy8w4ve/) - just the redux and redux-logic code
- - [async fetch - using processOptions](http://jsfiddle.net/jeffbski/oL6jmp52/) - using processOptions to streamline your code further with React
+ - [async axios fetch - single page](http://jsfiddle.net/jeffbski/954g5n7h/) - displayed using React
+ - [async rxjs-ajax fetch](http://jsfiddle.net/jeffbski/0fu407na/) - async fetching using RxJS ajax which supports XHR abort for cancels
+ - [async axios fetch - single page redux only](http://jsfiddle.net/jeffbski/yzy8w4ve/) - just the redux and redux-logic code
+ - [async axios fetch - using processOptions](http://jsfiddle.net/jeffbski/oL6jmp52/) - using processOptions to streamline your code further with React
+ - [async rxjs-ajax fetch - using processOptions](http://jsfiddle.net/jeffbski/d4p6oo0d/) - async fetch using RxJS ajax (supporting XHR abort on cancel) and processOptions for clean code.
  - [async await - react](http://jsfiddle.net/jeffbski/rfc7oz9p/) - using ES7 async functions (async/await) displaying with React
  - [async await - redux only](http://jsfiddle.net/jeffbski/h485f6h5/) - using ES7 async functions (async/await) - just redux and redux-logic code
  - [async await - react processOptions](http://jsfiddle.net/jeffbski/0rodyekn/) - using ES7 async functions (async/await) with processOptions, displayed with React
@@ -239,8 +241,9 @@ See the [docs for the full api](./docs/api.md)
 ### Full examples
 
  - [async-fetch-vanilla](./examples/async-fetch-vanilla) - async fetch example using axios
- - [async-fetch](./examples/async-fetch) - async fetch example using axios and redux-actions
+ - [async-rxjs-ajax-fetch](./examples/async-rxjs-ajax-fetch) - async fetch example using RxJS ajax (supporting XHR abort on cancel) and redux-actions
  - [async-fetch-proc-options](./examples/async-fetch-proc-options) - async fetch example using axios and the new processOptions feature
+ - [async-rxjs-ajax-proc-options](./examples/async-rxjs-ajax-proc-options) - async RxJS ajax (with XHR abort on cancel) fetch example using axios and the new processOptions feature
  - [async-await - ES7 async functions](./examples/async-await) - async fetch example using axios and ES7 async functions (async/await)
  - [async-await - ES7 async functions with processOptions](./examples/async-await-proc-options) - async fetch example using axios and ES7 async functions (async/await) and using the new processOptions feature
  - [countdown](./examples/countdown) - a countdown timer implemented with setInterval
