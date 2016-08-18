@@ -4,7 +4,7 @@
   "description": "Redux middleware for organizing business logic and action side effects.",
   "main": "build-lib/index.js",
   "browser": {
-    "main": "dist/redux-logix.js"
+    "main": "dist/redux-logic.js"
   },
   "browserify": {
     "transform": [
