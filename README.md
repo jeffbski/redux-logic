@@ -45,7 +45,7 @@ const fetchPollsLogic = createLogic({
   process({ getState, action }, dispatch) {
     axios.get('https://survey.codewinds.com/polls')
       .then(resp => resp.data.polls)
-      .then(polls => dispatch({ type: FETCH_POLLS_SUCESS,
+      .then(polls => dispatch({ type: FETCH_POLLS_SUCCESS,
                                 payload: polls }))
       .catch(({ statusText }) =>
              dispatch({ type: FETCH_POLLS_FAILED, payload: statusText,
@@ -164,7 +164,7 @@ const fetchPollsLogic = createLogic({
   process({ getState, action }, dispatch) {
     axios.get('https://survey.codewinds.com/polls')
       .then(resp => resp.data.polls)
-      .then(polls => dispatch({ type: FETCH_POLLS_SUCESS,
+      .then(polls => dispatch({ type: FETCH_POLLS_SUCCESS,
                                 payload: polls }))
       .catch(({ statusText }) =>
              dispatch({ type: FETCH_POLLS_FAILED, payload: statusText,
