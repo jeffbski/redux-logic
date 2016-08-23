@@ -484,10 +484,10 @@ const fooLogic = createLogic({
   type, // required str, regex, array of str/regex, use '*' for all
   cancelType, // string, regex, array of strings or regexes
 
-  // limiting - optionally define one of these
-  latest, // only take latest, default false
+  // limiting - optionally define any of these
   debounce, // debounce for N ms, default 0
   throttle, // throttle for N ms, default 0
+  latest, // only take latest, default false
 
   // Put your business logic into one or more of these
   // execution phase hooks.

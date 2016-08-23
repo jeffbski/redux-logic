@@ -24,7 +24,7 @@ export default function logicWrapper(logic, store, deps) {
         act$ => act$;
 
   const limiting = act =>
-        debouncing(throttling(act));
+        throttling(debouncing(act));
 
   return function wrappedLogic(actionIn$) {
     // we want to share the same copy amongst all here

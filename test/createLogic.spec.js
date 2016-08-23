@@ -1,5 +1,6 @@
 import expect from 'expect';
-import { createLogic } from '../src/index';
+import Rx from 'rxjs';
+import { createLogic, createLogicMiddleware } from '../src/index';
 
 describe('createLogic', () => {
   describe('createLogic()', () => {
@@ -18,27 +19,316 @@ describe('createLogic', () => {
     });
   });
 
-  describe('latest and debounce)', () => {
-    it('throws cannot use both error', () => {
-      expect(() => {
-        createLogic({
-          type: 'FOO',
-          latest: true,
-          debounce: 10
+  describe('debounce)', () => {
+    let dispatch;
+    beforeEach((done) => {
+      const next = expect.createSpy();
+      dispatch = expect.createSpy().andCall(check);
+      function check(action) {
+        // last dispatch should be slow: 3
+        if (action.slow === 3) { done(); }
+      }
+      const logicA = createLogic({
+        type: 'FOO',
+        debounce: 40,
+        process({ action }, dispatch) {
+          setTimeout(() => {
+            dispatch({
+              ...action,
+              type: 'BAR'
+            });
+          }, 100); // delay so we can use latest
+        }
+      });
+      const mw = createLogicMiddleware([logicA]);
+      const storeFn = mw({ dispatch })(next);
+      Rx.Observable.merge(
+        // fast 0, 1, 2
+        Rx.Observable.interval(10)
+          .take(3)
+          .map(x => ({ fast: x })),
+        // slow 0, 1, 2, 3
+        Rx.Observable.interval(60)
+          .take(4)
+          .delay(40)
+          .map(x => ({ slow: x }))
+      ).subscribe(x => {
+        storeFn({
+          ...x,
+          type: 'FOO'
         });
-      }).toThrow('cannot use both');
+      });
+    });
+
+    it('should debounce the fast calls', () => {
+      expect(dispatch.calls.length).toBe(5);
+      expect(dispatch.calls[0].arguments[0]).toEqual({
+        type: 'BAR',
+        fast: 2
+      });
     });
   });
 
-  describe('latest and throttle)', () => {
-    it('throws cannot use both error', () => {
-      expect(() => {
-        createLogic({
-          type: 'FOO',
-          latest: true,
-          throttle: 10
+  describe('debounce and latest)', () => {
+    let dispatch;
+    beforeEach((done) => {
+      const next = expect.createSpy();
+      dispatch = expect.createSpy().andCall(check);
+      function check(action) {
+        // last dispatch should be slow: 3
+        if (action.slow === 3) { done(); }
+      }
+      const logicA = createLogic({
+        type: 'FOO',
+        latest: true,
+        debounce: 40,
+        process({ action }, dispatch) {
+          setTimeout(() => {
+            dispatch({
+              ...action,
+              type: 'BAR'
+            });
+          }, 100); // delay so we can use latest
+        }
+      });
+      const mw = createLogicMiddleware([logicA]);
+      const storeFn = mw({ dispatch })(next);
+      Rx.Observable.merge(
+        // fast 0, 1, 2
+        Rx.Observable.interval(10)
+          .take(3)
+          .map(x => ({ fast: x })),
+        // slow 0, 1, 2, 3
+        Rx.Observable.interval(60)
+          .take(4)
+          .delay(40)
+          .map(x => ({ slow: x }))
+      ).subscribe(x => {
+        storeFn({
+          ...x,
+          type: 'FOO'
         });
-      }).toThrow('cannot use both');
+      });
+    });
+
+    it('should debounce and only use latest', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0]).toEqual({
+        type: 'BAR',
+        slow: 3
+      });
+    });
+  });
+
+  describe('throttle)', () => {
+    let dispatch;
+    beforeEach((done) => {
+      const asyncProcessDelay = 100; // simulate slow service
+      const next = expect.createSpy();
+      dispatch = expect.createSpy();
+      const logicA = createLogic({
+        type: 'FOO',
+        throttle: 40,
+        process({ action }, dispatch) {
+          setTimeout(() => {
+            dispatch({
+              ...action,
+              type: 'BAR'
+            });
+          }, asyncProcessDelay); // delay so we can use latest
+        }
+      });
+      const mw = createLogicMiddleware([logicA]);
+      const storeFn = mw({ dispatch })(next);
+      Rx.Observable.merge(
+        // fast 0, 1, 2
+        Rx.Observable.interval(10)
+          .take(3)
+          .map(x => ({ fast: x })),
+        // slow 0, 1, 2, 3
+        Rx.Observable.interval(60)
+          .take(4)
+          .delay(40)
+          .map(x => ({ slow: x }))
+      ).subscribe({
+        next: x => {
+          storeFn({
+            ...x,
+            type: 'FOO'
+          });
+        },
+        complete: () => {
+          setTimeout(() => {
+            done();
+          }, asyncProcessDelay + 20); // add margin
+        }
+      });
+    });
+
+    it('should throttle', () => {
+      expect(dispatch.calls.length)
+        .toBeLessThan(7)
+        .toBeGreaterThan(3); // margin for CI test env
+    });
+  });
+
+  describe('throttle and latest', () => {
+    let dispatch;
+    beforeEach((done) => {
+      const asyncProcessDelay = 100; // simulate slow service
+      const next = expect.createSpy();
+      dispatch = expect.createSpy();
+      const logicA = createLogic({
+        type: 'FOO',
+        latest: true,
+        throttle: 40,
+        process({ action }, dispatch) {
+          setTimeout(() => {
+            dispatch({
+              ...action,
+              type: 'BAR'
+            });
+          }, asyncProcessDelay); // delay so we can use latest
+        }
+      });
+      const mw = createLogicMiddleware([logicA]);
+      const storeFn = mw({ dispatch })(next);
+      Rx.Observable.merge(
+        // fast 0, 1, 2
+        Rx.Observable.interval(10)
+          .take(3)
+          .map(x => ({ fast: x })),
+        // slow 0, 1, 2, 3
+        Rx.Observable.interval(60)
+          .take(4)
+          .delay(40)
+          .map(x => ({ slow: x }))
+      ).subscribe({
+        next: x => {
+          storeFn({
+            ...x,
+            type: 'FOO'
+          });
+        },
+        complete: () => {
+          setTimeout(() => {
+            done();
+          }, asyncProcessDelay + 20); // add margin
+        }
+      });
+    });
+
+    it('should throttle and use latest', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0]).toEqual({
+        type: 'BAR',
+        slow: 3
+      });
+    });
+  });
+
+  describe('debounce and throttle', () => {
+    let dispatch;
+    beforeEach((done) => {
+      const asyncProcessDelay = 100; // simulate slow service
+      const next = expect.createSpy();
+      dispatch = expect.createSpy();
+      const logicA = createLogic({
+        type: 'FOO',
+        debounce: 30,
+        throttle: 80,
+        process({ action }, dispatch) {
+          setTimeout(() => {
+            dispatch({
+              ...action,
+              type: 'BAR'
+            });
+          }, asyncProcessDelay); // delay so we can use latest
+        }
+      });
+      const mw = createLogicMiddleware([logicA]);
+      const storeFn = mw({ dispatch })(next);
+      Rx.Observable.merge(
+        // fast 0, 1, 2
+        Rx.Observable.interval(10)
+          .take(3)
+          .map(x => ({ fast: x })),
+        // slow 0, 1, 2, 3
+        Rx.Observable.interval(60)
+          .take(4)
+          .delay(40)
+          .map(x => ({ slow: x }))
+      ).subscribe({
+        next: x => {
+          storeFn({
+            ...x,
+            type: 'FOO'
+          });
+        },
+        complete: () => {
+          setTimeout(() => {
+            done();
+          }, asyncProcessDelay + 20); // add margin
+        }
+      });
+    });
+
+    it('should debounce and throttle', () => {
+      expect(dispatch.calls.length)
+        .toBeGreaterThan(1)
+        .toBeLessThan(5); // allow margin for CI env
+    });
+  });
+
+  describe('debounce, throttle, and latest', () => {
+    let dispatch;
+    beforeEach((done) => {
+      const asyncProcessDelay = 100; // simulate slow service
+      const next = expect.createSpy();
+      dispatch = expect.createSpy();
+      const logicA = createLogic({
+        type: 'FOO',
+        debounce: 30,
+        throttle: 80,
+        latest: true,
+        process({ action }, dispatch) {
+          setTimeout(() => {
+            dispatch({
+              ...action,
+              type: 'BAR'
+            });
+          }, asyncProcessDelay); // delay so we can use latest
+        }
+      });
+      const mw = createLogicMiddleware([logicA]);
+      const storeFn = mw({ dispatch })(next);
+      Rx.Observable.merge(
+        // fast 0, 1, 2
+        Rx.Observable.interval(10)
+          .take(3)
+          .map(x => ({ fast: x })),
+        // slow 0, 1, 2, 3
+        Rx.Observable.interval(60)
+          .take(4)
+          .delay(40)
+          .map(x => ({ slow: x }))
+      ).subscribe({
+        next: x => {
+          storeFn({
+            ...x,
+            type: 'FOO'
+          });
+        },
+        complete: () => {
+          setTimeout(() => {
+            done();
+          }, asyncProcessDelay + 100); // add margin
+        }
+      });
+    });
+
+    it('should debounce, throttle, and use latest', () => {
+      expect(dispatch.calls.length).toBe(1);
     });
   });
 

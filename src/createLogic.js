@@ -100,10 +100,6 @@ export default function createLogic(logicOptions = {}) {
     throw new Error('type is required, use \'*\' to match all actions');
   }
 
-  if (latest && (debounce || throttle)) {
-    throw new Error('logic cannot use both latest and debounce/throttle');
-  }
-
   if (validate && transform) {
     throw new Error('logic cannot define both the validate and transform hooks they are aliases');
   }

@@ -21,10 +21,10 @@ const fooLogic = createLogic({
   // type and cancelType also support redux-actions fns for which
   //   the fn.toString() returns the associated action type
 
-  // limiting - optionally define one of these
-  latest: true, // only take latest, default false
+  // limiting - optionally define any of these
   debounce: 0, // debounce for N ms, default 0
   throttle: 0, // throttle for N ms, default 0
+  latest: true, // only take latest, default false
 
   // Put your business logic into one or more of these
   // execution phase hooks: validate, transform, process
