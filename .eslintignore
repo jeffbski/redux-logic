@@ -1,4 +1,8 @@
 **/dist/**
+**/build-es/**
+**/build-lib/**
+**/coverage/**
 **/node_modules/**
 **/server.js
 **/webpack.config*.js
+**/examples/**
