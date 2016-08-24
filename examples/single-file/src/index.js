@@ -10,32 +10,37 @@ const initialState = {
   fetchStatus: ''
 };
 
-const USERS_FETCH = 'USERS_FETCH';
-const USERS_FETCH_CANCEL = 'USERS_FETCH_CANCEL';
-const USERS_FETCH_FULFILLED = 'USERS_FETCH_FULFILLED';
-const USERS_FETCH_REJECTED = 'USERS_FETCH_REJECTED';
-function usersFetch() { return { type: USERS_FETCH }; }
-function usersFetchCancel() { return { type: USERS_FETCH_CANCEL }; }
+const NPM_SEARCH = 'NPM_SEARCH';
+const NPM_SEARCH_FULFILLED = 'NPM_SEARCH_FULFILLED';
+const NPM_SEARCH_REJECTED = 'NPM_SEARCH_REJECTED';
+function npmSearch(ev) {
+  return { type: NPM_SEARCH, payload: ev.target.value };
+}
 
-const delay = 2; // 2s delay for interactive use of cancel/take latest
-const usersFetchLogic = createLogic({
-  type: USERS_FETCH,
-  cancelType: USERS_FETCH_CANCEL,
+const npmSearchLogic = createLogic({
+  type: NPM_SEARCH,
+  debounce: 500, // ms
   latest: true, // take latest only
 
+  // only allow non-empty payloads
+  validate({ getState, action }, allow, reject) {
+    if (action.payload) {
+      allow(action);
+    } else { // empty request, silently reject
+      reject();
+    }
+  },
+
   // use axios injected as httpClient from configureStore logic deps
-  // we also have access to getState and action in the first argument
-  // but they were not needed for this particular code
-  process({ httpClient }, dispatch) {
-    // the delay query param adds arbitrary delay to the response
-    httpClient.get(`http://reqres.in/api/users?delay=${delay}`)
-      .then(resp => resp.data.data) // use data property of payload
-      .then(users => dispatch({
-        type: USERS_FETCH_FULFILLED,
-        payload: users
+  process({ httpClient, getState, action }, dispatch) {
+    httpClient.get(`http://npmsearch.com/query?q=${action.payload}&fields=name,description`)
+      .then(resp => resp.data.results) // use results prop of payload
+      .then(results => dispatch({
+        type: NPM_SEARCH_FULFILLED,
+        payload: results
       }))
       .catch((err) => dispatch({
-        type: USERS_FETCH_REJECTED,
+        type: NPM_SEARCH_REJECTED,
         payload: err,
         error: true
       }));
@@ -45,32 +50,33 @@ const usersFetchLogic = createLogic({
 const deps = { // injected dependencies for logic
   httpClient: axios
 };
-const arrLogic = [usersFetchLogic];
+const arrLogic = [npmSearchLogic];
 const logicMiddleware = createLogicMiddleware(arrLogic, deps);
 const store = createStore(reducer, initialState,
                           applyMiddleware(logicMiddleware));
 
 const ConnectedApp = connect(
   state => ({
-    users: state.list,
+    results: state.list,
     fetchStatus: state.fetchStatus
   }),
   {
-    usersFetch,
-    usersFetchCancel
+    npmSearch
   }
 )(App);
 
-function App({ users, fetchStatus, usersFetch, usersFetchCancel }) {
+function App({ results, fetchStatus, npmSearch }) {
   return (
     <div>
+      <h3>Search npmsearch.com for packages</h3>
       <div>Status: { fetchStatus }</div>
-      <button onClick={ usersFetch }>Fetch users</button>
-      <button onClick={ usersFetchCancel }>Cancel</button>
+      <input autoFocus="true"
+        onChange={ npmSearch }
+        placeholder="package keywords" />
       <ul>
         {
-          users.map(user => (
-            <li key={ user.id }>{ user.first_name } { user.last_name }</li>
+          results.map(result => (
+            <li key={ result.name[0] }>{ result.name[0] } - { result.description[0] }</li>
           ))
         }
       </ul>
@@ -87,27 +93,22 @@ ReactDOM.render(
 
 function reducer(state = initialState, action) {
   switch(action.type) {
-  case USERS_FETCH:
+  case NPM_SEARCH:
     return {
       ...state,
-      fetchStatus: `fetching... ${(new Date()).toLocaleString()}`,
+      fetchStatus: `fetching for ${action.payload}... ${(new Date()).toLocaleString()}`,
       list: []
     };
-  case USERS_FETCH_FULFILLED:
+  case NPM_SEARCH_FULFILLED:
     return {
       ...state,
       list: action.payload,
       fetchStatus: `Results from ${(new Date()).toLocaleString()}`
     };
-  case USERS_FETCH_REJECTED:
+  case NPM_SEARCH_REJECTED:
     return {
       ...state,
       fetchStatus: `errored: ${action.payload}`
-    };
-  case USERS_FETCH_CANCEL:
-    return {
-      ...state,
-      fetchStatus: 'user cancelled'
     };
   default:
     return state;
