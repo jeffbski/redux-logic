@@ -52,7 +52,7 @@ export const searchLogic = createLogic({
 
  - [src/App.js](./src/App.js) - App component which uses redux connect to provide the search state and bound action handlers as props
 
- - [test/search-fetch-logic.spec.js](./test/search-fetch-logic.spec.js) - testing searchFetch logic in isolation
+ - [test/search-logic.spec.js](./test/search-logic.spec.js) - testing search logic in isolation
 
 ## Usage
 
