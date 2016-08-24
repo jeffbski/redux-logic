@@ -27,7 +27,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
-    "test": "npm ls",
+    "test": "echo \"no tests defined\"",
     "test:watch": "npm test -- --watch"
   },
   "eslintConfig": {
