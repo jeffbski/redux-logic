@@ -147,14 +147,14 @@ describe('createLogicMiddleware-throttle', () => {
       }
       logicA = createLogic({
         type: 'FOO',
-        throttle: 10,
+        throttle: 40,
         process({ action }, dispatch) {
           setTimeout(() => {
             dispatch({
               ...action,
               type: 'BAR'
             });
-          }, 10);
+          }, 40);
         }
       });
       mw = createLogicMiddleware([logicA]);
@@ -194,7 +194,7 @@ describe('createLogicMiddleware-throttle', () => {
       }
       logicA = createLogic({
         type: 'FOO',
-        throttle: 20,
+        throttle: 40,
         process({ action }, dispatch) {
           // immediate dispatch
           dispatch({
@@ -208,7 +208,7 @@ describe('createLogicMiddleware-throttle', () => {
               ...action,
               type: 'CAT'
             });
-          }, 20);
+          }, 40);
         }
       });
       mw = createLogicMiddleware([logicA]);
