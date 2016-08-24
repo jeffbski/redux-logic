@@ -17,8 +17,9 @@ const npmSearchLogic = createLogic({
   debounce: 500, // ms
   latest: true, // take latest only
 
+  // only allow non-empty payloads
   validate({ getState, action }, allow, reject) {
-    if (action.payload && action.payload.length) {
+    if (action.payload) {
       allow(action);
     } else { // empty request, silently reject
       reject();

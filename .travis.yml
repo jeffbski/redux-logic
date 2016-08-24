@@ -24,5 +24,6 @@ cache:
   - examples/countdown-obs/node_modules
   - examples/form-validation/node_modules
   - examples/notification/node_modules
+  - examples/search-async-fetch/node_modules
   - examples/single-file/node_modules
   - examples/single-file-redux/node_modules

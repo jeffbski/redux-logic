@@ -229,6 +229,7 @@ See the [docs for the full api](./docs/api.md)
 
 ### JSFiddle live examples
 
+ - [search async axios fetch](http://jsfiddle.net/jeffbski/78vpf92k/) - search using debounce and take latest functionality with axios fetch
  - [async axios fetch - single page](http://jsfiddle.net/jeffbski/954g5n7h/) - displayed using React
  - [async rxjs-ajax fetch](http://jsfiddle.net/jeffbski/0fu407na/) - async fetching using RxJS ajax which supports XHR abort for cancels
  - [async axios fetch - single page redux only](http://jsfiddle.net/jeffbski/yzy8w4ve/) - just the redux and redux-logic code
@@ -240,6 +241,7 @@ See the [docs for the full api](./docs/api.md)
 
 ### Full examples
 
+ - [search-async-fetch](./examples/search-async-fetch) - search async fetch example using axios uses debouncing and take latest features
  - [async-fetch-vanilla](./examples/async-fetch-vanilla) - async fetch example using axios
  - [async-rxjs-ajax-fetch](./examples/async-rxjs-ajax-fetch) - async fetch example using RxJS ajax (supporting XHR abort on cancel) and redux-actions
  - [async-fetch-proc-options](./examples/async-fetch-proc-options) - async fetch example using axios and the new processOptions feature
@@ -250,7 +252,7 @@ See the [docs for the full api](./docs/api.md)
  - [countdown-obs](./examples/countdown-obs) - a countdown timer implemented with Rx.Observable.interval
  - [form-validation](./examples/form-validation) - form validation and async post to server using axios, displays updated user list
  - [notification](./examples/notification) - notification message example showing at most N messages for X amount of time, rotating queued messages in as others expire
- - [single-file](./examples/single-file) - async fetch example with all code in a single file and displayed with React
+ - [search-single-file](./examples/single-file) - search async fetch example with all code in a single file and displayed with React
  - [single-file-redux](./examples/single-file-redux) - async fetch example with all code in a single file and appended to the container div. Only redux and redux-logic code.
 
 

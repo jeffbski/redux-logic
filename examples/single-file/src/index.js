@@ -22,8 +22,9 @@ const npmSearchLogic = createLogic({
   debounce: 500, // ms
   latest: true, // take latest only
 
+  // only allow non-empty payloads
   validate({ getState, action }, allow, reject) {
-    if (action.payload && action.payload.length) {
+    if (action.payload) {
       allow(action);
     } else { // empty request, silently reject
       reject();
@@ -56,7 +57,7 @@ const store = createStore(reducer, initialState,
 
 const ConnectedApp = connect(
   state => ({
-    users: state.list,
+    results: state.list,
     fetchStatus: state.fetchStatus
   }),
   {
@@ -64,18 +65,18 @@ const ConnectedApp = connect(
   }
 )(App);
 
-function App({ users, fetchStatus, npmSearch }) {
+function App({ results, fetchStatus, npmSearch }) {
   return (
     <div>
-      <div>Search npmsearch.com for packages</div>
+      <h3>Search npmsearch.com for packages</h3>
       <div>Status: { fetchStatus }</div>
       <input autoFocus="true"
         onChange={ npmSearch }
         placeholder="package keywords" />
       <ul>
         {
-          users.map(user => (
-            <li key={ user.name[0] }>{ user.name[0] } - { user.description[0] }</li>
+          results.map(result => (
+            <li key={ result.name[0] }>{ result.name[0] } - { result.description[0] }</li>
           ))
         }
       </ul>
