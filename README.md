@@ -229,7 +229,8 @@ See the [docs for the full api](./docs/api.md)
 
 ### JSFiddle live examples
 
- - [search async axios fetch](http://jsfiddle.net/jeffbski/78vpf92k/) - search using debounce and take latest functionality with axios fetch
+ - [search async axios fetch](http://jsfiddle.net/jeffbski/78vpf92k/) - live search using debounce and take latest functionality with axios fetch
+ - [search rxjs ajax fetch](http://jsfiddle.net/jeffbski/uLh2add5/) - live search using debounce and take latest functionality with rxjs ajax fetch
  - [async axios fetch - single page](http://jsfiddle.net/jeffbski/954g5n7h/) - displayed using React
  - [async rxjs-ajax fetch](http://jsfiddle.net/jeffbski/0fu407na/) - async fetching using RxJS ajax which supports XHR abort for cancels
  - [async axios fetch - single page redux only](http://jsfiddle.net/jeffbski/yzy8w4ve/) - just the redux and redux-logic code
