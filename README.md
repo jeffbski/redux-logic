@@ -186,11 +186,11 @@ export default [
 
 `processOptions` has these new properties which affect the process hook behavior:
 
- - `dispatchReturn` - the returned value of the process function will be dispatched or if it is a promise or observable then the resolve, reject, or observable values will be dispatched applying any successType or failureType logic if defined. Default: `false`.
+ - `dispatchReturn` - the returned value of the process function will be dispatched or if it is a promise or observable then the resolve, reject, or observable values will be dispatched applying any successType or failType logic if defined. Default: `false`.
  - `successType` - dispatch this action type using contents of dispatch as the payload (also would work with with promise or observable). You may alternatively provide an action creator function to use instead. Deafult: `undefined`.
- - `failureType` - dispatch this action type using contents of error as the payload, sets error: true (would also work for rejects of promises or error from observable). You may alternatively provide an action creator function to use instead. Default: `undefined`.
+ - `failType` - dispatch this action type using contents of error as the payload, sets error: true (would also work for rejects of promises or error from observable). You may alternatively provide an action creator function to use instead. Default: `undefined`.
 
-The successType and failureType would enable clean code, where you can simply return a promise or observable that resolves to the payload and rejects on error. The resulting code doesn't have to deal with dispatch and actions directly.
+The successType and failType would enable clean code, where you can simply return a promise or observable that resolves to the payload and rejects on error. The resulting code doesn't have to deal with dispatch and actions directly.
 
 ```js
 const fetchPollsLogic = createLogic({
@@ -205,7 +205,7 @@ const fetchPollsLogic = createLogic({
     // provide action types or action creator functions to be used
     // with the resolved/rejected values from promise/observable returned
     successType: FETCH_POLLS_SUCCESS, // dispatch this success act type
-    failureType: FETCH_POLLS_FAILED, // dispatch this failed action type
+    failType: FETCH_POLLS_FAILED, // dispatch this failed action type
   },
 
   // dispatchReturn option allows you to simply return obj, promise, obs
