@@ -268,6 +268,36 @@ export default combineEpics(
 );
 ```
 
+Alternatively if you instead use the RxJS-DOM ajax library you can eliminate the create observable code
+
+```js
+// this action creator will be bound to dispatch
+const fetchUser = id => (
+  { type: USER_FETCH, payload: id }
+);
+
+// userEpics.js
+const fetchUserEpic = action$ =>
+  action$.ofType(FETCH_USER)
+    .mergeMap(action =>
+      ajax.getJSON(`https://a/${action.payload}`)
+        .map(user => ({ type: FETCH_USER_SUCCESS,
+                        payload: user }))
+        .catch(err => Observable.of({
+                        type: FETCH_USER_FAILED,
+                        payload: err,
+                        error: true }))
+        .takeUntil(
+          action$
+            .ofType(USER_FETCH_CANCELLED)));
+
+// rootEpic.js - export rootEpic used with the createEpicMiddleware()
+export default combineEpics(
+  fetchUserEpic,
+  fooEpics
+);
+```
+
 So Epics bring about some nice functionality allowing for easily cancellation, throttling, debouncing, taking the latest.
 
 However it's not all roses though since now instead of ES6 generators you need to understand RxJS observables well. I like the power of observables but they can be a bit of a challenge to master, there are a variety of edge cases you can run into.
