@@ -111,7 +111,7 @@ You may perform sync or async business logic and when ready call `allow` or `rej
 
 Calling `allow` or `reject` influences whether the process hook will be run. If `reject` was called then `process` hook will not be run.
 
-Note that you pass an action to `allow` and `reject` as the first argument. You may also call it with `undefined` if you do not wish to have anything propogate further. `action()` or `reject()`. Process hook would still be executed for `action()` but not `reject()`.
+Note that you pass an action to `allow` and `reject` as the first argument. You may also call it with `undefined` if you do not wish to have anything propagate further. `allow()` or `reject()`. Process hook would still be executed for `allow()` but not `reject()`.
 
 You can augment, modify, change actions however you want in your `allow` or `reject` call.
 
