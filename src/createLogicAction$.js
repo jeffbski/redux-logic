@@ -60,7 +60,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
       // let's console.error it and emit as an UNHANDLED_LOGIC_ERROR
       if (actionOrValue instanceof Error && !actionOrValue.type) {
         // eslint-disable-next-line no-console
-        console.error(`unhandled exception in logic named: ${logic.name}`);
+        console.error(`unhandled exception in logic named: ${logic.name}`, actionOrValue);
         return store.dispatch(mapToAction(UNHANDLED_LOGIC_ERROR,
                                           actionOrValue,
                                           true));
