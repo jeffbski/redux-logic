@@ -149,6 +149,8 @@ The `process` hook is only executed if the `validate/transform` hook allow was c
 
 The `process` hook is an ideal place to make async requests and then dispatch the results or an error.
 
+The `dispatch` function returns the value passed into it to make it easy to use in promise chaining.
+
 If you set the `processOptions` object, you can further influence how process behaves streamlining your code.
 
   - `processOptions.dispatchReturn` - if true, then process will use the returned value to dispatch. If you return a promise then it will use the resolve/reject values for dispatching. If you return an observable then it will use its values or error for dispatching. Returning an undefined, promise that resolves to undefined, or observable value of undefined will cause no dispatch. Default is false.
