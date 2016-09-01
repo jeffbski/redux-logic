@@ -97,6 +97,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
         );
       }
       if (!allowMore) { dispatch$.complete(); }
+      return act;
     }
 
     function applyDispatchDefaults(options) {

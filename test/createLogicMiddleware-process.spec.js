@@ -39,13 +39,14 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionBar = { type: 'BAR', a: 1 };
+    let dispatchReturnValue;
     beforeEach(done => {
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(() => done());
       logicA = createLogic({
         type: 'FOO',
         process(deps, dispatch) {
-          dispatch(actionBar);
+          dispatchReturnValue = dispatch(actionBar);
         }
       });
       mw = createLogicMiddleware([logicA]);
@@ -60,6 +61,10 @@ describe('createLogicMiddleware-process', () => {
     it('dispatches actionBar', () => {
       expect(dispatch.calls.length).toBe(1);
       expect(dispatch.calls[0].arguments[0]).toEqual(actionBar);
+    });
+
+    it('dispatch should also return its value', () => {
+      expect(dispatchReturnValue).toEqual(actionBar);
     });
   });
 
