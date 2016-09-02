@@ -238,7 +238,7 @@ const usersFetchLogic = createLogic({
           type: USERS_FETCH_FULFILLED,
           payload: users
         }))
-        .catch((err) => Observable.of({
+        .catch(err => Observable.of({
           type: USERS_FETCH_REJECTED,
           payload: err,
           error: true
@@ -265,7 +265,7 @@ const usersFetchLogic = createLogic({
     failType: USERS_FETCH_REJECTED // apply this action type on err
   },
 
-  process({ getState, action }, dispatch) {
+  process({ getState, action }) {
     // dispatch the values from this returned observable
     // cancel and take latest will abort in-flight xhr requests
     // the delay query param adds arbitrary delay to the response
@@ -292,13 +292,13 @@ Alternatively if you just want to force the action being passed down (not dispat
 
 In most situations the default options `{ useDefault: 'auto' }` is the proper choice.
 
-### dispatch - optional second argument options - multi-dispatching
+### dispatch - multi-dispatching and optional second argument options
 
 The `process`'s `dispatch` function accepts a second `options` argument which changes its behavior slightly. It defaults to `{ allowMore: false }`.
 
 The `allowMore` option controls whether `dispatch` will complete our underlying wrapping observable after being called. By default, allowMore is set to false so that means that `process` is only expecting to be called exactly one time, typically with its results on success or the failure if it errored. Thus it will complete the underlying wrapping observable after dispatch is called. If the logic decided it didn't want to dispatch anything it should be called empty like `dispatch()`.
 
-If you dispatch an observable instead of an action, then the underlying wrapping observable will stay alive until the dispatched observable completes. So dispatching an observable allows long running subscription type dispatching regardles of using allowMore. Process will dispatch each value that comes from the observable continuing until it completes.
+Alternatively if you dispatch an observable instead of an action, then the underlying wrapping observable will stay alive until the dispatched observable completes. So dispatching an observable allows long running subscription type dispatching regardles of using allowMore. Process will dispatch each value that comes from the observable continuing until it completes.
 
 If you don't want to deal with creating observables of your own, the allowMore option allows you to perform multiple dispatch as well. Set `{ allowMore: true }` to keep open the dispatching until you are ready to complete, then call `dispatch` one final time with `{allowMore: false}` or just using the default options `dispatch(action)` or `dispatch()`.
 
