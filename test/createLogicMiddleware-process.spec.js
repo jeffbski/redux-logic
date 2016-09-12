@@ -148,6 +148,7 @@ describe('createLogicMiddleware-process', () => {
           // access xyz of null to cause a runtime error
           const a = null;
           const z = a.xyz; // should cause runtime error
+          return z;
         }
       });
       mw = createLogicMiddleware([logicA]);
