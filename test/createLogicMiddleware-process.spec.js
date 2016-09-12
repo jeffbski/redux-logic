@@ -133,6 +133,40 @@ describe('createLogicMiddleware-process', () => {
     });
   });
 
+  describe('[logicA] process runtime error', () => {
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    beforeEach(done => {
+      next = expect.createSpy();
+      dispatch = expect.createSpy().andCall(() => done());
+      logicA = createLogic({
+        type: 'FOO',
+        process() {
+          // access xyz of null to cause a runtime error
+          const a = null;
+          const z = a.xyz; // should cause runtime error
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw({ dispatch })(next)(actionFoo);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches UNHANDLED_LOGIC_ERROR', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0].type).toBe('UNHANDLED_LOGIC_ERROR');
+      expect(dispatch.calls[0].arguments[0].payload.message).toMatch('Cannot read property');
+      expect(dispatch.calls[0].arguments[0].error).toBe(true);
+    });
+  });
+
   describe('[logicA] process dispatch(x, { allowMore: true }) dispatch(y)', () => {
     let mw;
     let logicA;
