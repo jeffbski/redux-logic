@@ -2,11 +2,13 @@
   "extends": "airbnb-base",
   "rules": {
     "arrow-body-style": [1, "as-needed"],
+    "arrow-parens": 0,
     // don't require dangling commas
     "comma-dangle": 0,
     // causing issues with codacy
     "import/no-unresolved": 0,
     "indent": 0,
+    "no-plusplus": 0,
     "no-shadow": 0,
     // don't require functions to be declared before use
     "no-use-before-define": [2, { "functions": false, "classes": true }],
