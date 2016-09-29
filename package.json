@@ -35,6 +35,7 @@
     "build:umd:min": "cross-env BABEL_ENV=commonjs NODE_ENV=production webpack src/index.js dist/redux-logic.min.js",
     "build:examples": "cross-env BABEL_ENV=commonjs babel-node examples/buildAll.js",
     "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min",
+    "fullbuild:examples": "cross-env BABEL_ENV=commonjs babel-node examples/fullBuildAll.js",
     "prepublish": "npm run clean && npm run check:src && npm run build && check-es3-syntax build-lib/ --kill",
     "docs:clean": "rimraf _book",
     "docs:prepare": "gitbook install",
