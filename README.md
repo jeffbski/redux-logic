@@ -4,7 +4,7 @@ Redux middleware for organizing business logic and action side effects.
 
 > "I wrote the rxjs code so you won't have to."
 
-[![Build Status](https://secure.travis-ci.org/jeffbski/redux-logic.png?branch=master)](http://travis-ci.org/jeffbski/redux-logic) [![Codacy Grade Badge](https://img.shields.io/codacy/grade/3687e7267e6d466b9d226c22b24f0061.svg)](https://www.codacy.com/app/jeff-barczewski/redux-logic) [![Codacy Coverage Badge](https://img.shields.io/codacy/coverage/3687e7267e6d466b9d226c22b24f0061.svg)](https://www.codacy.com/app/jeff-barczewski/redux-logic) [![NPM Version Badge](https://img.shields.io/npm/v/redux-logic.svg)](https://www.npmjs.com/package/redux-logic)
+[![Build Status](https://secure.travis-ci.org/jeffbski/redux-logic.png?branch=master)](http://travis-ci.org/jeffbski/redux-logic) [![Codacy Grade Badge](https://img.shields.io/codacy/grade/3687e7267e6d466b9d226c22b24f0061.svg)](https://www.codacy.com/app/jeff-barczewski/redux-logic) [![Codacy Coverage Badge](https://img.shields.io/codacy/coverage/3687e7267e6d466b9d226c22b24f0061.svg)](https://www.codacy.com/app/jeff-barczewski/redux-logic) [![Known Vulnerabilities](https://snyk.io/test/github/jeffbski/redux-logic/badge.svg)](https://snyk.io/test/github/jeffbski/redux-logic) [![NPM Version Badge](https://img.shields.io/npm/v/redux-logic.svg)](https://www.npmjs.com/package/redux-logic)
 
 
 You declare some behavior that wraps your code providing things like filtering, cancelation, limiting, etc., then write just the simple business logic code that runs in the center.
