@@ -27,6 +27,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
 
   debug('createLogicAction$', name, action);
 
+  // logicAction$ is used for the mw next(action) call
   const logicAction$ = Observable.create(logicActionObs => {
     // create notification subject for process which we dispose of
     // when take(1) or when we are done dispatching
@@ -147,7 +148,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
       const { useDispatch } = applyAllowRejectNextDefaults(options);
       if (shouldDispatch(act, useDispatch)) {
         dispatch(act, { allowMore: true }); // will be completed later
-        logicActionObs.complete();
+        logicActionObs.complete(); // dispatched action, so no next(act)
       } else { // normal next
         postIfDefinedOrComplete(act, logicActionObs);
       }
@@ -192,13 +193,12 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
       }
     }
 
-    /* post if defined, otherwise complete */
+    /* post if defined, then complete */
     function postIfDefinedOrComplete(act, act$) {
       if (act) {
         act$.next(act);
-      } else {
-        act$.complete();
       }
+      act$.complete();
     }
 
     // start use of the action
