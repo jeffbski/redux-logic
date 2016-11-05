@@ -7,7 +7,7 @@ import 'rxjs/add/operator/share';
 import 'rxjs/add/operator/throttleTime';
 import createLogicAction$ from './createLogicAction$';
 
-export default function logicWrapper(logic, store, deps) {
+export default function logicWrapper(logic, store, deps, monitor$) {
   const { type, cancelType, latest, debounce, throttle } = logic;
 
   // cancel on cancelType or if take latest specified
@@ -40,7 +40,7 @@ export default function logicWrapper(logic, store, deps) {
 
     const matchingAction$ =
       limiting(action$.filter(action => matchesType(type, action.type)))
-          .mergeMap(action => createLogicAction$({ action, logic, store, deps, cancel$ }));
+          .mergeMap(action => createLogicAction$({ action, logic, store, deps, cancel$, monitor$ }));
 
     return Observable.merge(
       nonMatchingAction$,

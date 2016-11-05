@@ -18,14 +18,15 @@ const UNHANDLED_LOGIC_ERROR = 'UNHANDLED_LOGIC_ERROR';
 
 const debug = (/* ...args */) => {};
 
-export default function createLogicAction$({ action, logic, store, deps, cancel$ }) {
+export default function createLogicAction$({ action, logic, store, deps, cancel$, monitor$ }) {
   const { getState } = store;
   const { name, process: processFn,
           processOptions: { dispatchReturn,
                             successType, failType } } = logic;
-  const validtrans = logic.validate || logic.transform; // aliases
+  const intercept = logic.validate || logic.transform; // aliases
 
   debug('createLogicAction$', name, action);
+  monitor$.next({ action, name, op: 'begin' });
 
   // logicAction$ is used for the mw next(action) call
   const logicAction$ = Observable.create(logicActionObs => {
@@ -41,28 +42,34 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
     dispatch$.subscribe({
       next: mapAndDispatch,
       complete: () => {
+        monitor$.next({ action, name, op: 'end' });
         cancelled$.complete();
         cancelled$.unsubscribe();
       }
     });
+
+    function storeDispatch(act) {
+      monitor$.next({ action, dispAction: act, op: 'dispatch' });
+      return store.dispatch(act);
+    }
 
     /* eslint-disable consistent-return */
     function mapAndDispatch(actionOrValue) {
       if (typeof actionOrValue === 'undefined') { return; }
       if (failType) {
         if (actionOrValue.useFailType) {
-          return store.dispatch(mapToAction(failType, actionOrValue.value, true));
+          return storeDispatch(mapToAction(failType, actionOrValue.value, true));
         }
         if (actionOrValue instanceof Error) {
-          return store.dispatch(mapToAction(failType, actionOrValue, true));
+          return storeDispatch(mapToAction(failType, actionOrValue, true));
         }
       }
       // failType not defined, but we have an error with no action type
       // let's console.error it and emit as an UNHANDLED_LOGIC_ERROR
       if (actionOrValue instanceof Error && !actionOrValue.type) {
         // eslint-disable-next-line no-console
-        console.error(`unhandled exception in logic named: ${logic.name}`, actionOrValue);
-        return store.dispatch(mapToAction(UNHANDLED_LOGIC_ERROR,
+        console.error(`unhandled exception in logic named: ${name}`, actionOrValue);
+        return storeDispatch(mapToAction(UNHANDLED_LOGIC_ERROR,
                                           actionOrValue,
                                           true));
       }
@@ -70,7 +77,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
       const act = (successType) ?
             mapToAction(successType, actionOrValue, false) :
             actionOrValue;
-      return store.dispatch(act);
+      return storeDispatch(act);
     }
     /* eslint-enable consistent-return */
 
@@ -147,9 +154,11 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
     function handleNextOrDispatch(shouldProcess, act, options) {
       const { useDispatch } = applyAllowRejectNextDefaults(options);
       if (shouldDispatch(act, useDispatch)) {
+        monitor$.next({ action, dispAction: act, name, shouldProcess, op: 'nextDisp' });
         dispatch(act, { allowMore: true }); // will be completed later
         logicActionObs.complete(); // dispatched action, so no next(act)
       } else { // normal next
+        monitor$.next({ action, nextAction: act, name, shouldProcess, op: 'next' });
         postIfDefinedOrComplete(act, logicActionObs);
       }
       // unless rejected, we will process even if allow/next dispatched
@@ -203,7 +212,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
 
     // start use of the action
     function start() {
-      validtrans(depObj, allow, reject);
+      intercept(depObj, allow, reject);
     }
 
     start();

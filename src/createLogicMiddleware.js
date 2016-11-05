@@ -27,7 +27,8 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
     throw new Error('createLogicMiddleware needs to be called with an array of logic items');
   }
 
-  const actionSrc$ = new Subject();
+  const actionSrc$ = new Subject(); // mw action stream
+  const monitor$ = new Subject(); // monitor all activity
   let savedStore;
   let savedNext;
   let actionEnd$;
@@ -41,18 +42,22 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
       savedNext = next;
       const { action$, sub, logicCount: cnt } =
             applyLogic(arrLogic, savedStore, savedNext,
-                       logicSub, actionSrc$, deps, logicCount);
+                       logicSub, actionSrc$, deps, logicCount,
+                       monitor$);
       actionEnd$ = action$;
       logicSub = sub;
       logicCount = cnt;
 
       return action => {
         debug('starting off', action);
+        monitor$.next({ action, op: 'top' });
         actionSrc$.next(action);
         return action;
       };
     };
   }
+
+  mw.monitor$ = monitor$; // observable to monitor flow in logic
 
   /**
     add logic after createStore has been run. Useful for dynamically
@@ -63,7 +68,7 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
   mw.addLogic = function addLogic(arrNewLogic) {
     const { action$, sub, logicCount: cnt } =
           applyLogic(arrNewLogic, savedStore, savedNext,
-                     logicSub, actionEnd$, deps, logicCount);
+                     logicSub, actionEnd$, deps, logicCount, monitor$);
     actionEnd$ = action$;
     logicSub = sub;
     logicCount = cnt;
@@ -80,7 +85,7 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
   mw.replaceLogic = function replaceLogic(arrRepLogic) {
     const { action$, sub, logicCount: cnt } =
           applyLogic(arrRepLogic, savedStore, savedNext,
-                     logicSub, actionSrc$, deps, 0);
+                     logicSub, actionSrc$, deps, 0, monitor$);
     actionEnd$ = action$;
     logicSub = sub;
     logicCount = cnt;
@@ -92,19 +97,20 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
 }
 
 function applyLogic(arrLogic, store, next, sub, actionIn$, deps,
-                    startLogicCount) {
+                    startLogicCount, monitor$) {
   if (!store || !next) { throw new Error('store is not defined'); }
 
   if (sub) { sub.unsubscribe(); }
 
   const wrappedLogic = arrLogic.map((logic, idx) => {
     const namedLogic = naming(logic, idx + startLogicCount);
-    return wrapper(namedLogic, store, deps);
+    return wrapper(namedLogic, store, deps, monitor$);
   });
   const actionOut$ = wrappedLogic.reduce((acc$, wep) => wep(acc$),
                                          actionIn$);
   const newSub = actionOut$.subscribe(action => {
     debug('actionEnd$', action);
+    monitor$.next({ action, op: 'bottom' });
     const result = next(action);
     debug('result', result);
   });
