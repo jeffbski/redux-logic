@@ -35,6 +35,8 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
     const cancelled$ = (new Subject())
           .take(1);
     cancel$.subscribe(cancelled$); // connect cancelled$ to cancel$
+    cancelled$
+      .subscribe(() => monitor$.next({ action, name, op: 'cancelled' }));
 
     const dispatch$ = (new Subject())
           .mergeAll()
@@ -158,9 +160,14 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
         dispatch(act, { allowMore: true }); // will be completed later
         logicActionObs.complete(); // dispatched action, so no next(act)
       } else { // normal next
-        monitor$.next({ action, nextAction: act, name, shouldProcess, op: 'next' });
+        if (act) {
+          monitor$.next({ action, nextAction: act, name, shouldProcess, op: 'next' });
+        } else { // act is undefined, filtered
+          monitor$.next({ action, name, shouldProcess, op: 'filtered' });
+        }
         postIfDefinedOrComplete(act, logicActionObs);
       }
+
       // unless rejected, we will process even if allow/next dispatched
       if (shouldProcess) { // processing, was an accept
         // delay process slightly so state can be updated

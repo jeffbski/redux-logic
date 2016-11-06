@@ -41,13 +41,16 @@ describe('createLogicMiddleware-add-replace', () => {
     });
 
     describe('mw.addLogic([logic1])', () => {
+      let monArr = [];
       let logicCount;
       let next;
       let storeFn;
       const action1 = { type: 'FOO' };
       const action2 = { type: 'FOO', tid: 1 };
       beforeEach(done => {
-        next = expect.createSpy().andCall(() => done());
+        monArr = [];
+        mw.monitor$.subscribe(x => monArr.push(x));
+        next = expect.createSpy();
         storeFn = mw({})(next);
         const logic = createLogic({
           type: 'FOO',
@@ -58,6 +61,7 @@ describe('createLogicMiddleware-add-replace', () => {
         const result = mw.addLogic([logic]);
         logicCount = result.logicCount;
         storeFn(action1);
+        mw.whenComplete(done);
       });
 
       it('should return count of 1', () => {
@@ -68,16 +72,33 @@ describe('createLogicMiddleware-add-replace', () => {
         expect(next.calls.length).toBe(1);
         expect(next.calls[0].arguments[0]).toEqual(action2);
       });
+
+      it('mw.monitor$ should track flow', () => {
+        expect(monArr).toEqual([
+          { action: { type: 'FOO' }, op: 'top' },
+          { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+          { action: { type: 'FOO' },
+            nextAction: { type: 'FOO', tid: 1 },
+            name: 'L(FOO)-0',
+            shouldProcess: true,
+            op: 'next' },
+          { action: { type: 'FOO', tid: 1 }, op: 'bottom' },
+          { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+        ]);
+      });
     });
 
     describe('mw.replaceLogic([logic1])', () => {
+      let monArr = [];
       let logicCount;
       let next;
       let storeFn;
       const action1 = { type: 'FOO' };
       const action2 = { type: 'FOO', tid: 1 };
       beforeEach(done => {
-        next = expect.createSpy().andCall(() => done());
+        monArr = [];
+        mw.monitor$.subscribe(x => monArr.push(x));
+        next = expect.createSpy();
         storeFn = mw({})(next);
         const logic = createLogic({
           type: 'FOO',
@@ -88,6 +109,7 @@ describe('createLogicMiddleware-add-replace', () => {
         const result = mw.replaceLogic([logic]);
         logicCount = result.logicCount;
         storeFn(action1);
+        mw.whenComplete(done);
       });
 
       it('should return count of 1', () => {
@@ -98,8 +120,22 @@ describe('createLogicMiddleware-add-replace', () => {
         expect(next.calls.length).toBe(1);
         expect(next.calls[0].arguments[0]).toEqual(action2);
       });
-    });
 
+      it('mw.monitor$ should track flow', () => {
+        expect(monArr).toEqual([
+          { action: { type: 'FOO' }, op: 'top' },
+          { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+          { action: { type: 'FOO' },
+            nextAction: { type: 'FOO', tid: 1 },
+            name: 'L(FOO)-0',
+            shouldProcess: true,
+            op: 'next' },
+          { action: { type: 'FOO', tid: 1 }, op: 'bottom' },
+          { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+        ]);
+      });
+
+    });
   });
 
   describe('createLogicMiddleware([logicA])', () => {
@@ -135,16 +171,19 @@ describe('createLogicMiddleware-add-replace', () => {
     });
 
     describe('mw.addLogic([logic1])', () => {
+      let monArr = [];
       let logicCount;
       let next;
       let storeFn;
       const action1 = { type: 'FOO' };
       const actionA2 = { type: 'FOO', a: 1, tid: 2 };
       beforeEach(done => {
+        monArr = [];
         // reset mw
         mw = createLogicMiddleware([logicA]);
+        mw.monitor$.subscribe(x => monArr.push(x));
 
-        next = expect.createSpy().andCall(() => done());
+        next = expect.createSpy();
         storeFn = mw({})(next);
         const logic = createLogic({
           type: 'FOO',
@@ -158,6 +197,7 @@ describe('createLogicMiddleware-add-replace', () => {
         const result = mw.addLogic([logic]);
         logicCount = result.logicCount;
         storeFn(action1);
+        mw.whenComplete(done);
       });
 
       it('should return count of 2', () => {
@@ -168,19 +208,43 @@ describe('createLogicMiddleware-add-replace', () => {
         expect(next.calls.length).toBe(1);
         expect(next.calls[0].arguments[0]).toEqual(actionA2);
       });
+
+      it('mw.monitor$ should track flow', () => {
+        expect(monArr).toEqual([
+          { action: { type: 'FOO' }, op: 'top' },
+          { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+          { action: { type: 'FOO' },
+            nextAction: { type: 'FOO', a: 1 },
+            name: 'L(FOO)-0',
+            shouldProcess: true,
+            op: 'next' },
+          { action: { type: 'FOO', a: 1 }, name: 'L(FOO)-1', op: 'begin' },
+          { action: { type: 'FOO', a: 1 },
+            nextAction: { type: 'FOO', a: 1, tid: 2 },
+            name: 'L(FOO)-1',
+            shouldProcess: true,
+            op: 'next' },
+          { action: { type: 'FOO', a: 1, tid: 2 }, op: 'bottom' },
+          { action: { type: 'FOO', a: 1 }, name: 'L(FOO)-1', op: 'end' },
+          { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+        ]);
+      });
     });
 
     describe('mw.replaceLogic([logic1])', () => {
+      let monArr = [];
       let logicCount;
       let next;
       let storeFn;
       const action1 = { type: 'FOO' };
       const action2 = { type: 'FOO', tid: 2 };
       beforeEach(done => {
+        monArr = [];
         // reset mw
         mw = createLogicMiddleware([logicA]);
+        mw.monitor$.subscribe(x => monArr.push(x));
 
-        next = expect.createSpy().andCall(() => done());
+        next = expect.createSpy();
         storeFn = mw({})(next);
         const logic = createLogic({
           type: 'FOO',
@@ -194,6 +258,7 @@ describe('createLogicMiddleware-add-replace', () => {
         const result = mw.replaceLogic([logic]);
         logicCount = result.logicCount;
         storeFn(action1);
+        mw.whenComplete(done);
       });
 
       it('should return count of 1', () => {
@@ -204,6 +269,21 @@ describe('createLogicMiddleware-add-replace', () => {
         expect(next.calls.length).toBe(1);
         expect(next.calls[0].arguments[0]).toEqual(action2);
       });
+
+      it('mw.monitor$ should track flow', () => {
+        expect(monArr).toEqual([
+          { action: { type: 'FOO' }, op: 'top' },
+          { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+          { action: { type: 'FOO' },
+            nextAction: { type: 'FOO', tid: 2 },
+            name: 'L(FOO)-0',
+            shouldProcess: true,
+            op: 'next' },
+          { action: { type: 'FOO', tid: 2 }, op: 'bottom' },
+          { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+        ]);
+      });
+
     });
   });
 });

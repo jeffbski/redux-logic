@@ -1,7 +1,13 @@
 import { Subject } from 'rxjs/Subject';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import 'rxjs/add/operator/scan';
+import 'rxjs/add/operator/takeWhile';
 import wrapper from './logicWrapper';
 
 const debug = (/* ...args */) => {};
+const OP_INIT = 'init'; // initial monitor op before anything else
+
+function identity(x) { return x; }
 
 /**
    Builds a redux middleware for handling logic (created with
@@ -29,6 +35,30 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
 
   const actionSrc$ = new Subject(); // mw action stream
   const monitor$ = new Subject(); // monitor all activity
+  const lastPending$ = new BehaviorSubject({ op: OP_INIT });
+  monitor$
+    .scan((acc, x) => { // append a pending logic count
+      let pending = acc.pending || 0;
+      switch (x.op) { // eslint-disable-line default-case
+        case 'top' :
+        case 'begin' :
+          pending += 1;
+          break;
+        case 'end' :
+        case 'bottom' :
+        case 'nextDisp' :
+        case 'filtered' :
+        case 'cancelled' :
+          pending -= 1;
+          break;
+      }
+      return {
+        ...x,
+        pending
+      };
+    }, { pending: 0 })
+    .subscribe(lastPending$); // pipe to lastPending
+
   let savedStore;
   let savedNext;
   let actionEnd$;
@@ -57,7 +87,27 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
     };
   }
 
-  mw.monitor$ = monitor$; // observable to monitor flow in logic
+  /**
+    observable to monitor flow in logic
+    */
+  mw.monitor$ = monitor$;
+
+  /**
+     Resolve promise when all in-flight actions are complete passing
+     through fn if provided
+     @param {function} fn optional fn() which is invoked on completion
+     @return {promise} promise resolves when all are complete
+    */
+  mw.whenComplete = function whenComplete(fn = identity) {
+    return lastPending$
+      .filter(x => !logicCount || x.op !== OP_INIT) // no logic or not init
+      // .do(x => console.log('wc', x))
+      .takeWhile(x => x.pending)
+      .map((/* x */) => undefined) // not passing along anything
+      .toPromise()
+      .then(fn);
+  };
+
 
   /**
     add logic after createStore has been run. Useful for dynamically
@@ -110,8 +160,9 @@ function applyLogic(arrLogic, store, next, sub, actionIn$, deps,
                                          actionIn$);
   const newSub = actionOut$.subscribe(action => {
     debug('actionEnd$', action);
-    monitor$.next({ action, op: 'bottom' });
     const result = next(action);
+    // at this point, action is the transformed action, not original
+    monitor$.next({ action, op: 'bottom' });
     debug('result', result);
   });
 
