@@ -422,7 +422,7 @@ describe('createLogicMiddleware-process', () => {
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 1) {
-          //done();
+          // done();
           // use whenComplete to trigger done
         }
       }
@@ -488,7 +488,7 @@ describe('createLogicMiddleware-process', () => {
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 2) {
-          //done();
+          // done();
           // whenComplete triggers done
         }
       }
@@ -557,7 +557,7 @@ describe('createLogicMiddleware-process', () => {
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 2) {
-          //done();
+          // done();
           // whenComplete triggers done
         }
       }
@@ -629,7 +629,7 @@ describe('createLogicMiddleware-process', () => {
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 3) {
-          //done();
+          // done();
           // use whenComplete to trigger done
         }
       }
@@ -790,7 +790,7 @@ describe('createLogicMiddleware-process', () => {
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 5) {
-          //done();
+          // done();
           // use whenComplete to trigger done
         }
       }
@@ -1310,7 +1310,7 @@ describe('createLogicMiddleware-process', () => {
           dispatchReturn: true
         },
         process() {
-          return; // undefined
+          return; // eslint-disable-line no-useless-return
         }
       });
       mw = createLogicMiddleware([logicA]);
@@ -2045,7 +2045,7 @@ describe('createLogicMiddleware-process', () => {
           successType: 'BAR'
         },
         process() {
-          return; // undefined
+          return; // eslint-disable-line no-useless-return
         }
       });
       mw = createLogicMiddleware([logicA]);
@@ -2500,7 +2500,7 @@ describe('createLogicMiddleware-process', () => {
           successType: actionBarFn
         },
         process() {
-          return; // undefined
+          return; // eslint-disable-line no-useless-return
         }
       });
       mw = createLogicMiddleware([logicA]);

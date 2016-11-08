@@ -29,7 +29,7 @@ describe('createLogicMiddleware', () => {
       mw.monitor$.subscribe(x => monArr.push(x));
       const next = expect.createSpy();
       const action = { type: 'FOO' };
-      const result = mw({})(next)(action);
+      mw({})(next)(action);
       expect(monArr).toEqual([
         { action: { type: 'FOO' }, op: 'top' },
         { action: { type: 'FOO' }, op: 'bottom' }
