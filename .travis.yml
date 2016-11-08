@@ -1,16 +1,17 @@
 language: node_js
 node_js:
   - "4"
-  - "5"
   - "6"
+  - "7"
+  - node
 script:
   - npm run check:src
   - npm run build
   - npm run check:examples
   - npm run test:cov-codacy
 branches:
-  only:
-    - master
+  except:
+    - experimental
 cache:
   directories:
   - $HOME/.npm
