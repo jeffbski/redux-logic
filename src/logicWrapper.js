@@ -40,7 +40,9 @@ export default function logicWrapper(logic, store, deps, monitor$) {
 
     const matchingAction$ =
       limiting(action$.filter(action => matchesType(type, action.type)))
-          .mergeMap(action => createLogicAction$({ action, logic, store, deps, cancel$, monitor$ }));
+        .mergeMap(action =>
+          createLogicAction$({ action, logic, store, deps,
+                               cancel$, monitor$ }));
 
     return Observable.merge(
       nonMatchingAction$,
