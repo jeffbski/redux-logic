@@ -124,7 +124,7 @@ describe('createLogicMiddleware', () => {
           op: 'dispatch' },
         { action: { type: 'FOO' },
           name: 'L(FOO)-0',
-          op: 'end',
+          op: 'end'
          }
       ]);
     });
@@ -433,7 +433,7 @@ describe('createLogicMiddleware', () => {
           op: 'bottom' },
         { action: { type: 'FOO', allowMe: true },
           name: 'L(FOO)-0',
-          op: 'end',
+          op: 'end'
          }
       ]);
     });
@@ -493,7 +493,7 @@ describe('createLogicMiddleware', () => {
           op: 'bottom' },
         { action: { type: 'FOO', allowMe: false },
           name: 'logicA',
-          op: 'end',
+          op: 'end'
          }
       ]);
     });
