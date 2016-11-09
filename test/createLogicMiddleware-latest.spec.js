@@ -74,7 +74,6 @@ describe('createLogicMiddleware-latest', () => {
   });
 
   describe('[logicA] latest=falsey process', () => {
-    let monArr = [];
     let mw;
     let logicA;
     let next;
@@ -84,7 +83,6 @@ describe('createLogicMiddleware-latest', () => {
     const actionResultFoo1 = { type: 'BAR', id: 1 };
     const actionResultFoo2 = { type: 'BAR', id: 2 };
     beforeEach(done => {
-      monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
@@ -94,16 +92,13 @@ describe('createLogicMiddleware-latest', () => {
       logicA = createLogic({
         type: 'FOO',
         process({ action }, dispatch) {
-          setTimeout(() => {
-            dispatch({
-              ...action,
-              type: 'BAR'
-            });
-          }, 0);
+          dispatch({
+            ...action,
+            type: 'BAR'
+          });
         }
       });
       mw = createLogicMiddleware([logicA]);
-      mw.monitor$.subscribe(x => monArr.push(x));
       const storeFn = mw({ dispatch })(next);
       storeFn(actionFoo1);
       storeFn(actionFoo2);
@@ -119,34 +114,6 @@ describe('createLogicMiddleware-latest', () => {
       expect(dispatch.calls.length).toBe(2);
       expect(dispatch.calls[0].arguments[0]).toEqual(actionResultFoo1);
       expect(dispatch.calls[1].arguments[0]).toEqual(actionResultFoo2);
-    });
-
-    it('mw.monitor$ should track flow', () => {
-      expect(monArr).toEqual([
-        { action: { type: 'FOO', id: 1 }, op: 'top' },
-        { action: { type: 'FOO', id: 1 }, name: 'L(FOO)-0', op: 'begin' },
-        { action: { type: 'FOO', id: 1 },
-          nextAction: { type: 'FOO', id: 1 },
-          name: 'L(FOO)-0',
-          shouldProcess: true,
-          op: 'next' },
-        { action: { type: 'FOO', id: 1 }, op: 'bottom' },
-        { action: { type: 'FOO', id: 2 }, op: 'top' },
-        { action: { type: 'FOO', id: 2 }, name: 'L(FOO)-0', op: 'begin' },
-        { action: { type: 'FOO', id: 2 },
-          nextAction: { type: 'FOO', id: 2 },
-          name: 'L(FOO)-0',
-          shouldProcess: true,
-          op: 'next' },
-        { action: { type: 'FOO', id: 2 }, op: 'bottom' },
-        { action: { type: 'FOO', id: 1 },
-          dispAction: { type: 'BAR', id: 1 },
-          op: 'dispatch' },
-        { action: { type: 'FOO', id: 1 }, name: 'L(FOO)-0', op: 'end' },
-        { action: { type: 'FOO', id: 2 },
-          dispAction: { type: 'BAR', id: 2 },
-          op: 'dispatch' }
-      ]);
     });
 
     it('mw.whenComplete(fn) should be called when complete', (done) => {

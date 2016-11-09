@@ -142,6 +142,12 @@ describe('createLogicMiddleware', () => {
       mw.whenComplete().then(done);
     });
 
+    it('delayed mw.whenComplete() should still resolve to promise', (done) => {
+      setTimeout(() => {
+        mw.whenComplete().then(done);
+      }, 100);
+    });
+
   });
 
   describe('[logicA] type is arr of strings, match any', () => {
@@ -1335,6 +1341,12 @@ describe('createLogicMiddleware', () => {
 
     it('mw.whenComplete() should resolve to promise', (done) => {
       mw.whenComplete().then(done);
+    });
+
+    it('delayed mw.whenComplete() should still resolve to promise', (done) => {
+      setTimeout(() => {
+        mw.whenComplete().then(done);
+      }, 100);
     });
 
   });
