@@ -15,6 +15,8 @@ Contents:
    object to perform isolated testing. Use the validate, transform,
    and process properties of the returned logic object */
 const fooLogic = createLogic({
+  // optional name - used in monitor$ and error messages, the default name assigned is L(TYPE)-N where TYPE is the action type(s) and N is the index in the logic array
+
   // filtering/canceling
   type: T, // required string, regex, array of str/regex, use '*' for all
   cancelType: CT, // string, regex, array of strings or regexes
@@ -82,6 +84,17 @@ logicMiddleware.addLogic(arrNewLogic);
 // replacing logic, logic state is reset but in-flight logic
 // should still complete properly
 logicMiddleware.replaceLogic(arrReplacementLogic);
+
+// for server-side use, runs optional fn and returns promise
+// when all in-flight processing/loading has completed.
+// Use it after performing any required store.dispatch
+store.dispatch(ROUTE_CHANGE); // triggers async loading
+return logicMiddleware.whenComplete(() => { // returns promise
+  return store.getState(); // can serialize store, loading was done
+});
+
+// observable for monitoring the internal operations, see advanced
+logicMiddleware.monitor$
 ```
 
 ## Execution phase hooks - validate, transform, process
@@ -341,4 +354,52 @@ process({ getState, action }, dispatch) {
   });
   dispatch(ob$);
 }
+```
+
+### Monitoring redux logic internal operations
+
+For debugging or gaining insight into the internal operations of redux-logic, you may subscribe to the monitor$ observable. This could also be used for developing developer tools.
+
+```js
+logicMiddleware.monitor$.subscribe(
+  x => console.log(x)
+;)
+```
+
+The structure emitted by the observable is an object with properties:
+
+ - action - the original action
+ - op - what is occurring in redux-logic, one of the following values
+   - top - top of the redux-logic before any logic
+   - bottom - after all redux-logic processing handed to next middleware/reducers
+   - begin - enter a logic
+   - next - validate or transform intercept has passed to the next logic/middleware
+   - nextDisp - validate or transform intercept was successful but needs to be dispatched
+   - filtered - validate or transform passed undefined so action is filtered and not passed to other logic/middleware/reducers
+   - cancelled - processing was cancelled either from cancel type or take latest
+   - dispatch - dispAction was dispatched to store
+   - end - everything has completed for this logic including async processing
+ - name - name of the logic operating on this action
+ - nextAction - action being passed down to next logic/middleware/reducer
+ - shouldProcess - true/false on op:next indicating whether validation was successful and process should be invoked
+ - dispAction - action to dispatch to store
+
+
+For example:
+
+```js
+{ action: { type: 'FOO' }, op: 'top' }
+{ action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' }
+{ action: { type: 'FOO' }
+  nextAction: { type: 'FOO', payload: 42 }
+  name: 'L(FOO)-0',
+  shouldProcess: true,
+  op: 'next' }
+{ nextAction: { type: 'FOO', payload: 42 }, op: 'bottom' }
+{ action: { type: 'FOO' },
+  dispAction: { type: 'BAR', payload: 42 },
+  op: 'dispatch' },
+{ action: { type: 'FOO' },
+  name: 'L(FOO)-0',
+  op: 'end' }
 ```
