@@ -82,7 +82,7 @@ describe('createLogicMiddleware-add-replace', () => {
             name: 'L(FOO)-0',
             shouldProcess: true,
             op: 'next' },
-          { action: { type: 'FOO', tid: 1 }, op: 'bottom' },
+          { nextAction: { type: 'FOO', tid: 1 }, op: 'bottom' },
           { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
         ]);
       });
@@ -130,7 +130,7 @@ describe('createLogicMiddleware-add-replace', () => {
             name: 'L(FOO)-0',
             shouldProcess: true,
             op: 'next' },
-          { action: { type: 'FOO', tid: 1 }, op: 'bottom' },
+          { nextAction: { type: 'FOO', tid: 1 }, op: 'bottom' },
           { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
         ]);
       });
@@ -224,7 +224,7 @@ describe('createLogicMiddleware-add-replace', () => {
             name: 'L(FOO)-1',
             shouldProcess: true,
             op: 'next' },
-          { action: { type: 'FOO', a: 1, tid: 2 }, op: 'bottom' },
+          { nextAction: { type: 'FOO', a: 1, tid: 2 }, op: 'bottom' },
           { action: { type: 'FOO', a: 1 }, name: 'L(FOO)-1', op: 'end' },
           { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
         ]);
@@ -279,7 +279,7 @@ describe('createLogicMiddleware-add-replace', () => {
             name: 'L(FOO)-0',
             shouldProcess: true,
             op: 'next' },
-          { action: { type: 'FOO', tid: 2 }, op: 'bottom' },
+          { nextAction: { type: 'FOO', tid: 2 }, op: 'bottom' },
           { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
         ]);
       });

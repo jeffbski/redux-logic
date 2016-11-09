@@ -32,7 +32,7 @@ describe('createLogicMiddleware', () => {
       mw({})(next)(action);
       expect(monArr).toEqual([
         { action: { type: 'FOO' }, op: 'top' },
-        { action: { type: 'FOO' }, op: 'bottom' }
+        { nextAction: { type: 'FOO' }, op: 'bottom' }
       ]);
     });
 
@@ -110,7 +110,7 @@ describe('createLogicMiddleware', () => {
     it('mw.monitor$ should track flow', () => {
       expect(monArr).toEqual([
         { action: { type: 'CAT' }, op: 'top' },
-        { action: { type: 'CAT' }, op: 'bottom' },
+        { nextAction: { type: 'CAT' }, op: 'bottom' },
         { action: { type: 'FOO' }, op: 'top' },
         { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
         { action: { type: 'FOO' },
@@ -118,7 +118,7 @@ describe('createLogicMiddleware', () => {
           name: 'L(FOO)-0',
           shouldProcess: true,
           op: 'next' },
-        { action: { type: 'FOO', allowed: ['a'] }, op: 'bottom' },
+        { nextAction: { type: 'FOO', allowed: ['a'] }, op: 'bottom' },
         { action: { type: 'FOO' },
           dispAction: { type: 'BAR', allowed: ['a'] },
           op: 'dispatch' },
@@ -429,7 +429,7 @@ describe('createLogicMiddleware', () => {
           name: 'L(FOO)-0',
           shouldProcess: true,
           op: 'next' },
-        { action: { type: 'FOO', allowMe: true, allowed: ['a'] },
+        { nextAction: { type: 'FOO', allowMe: true, allowed: ['a'] },
           op: 'bottom' },
         { action: { type: 'FOO', allowMe: true },
           name: 'L(FOO)-0',
@@ -489,7 +489,7 @@ describe('createLogicMiddleware', () => {
           name: 'logicA',
           shouldProcess: false,
           op: 'next' },
-        { action: { type: 'FOO', allowMe: false, rejected: ['a'] },
+        { nextAction: { type: 'FOO', allowMe: false, rejected: ['a'] },
           op: 'bottom' },
         { action: { type: 'FOO', allowMe: false },
           name: 'logicA',
@@ -674,7 +674,7 @@ describe('createLogicMiddleware', () => {
           name: 'L(FOO)-0',
           shouldProcess: true,
           op: 'next' },
-        { action: { type: 'FOO', allowMe: true, allowed: ['a'] },
+        { nextAction: { type: 'FOO', allowMe: true, allowed: ['a'] },
           op: 'bottom' },
         { action: { type: 'FOO', allowMe: true },
           dispAction:
@@ -1106,7 +1106,7 @@ describe('createLogicMiddleware', () => {
           name: 'L(FOO)-0',
           shouldProcess: false,
           op: 'next' },
-        { action: { type: 'FOO', allowMe: false, rejected: ['a'] },
+        { nextAction: { type: 'FOO', allowMe: false, rejected: ['a'] },
           op: 'bottom' },
         { action: { type: 'FOO', allowMe: false },
           name: 'L(FOO)-0',
@@ -1320,7 +1320,7 @@ describe('createLogicMiddleware', () => {
           name: 'L(BAR,FOO)-1',
           shouldProcess: true,
           op: 'next' },
-        { action: { type: 'FOO', trans: ['a', 'b'] }, op: 'bottom' },
+        { nextAction: { type: 'FOO', trans: ['a', 'b'] }, op: 'bottom' },
         { action: { type: 'FOO', trans: ['a'] },
           name: 'L(BAR,FOO)-1',
           op: 'end' },

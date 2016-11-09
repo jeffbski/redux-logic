@@ -162,7 +162,7 @@ function applyLogic(arrLogic, store, next, sub, actionIn$, deps,
     debug('actionEnd$', action);
     const result = next(action);
     // at this point, action is the transformed action, not original
-    monitor$.next({ action, op: 'bottom' });
+    monitor$.next({ nextAction: action, op: 'bottom' });
     debug('result', result);
   });
 
