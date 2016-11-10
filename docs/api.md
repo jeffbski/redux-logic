@@ -74,15 +74,17 @@ const fooLogic = createLogic({
 });
 
 const logicMiddleware = createLogicMiddleware(
-  arrLogic, // array of logic items
+  arrLogic, // array of logic items, no duplicate refs to same logic
   deps   // optional injected deps/config, supplied to logic
 );
 
 // dynamically add logic later at runtime, keeping logic state
+// new logic should be unique and not refs to previous logic
 logicMiddleware.addLogic(arrNewLogic);
 
 // replacing logic, logic state is reset but in-flight logic
 // should still complete properly
+// If arrReplacementLogic should be unique
 logicMiddleware.replaceLogic(arrReplacementLogic);
 
 // for server-side use, runs optional fn and returns promise

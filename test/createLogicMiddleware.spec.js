@@ -58,6 +58,121 @@ describe('createLogicMiddleware', () => {
     });
   });
 
+  describe('createLogicMiddleware(duplicateArray)', () => {
+    it('throws an error', () => {
+      const fooLogic = createLogic({ type: 'FOO' });
+      const barLogic = createLogic({ type: 'BAR' });
+      const arrLogic = [
+        fooLogic,
+        barLogic,
+        fooLogic,
+      ];
+      expect(() => {
+        createLogicMiddleware(arrLogic);
+      }).toThrow('duplicate logic');
+    });
+  });
+
+  describe('createLogicMiddleware(duplicateArray2)', () => {
+    it('throws an error', () => {
+      const fooLogic = createLogic({ type: 'FOO' });
+      const barLogic = createLogic({ type: 'BAR' });
+      const arrLogic = [
+        fooLogic,
+        barLogic,
+        fooLogic,
+        barLogic,
+      ];
+      expect(() => {
+        createLogicMiddleware(arrLogic);
+      }).toThrow('duplicate logic');
+    });
+  });
+
+  describe('createLogicMiddleware(similarArray)', () => {
+    it('is allowed', () => {
+      const fooLogic = createLogic({ type: 'FOO' });
+      const foo2Logic = createLogic({ type: 'FOO' });
+      const arrLogic = [
+        fooLogic,
+        foo2Logic
+      ];
+      createLogicMiddleware(arrLogic);
+    });
+  });
+
+  describe('mw.addLogic(duplicateArray)', () => {
+    it('throws an error', () => {
+      const dispatch = expect.createSpy();
+      const next = expect.createSpy();
+      const fooLogic = createLogic({ type: 'FOO' });
+      const barLogic = createLogic({ type: 'BAR' });
+      const arrLogic = [
+        fooLogic,
+        barLogic
+      ];
+      const mw = createLogicMiddleware(arrLogic);
+      mw({ dispatch })(next); // simulate store creation
+      expect(() => {
+        mw.addLogic([fooLogic]); // duplicates existing
+      }).toThrow('duplicate logic');
+    });
+  });
+
+  describe('mw.addLogic(duplicateArray2)', () => {
+    it('throws an error', () => {
+      const dispatch = expect.createSpy();
+      const next = expect.createSpy();
+      const fooLogic = createLogic({ type: 'FOO' });
+      const barLogic = createLogic({ type: 'BAR' });
+      const arrLogic = [
+        fooLogic,
+        barLogic,
+        fooLogic
+      ];
+      const mw = createLogicMiddleware();
+      mw({ dispatch })(next); // simulate store creation
+      expect(() => {
+        mw.addLogic(arrLogic); // has duplicates
+      }).toThrow('duplicate logic');
+    });
+  });
+
+  describe('mw.replaceLogic(matchesOld)', () => {
+    it('is allowed', () => {
+      const dispatch = expect.createSpy();
+      const next = expect.createSpy();
+      const fooLogic = createLogic({ type: 'FOO' });
+      const foo2Logic = createLogic({ type: 'FOO' });
+      const arrLogic = [
+        fooLogic,
+        foo2Logic
+      ];
+      const mw = createLogicMiddleware(arrLogic);
+      mw({ dispatch })(next); // simulate store creation
+      mw.replaceLogic(arrLogic); // matching old is fine
+    });
+  });
+
+  describe('mw.replaceLogic(duplicateArray)', () => {
+    it('throws an error', () => {
+      const dispatch = expect.createSpy();
+      const next = expect.createSpy();
+      const fooLogic = createLogic({ type: 'FOO' });
+      const barLogic = createLogic({ type: 'BAR' });
+      const arrLogic = [
+        fooLogic,
+        barLogic,
+        fooLogic
+      ];
+      const mw = createLogicMiddleware();
+      mw({ dispatch })(next); // simulate store creation
+      expect(() => {
+        mw.replaceLogic(arrLogic); // has duplicates
+      }).toThrow('duplicate logic');
+    });
+  });
+
   describe('[logicA] type is string, match only', () => {
     let monArr = [];
     let mw;

@@ -32,6 +32,10 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
   if (!Array.isArray(arrLogic)) {
     throw new Error('createLogicMiddleware needs to be called with an array of logic items');
   }
+  const duplicateLogic = findDuplicates(arrLogic);
+  if (duplicateLogic.length) {
+    throw new Error(`duplicate logic, indexes: ${duplicateLogic}`);
+  }
 
   const actionSrc$ = new Subject(); // mw action stream
   const monitor$ = new Subject(); // monitor all activity
@@ -64,6 +68,7 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
   let actionEnd$;
   let logicSub;
   let logicCount = 0; // used for implicit naming
+  let savedLogicArr = arrLogic; // keep for uniqueness check
 
   function mw(store) {
     savedStore = store;
@@ -116,12 +121,18 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
     @return {object} object with a property logicCount set to the count of logic items
    */
   mw.addLogic = function addLogic(arrNewLogic) {
+    const combinedLogic = savedLogicArr.concat(arrNewLogic);
+    const duplicateLogic = findDuplicates(combinedLogic);
+    if (duplicateLogic.length) {
+      throw new Error(`duplicate logic, indexes: ${duplicateLogic}`);
+    }
     const { action$, sub, logicCount: cnt } =
           applyLogic(arrNewLogic, savedStore, savedNext,
                      logicSub, actionEnd$, deps, logicCount, monitor$);
     actionEnd$ = action$;
     logicSub = sub;
     logicCount = cnt;
+    savedLogicArr = combinedLogic;
     debug('added logic');
     return { logicCount: cnt };
   };
@@ -133,6 +144,10 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
    @return {object} object with a property logicCount set to the count of logic items
    */
   mw.replaceLogic = function replaceLogic(arrRepLogic) {
+    const duplicateLogic = findDuplicates(arrRepLogic);
+    if (duplicateLogic.length) {
+      throw new Error(`duplicate logic, indexes: ${duplicateLogic}`);
+    }
     const { action$, sub, logicCount: cnt } =
           applyLogic(arrRepLogic, savedStore, savedNext,
                      logicSub, actionSrc$, deps, 0, monitor$);
@@ -185,4 +200,18 @@ function naming(logic, idx) {
     ...logic,
     name: `L(${logic.type.toString()})-${idx}`
   };
+}
+
+/**
+  Find duplicates in arrLogic by checking if ref to same logic object
+  @param {array} arrLogic array of logic to check
+  @return {array} array of indexes to duplicates, empty array if none
+ */
+function findDuplicates(arrLogic) {
+  return arrLogic.reduce((acc, x1, idx1) => {
+    if (arrLogic.some((x2, idx2) => (idx1 !== idx2 && x1 === x2))) {
+      acc.push(idx1);
+    }
+    return acc;
+  }, []);
 }
