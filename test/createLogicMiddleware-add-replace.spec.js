@@ -9,6 +9,136 @@ describe('createLogicMiddleware-add-replace', () => {
       mw = createLogicMiddleware();
     });
 
+    describe('mw.addLogic(duplicateArray)', () => {
+      it('throws an error', () => {
+        const dispatch = expect.createSpy();
+        const next = expect.createSpy();
+        const fooLogic = createLogic({ type: 'FOO' });
+        const barLogic = createLogic({ type: 'BAR' });
+        const arrLogic = [
+          fooLogic,
+          barLogic
+        ];
+        const mw = createLogicMiddleware(arrLogic);
+        mw({ dispatch })(next); // simulate store creation
+        expect(() => {
+          mw.addLogic([fooLogic]); // duplicates existing
+        }).toThrow('duplicate logic');
+      });
+    });
+
+    describe('mw.addLogic(duplicateArray2)', () => {
+      it('throws an error', () => {
+        const dispatch = expect.createSpy();
+        const next = expect.createSpy();
+        const fooLogic = createLogic({ type: 'FOO' });
+        const barLogic = createLogic({ type: 'BAR' });
+        const arrLogic = [
+          fooLogic,
+          barLogic,
+          fooLogic
+        ];
+        const mw = createLogicMiddleware();
+        mw({ dispatch })(next); // simulate store creation
+        expect(() => {
+          mw.addLogic(arrLogic); // has duplicates
+        }).toThrow('duplicate logic');
+      });
+    });
+
+    describe('mw.mergeNewLogic(duplicateInArray)', () => {
+      it('throws an error', () => {
+        const dispatch = expect.createSpy();
+        const next = expect.createSpy();
+        const fooLogic = createLogic({ type: 'FOO' });
+        const barLogic = createLogic({ type: 'BAR' });
+        const arrLogic = [
+          fooLogic,
+          barLogic,
+          fooLogic
+        ];
+        const mw = createLogicMiddleware();
+        mw({ dispatch })(next); // simulate store creation
+        expect(() => {
+          mw.mergeNewLogic(arrLogic); // duplicates existing
+        }).toThrow('duplicate logic');
+      });
+    });
+
+    describe('mw.mergeNewLogic(allRepeatArray)', () => {
+      it('is ok', () => {
+        const dispatch = expect.createSpy();
+        const next = expect.createSpy();
+        const fooLogic = createLogic({ type: 'FOO' });
+        const barLogic = createLogic({ type: 'BAR' });
+        const arrLogic = [
+          fooLogic,
+          barLogic
+        ];
+        const mw = createLogicMiddleware(arrLogic);
+        mw({ dispatch })(next); // simulate store creation
+        mw.mergeNewLogic(arrLogic); // duplicates existing
+      });
+    });
+
+    describe('mw.mergeNewLogic(someNewArray)', () => {
+      it('is ok', () => {
+        const dispatch = expect.createSpy();
+        const next = expect.createSpy();
+        const fooLogic = createLogic({ type: 'FOO' });
+        const barLogic = createLogic({ type: 'BAR' });
+        const catLogic = createLogic({ type: 'CAT' });
+        const arrLogic = [
+          fooLogic,
+          barLogic
+        ];
+        const someNewLogic = [
+          fooLogic,
+          barLogic,
+          catLogic // new logic
+        ];
+
+        const mw = createLogicMiddleware(arrLogic);
+        mw({ dispatch })(next); // simulate store creation
+        mw.mergeNewLogic(someNewLogic); // has duplicates
+      });
+    });
+
+    describe('mw.replaceLogic(matchesOld)', () => {
+      it('is allowed', () => {
+        const dispatch = expect.createSpy();
+        const next = expect.createSpy();
+        const fooLogic = createLogic({ type: 'FOO' });
+        const foo2Logic = createLogic({ type: 'FOO' });
+        const arrLogic = [
+          fooLogic,
+          foo2Logic
+        ];
+        const mw = createLogicMiddleware(arrLogic);
+        mw({ dispatch })(next); // simulate store creation
+        mw.replaceLogic(arrLogic); // matching old is fine
+      });
+    });
+
+    describe('mw.replaceLogic(duplicateArray)', () => {
+      it('throws an error', () => {
+        const dispatch = expect.createSpy();
+        const next = expect.createSpy();
+        const fooLogic = createLogic({ type: 'FOO' });
+        const barLogic = createLogic({ type: 'BAR' });
+        const arrLogic = [
+          fooLogic,
+          barLogic,
+          fooLogic
+        ];
+        const mw = createLogicMiddleware();
+        mw({ dispatch })(next); // simulate store creation
+        expect(() => {
+          mw.replaceLogic(arrLogic); // has duplicates
+        }).toThrow('duplicate logic');
+      });
+    });
+
     describe('no store, mw.addLogic([logic1])', () => {
       const action2 = { type: 'FOO', tid: 1 };
       it('should throw with error store is not defined', () => {
@@ -195,6 +325,67 @@ describe('createLogicMiddleware-add-replace', () => {
           }
         });
         const result = mw.addLogic([logic]);
+        logicCount = result.logicCount;
+        storeFn(action1);
+        mw.whenComplete(done);
+      });
+
+      it('should return count of 2', () => {
+        expect(logicCount).toBe(2);
+      });
+
+      it('should transform action', () => {
+        expect(next.calls.length).toBe(1);
+        expect(next.calls[0].arguments[0]).toEqual(actionA2);
+      });
+
+      it('mw.monitor$ should track flow', () => {
+        expect(monArr).toEqual([
+          { action: { type: 'FOO' }, op: 'top' },
+          { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+          { action: { type: 'FOO' },
+            nextAction: { type: 'FOO', a: 1 },
+            name: 'L(FOO)-0',
+            shouldProcess: true,
+            op: 'next' },
+          { action: { type: 'FOO', a: 1 }, name: 'L(FOO)-1', op: 'begin' },
+          { action: { type: 'FOO', a: 1 },
+            nextAction: { type: 'FOO', a: 1, tid: 2 },
+            name: 'L(FOO)-1',
+            shouldProcess: true,
+            op: 'next' },
+          { nextAction: { type: 'FOO', a: 1, tid: 2 }, op: 'bottom' },
+          { action: { type: 'FOO', a: 1 }, name: 'L(FOO)-1', op: 'end' },
+          { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+        ]);
+      });
+    });
+
+    describe('mw.mergeNewLogic([logicA, logic1])', () => {
+      let monArr = [];
+      let logicCount;
+      let next;
+      let storeFn;
+      const action1 = { type: 'FOO' };
+      const actionA2 = { type: 'FOO', a: 1, tid: 2 };
+      beforeEach(done => {
+        monArr = [];
+        // reset mw
+        mw = createLogicMiddleware([logicA]);
+        mw.monitor$.subscribe(x => monArr.push(x));
+
+        next = expect.createSpy();
+        storeFn = mw({})(next);
+        const logic = createLogic({
+          type: 'FOO',
+          transform({ action }, next) {
+            next({
+              ...action,
+              tid: 2
+            });
+          }
+        });
+        const result = mw.mergeNewLogic([logicA, logic]);
         logicCount = result.logicCount;
         storeFn(action1);
         mw.whenComplete(done);

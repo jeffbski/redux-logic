@@ -137,6 +137,18 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
     return { logicCount: cnt };
   };
 
+  mw.mergeNewLogic = function mergeNewLogic(arrMergeLogic) {
+    // check for duplicates within the arrMergeLogic first
+    const duplicateLogic = findDuplicates(arrMergeLogic);
+    if (duplicateLogic.length) {
+      throw new Error(`duplicate logic, indexes: ${duplicateLogic}`);
+    }
+    // filter out any refs that match existing logic, then addLogic
+    const arrNewLogic = arrMergeLogic.filter(x =>
+      savedLogicArr.indexOf(x) === -1);
+    return mw.addLogic(arrNewLogic);
+  };
+
   /**
    replace all existing logic with a new array of logic.
    In-flight requests should complete. Logic state will be reset.

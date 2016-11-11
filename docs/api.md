@@ -80,7 +80,14 @@ const logicMiddleware = createLogicMiddleware(
 
 // dynamically add logic later at runtime, keeping logic state
 // new logic should be unique and not refs to previous logic
+// it will be added to the end of the existing chain
 logicMiddleware.addLogic(arrNewLogic);
+
+// dynamically add new logic later at runtime, keeping logic state
+// only adds logic that it doesn't already have, so it is safe to
+// use with split route bundles loading logic on the fly.
+// New logic is added to the end of the existing chain.
+logicMiddleware.mergeNewLogic(arrMergeLogic);
 
 // replacing logic, logic state is reset but in-flight logic
 // should still complete properly
