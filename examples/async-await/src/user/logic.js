@@ -16,7 +16,10 @@ export const userProfFetchLogic = createLogic({
     const uid = action.payload;
     fetchUserWithProfile(httpClient, uid)
       .then(user => dispatch(userProfileFetchFulfilled(user)))
-      .catch(err => dispatch(userProfileFetchRejected(err)));
+      .catch(err => {
+        console.error(err); // might be a render err
+        dispatch(userProfileFetchRejected(err))
+      });
   }
 });
 

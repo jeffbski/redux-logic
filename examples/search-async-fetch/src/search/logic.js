@@ -20,7 +20,10 @@ export const searchLogic = createLogic({
     httpClient.get(`http://npmsearch.com/query?q=${action.payload}&fields=name,description`)
       .then(resp => resp.data.results) // use results property of payload
       .then(results => dispatch(searchFulfilled(results)))
-      .catch((err) => dispatch(searchRejected(err)));
+      .catch((err) => {
+        console.error(err); // might be a render err
+        dispatch(searchRejected(err))
+      });
   }
 });
 

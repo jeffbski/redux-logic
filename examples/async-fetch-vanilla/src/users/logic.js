@@ -17,8 +17,10 @@ export const usersFetchLogic = createLogic({
     httpClient.get(`http://reqres.in/api/users?delay=${delay}`)
       .then(resp => resp.data.data) // use data property of payload
       .then(users => dispatch(usersFetchFulfilled(users)))
-      .catch((err) =>
-             dispatch(usersFetchRejected(err)));
+      .catch((err) => {
+        console.error(err); // might be a render err
+        dispatch(usersFetchRejected(err))
+      });
   }
 });
 

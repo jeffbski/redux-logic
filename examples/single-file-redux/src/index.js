@@ -37,11 +37,14 @@ const usersFetchLogic = createLogic({
         type: USERS_FETCH_FULFILLED,
         payload: users
       }))
-      .catch((err) => dispatch({
-        type: USERS_FETCH_REJECTED,
-        payload: err,
-        error: true
-      }));
+      .catch((err) => {
+        console.error(err); // might be a render err
+        dispatch({
+          type: USERS_FETCH_REJECTED,
+          payload: err,
+          error: true
+        });
+      });
   }
 });
 

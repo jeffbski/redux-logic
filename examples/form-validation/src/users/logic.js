@@ -75,7 +75,10 @@ export const usersAddLogic = createLogic({
     httpClient.post('http://reqres.in/api/users', fields)
       .then(resp => resp.data) // new user created is returned
       .then(user => dispatch(usersAddSuccess(user)))
-      .catch(err => dispatch(usersAddFailed(err)));
+      .catch(err => {
+        console.error(err); // might be a render err
+        dispatch(usersAddFailed(err))
+      });
   }
 });
 

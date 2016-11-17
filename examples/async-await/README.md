@@ -29,6 +29,7 @@ export const usersFetchLogic = createLogic({
             .then(resp => resp.data.data); // use data property of payload
         dispatch(usersFetchFulfilled(users));
       } catch(err) {
+        console.error(err); // might be a render err
         dispatch(usersFetchRejected(err));
       }
     }
@@ -56,7 +57,10 @@ export const userProfFetchLogic = createLogic({
     const uid = action.payload;
     fetchUserWithProfile(httpClient, uid)
       .then(user => dispatch(userProfileFetchFulfilled(user)))
-      .catch(err => dispatch(userProfileFetchRejected(err)));
+      .catch(err => {
+        console.error(err); // might be a render err
+        dispatch(userProfileFetchRejected(err))
+      });
   }
 });
 

@@ -47,9 +47,11 @@ const fetchPollsLogic = createLogic({
       .then(resp => resp.data.polls)
       .then(polls => dispatch({ type: FETCH_POLLS_SUCCESS,
                                 payload: polls }))
-      .catch(({ statusText }) =>
-             dispatch({ type: FETCH_POLLS_FAILED, payload: statusText,
+      .catch(err => {
+             console.error(err); // log since could be render err
+             dispatch({ type: FETCH_POLLS_FAILED, payload: err,
                         error: true })
+      });
 
   }
 });
@@ -166,9 +168,11 @@ const fetchPollsLogic = createLogic({
       .then(resp => resp.data.polls)
       .then(polls => dispatch({ type: FETCH_POLLS_SUCCESS,
                                 payload: polls }))
-      .catch(({ statusText }) =>
-             dispatch({ type: FETCH_POLLS_FAILED, payload: statusText,
+      .catch(err => {
+             console.error(err); // log since could be render err
+             dispatch({ type: FETCH_POLLS_FAILED, payload: err,
                         error: true })
+      });
 
   }
 });

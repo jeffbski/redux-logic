@@ -39,11 +39,14 @@ const npmSearchLogic = createLogic({
         type: NPM_SEARCH_FULFILLED,
         payload: results
       }))
-      .catch((err) => dispatch({
-        type: NPM_SEARCH_REJECTED,
-        payload: err,
-        error: true
-      }));
+      .catch((err) => {
+        console.error(err); // might be a render err
+        dispatch({
+          type: NPM_SEARCH_REJECTED,
+          payload: err,
+          error: true
+        })
+      });
   }
 });
 

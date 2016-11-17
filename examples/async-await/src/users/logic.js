@@ -21,6 +21,7 @@ export const usersFetchLogic = createLogic({
             .then(resp => resp.data.data); // use data property of payload
         dispatch(usersFetchFulfilled(users));
       } catch(err) {
+        console.error(err); // might be a render err
         dispatch(usersFetchRejected(err));
       }
     }
