@@ -20,8 +20,7 @@ export const usersFetchLogic = createLogic({
   // use axios injected as httpClient from configureStore logic deps
   // we also have access to getState and action in the first argument
   // but they were not needed for this particular code
-  process({ httpClient }, dispatch) {
-    async function fetchUsers() {
+  async process({ httpClient }, dispatch) {
       try {
         // the delay query param adds arbitrary delay to the response
         const users =
@@ -32,10 +31,6 @@ export const usersFetchLogic = createLogic({
         console.error(err); // might be a render err
         dispatch(usersFetchRejected(err));
       }
-    }
-
-    // now run it
-    fetchUsers();
   }
 });
 ```
