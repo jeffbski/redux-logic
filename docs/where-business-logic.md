@@ -58,7 +58,10 @@ const fetchUser = (dispatch, id) => {
   axios.get(`https://server/user/${id}`)
     .then(resp => resp.data)
     .then(user => dispatch({ type: USER_FETCH_SUCCESS, payload: user }))
-    .catch(err => dispatch({ type: USER_FETCH_FAILED, payload: err, error: true }));
+    .catch(err => {
+      console.error(err); // log since might be a render err
+      dispatch({ type: USER_FETCH_FAILED, payload: err, error: true })
+    });
 };
 ```
 
@@ -114,7 +117,10 @@ const fetchUser = id => (dispatch, getState) => {
   axios.get(`https://server/user/${id}`)
     .then(resp => resp.data)
     .then(user => dispatch({ type: USER_FETCH_SUCCESS, payload: user }))
-    .catch(err => dispatch({ type: USER_FETCH_FAILED, payload: err, error: true }));
+    .catch(err => {
+      console.error(err); // log since might be a render err
+      dispatch({ type: USER_FETCH_FAILED, payload: err, error: true })
+    });
 };
 ```
 
@@ -365,9 +371,12 @@ const fetchUserMiddleware = store => next => action => {
       .then(resp => resp.data)
       .then(user => store.dispatch({ type: USER_FETCH_SUCCESS,
                                      payload: user }))
-      .catch(err => store.dispatch({ type: USER_FETCH_FAILED,
+      .catch(err => {
+        console.error(err); // log since might be a render err
+        store.dispatch({ type: USER_FETCH_FAILED,
                                      payload: err,
                                      error: true });
+      });
     return next(action); // pass the original
   } else { // pass other actions
     return next(action);
@@ -431,7 +440,10 @@ const fetchUserLogic = createLogic({
     axios.get(`https://server/user/${action.payload}`)
       .then(resp => resp.data)
       .then(user => dispatch({ type: USER_FETCH_SUCCESS, payload: user }))
-      .catch(err => dispatch({ type: USER_FETCH_FAILED, payload: err, error: true }));
+      .catch(err => {
+        console.error(err); // log since might be a render err
+        dispatch({ type: USER_FETCH_FAILED, payload: err, error: true });
+      });
 
   }
 });
