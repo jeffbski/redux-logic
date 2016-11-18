@@ -115,7 +115,7 @@ describe('createLogicMiddleware-latest', () => {
       function cb() {
         if (++dispatchCount >= 0) {
           // letting whenComplete let us know when we are done
-          //done();
+          // done();
         }
       }
       logicA = createLogic({

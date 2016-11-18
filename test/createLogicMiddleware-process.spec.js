@@ -543,10 +543,6 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-
-
-// TODO
-
   describe('[logicA] process dispatchMultiple:true dispatch(x) dispatch(y) cancel', () => {
     let monArr = [];
     let mw;
@@ -629,11 +625,6 @@ describe('createLogicMiddleware-process', () => {
     });
 
   });
-
-
-
-
-
 
   describe('[logicA] process dispatch(x) dispatch() done()', () => {
     let monArr = [];
@@ -1405,12 +1396,6 @@ describe('createLogicMiddleware-process', () => {
     });
 
   });
-
-
-
-
-
-
 
   describe('[logicA] process successType=BAR dispatch(42)', () => {
     let monArr = [];
