@@ -93,12 +93,13 @@ const fetchPollsLogic = createLogic({
 ## Usage
 
 ```bash
+npm install rxjs --save
 npm install redux-logic --save
 ```
 
 ```js
 // in configureStore.js
-import { createLogicMiddleware } from 'redux-logic';
+import { createLogic, createLogicMiddleware } from 'redux-logic';
 import rootReducer from './rootReducer';
 import arrLogic from './logic';
 

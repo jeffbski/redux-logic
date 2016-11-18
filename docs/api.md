@@ -106,7 +106,8 @@ logicMiddleware.replaceLogic(arrReplacementLogic);
 // for server-side use, runs optional fn and returns promise
 // when all in-flight processing/loading has completed.
 // Use it after performing any required store.dispatch
-store.dispatch(ROUTE_CHANGE); // triggers async loading
+store.dispatch(ROUTE_CHANGE); // triggers async loading in our logic
+store.dispatch(FOO); // any number of additional dispatches
 return logicMiddleware.whenComplete(() => { // returns promise
   return store.getState(); // can serialize store, loading was done
 });
@@ -236,7 +237,7 @@ The signature of each execution phase hook is:
 ```js
 validate(depObj, allow, reject)
 transform(depObj, next, ?reject)
-process(depObj, ?dispatch, ?done) // see multi-
+process(depObj, ?dispatch, ?done)
 ```
 
 Supplying dependencies to createLogicMiddleware makes it easy to create testable code since you can use different injected deps in your tests than you do at runtime. It also makes it easy to inject different config or connections in development, staging, and production. Use of these is optional.
@@ -330,32 +331,40 @@ In most situations the default options `{ useDefault: 'auto' }` is the proper ch
 
 ### dispatch - multi-dispatching and process' variable signature
 
-The `process` hook supports three different signatures that affect how dispatching works
+The `process` hook supports a variable signature that affect how dispatching works
 
 The official signature for process is
 ```js
 process({ getState, action }, ?dispatch, ?done)
 ```
 
-which results in the following three possible signatures:
+which results in the following three possible variations:
 
 ```js
 // dispatch from returned object, resolved promise, or observable
 // this defaults processOptions.dispatchReturn = true enabling
 // dispatching of the returned/resolved values
-process({ getState, action })
+process({ getState, action }) {
+  return objOrPromiseOrObservable;
+}
 ```
 
 ```js
 // single dispatch
-process({ getState, action }, dispatch)
+process({ getState, action }, dispatch) {
+  dispatch(objOrPromiseOrObservable); // call exactly once
+}
 ```
 
 ```js
 // multiple dispatch, call done when finished dispatching
 // this defaults processOptions.dispatchMultiple = true
 // which enables the multiple dispatch mode
-process({ getState, action }, dispatch, done)
+process({ getState, action }, dispatch, done) {
+  dispatch(objOrPromiseOrObservable);
+  dispatch(objOrPromiseOrObservable);
+  done(); // call when done dispatching
+}
 ```
 
 This should be somewhat intuitive so that you include the parameters when you need to use them. In the first case, you are returning an object, promise, or observable so the values returned or resolved will be dispatched.
