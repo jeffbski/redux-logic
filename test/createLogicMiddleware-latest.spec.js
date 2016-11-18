@@ -109,12 +109,13 @@ describe('createLogicMiddleware-latest', () => {
     const actionFoo2 = { type: 'FOO', id: 2 };
     beforeEach(done => {
       monArr = [];
-      next = expect.createSpy().andCall(() => done());
+      next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 0) {
-          done();
+          // letting whenComplete let us know when we are done
+          //done();
         }
       }
       logicA = createLogic({
@@ -131,6 +132,7 @@ describe('createLogicMiddleware-latest', () => {
       const storeFn = mw({ dispatch })(next);
       storeFn(actionFoo1);
       storeFn(actionFoo2);
+      mw.whenComplete(done);
     });
 
     it('take only latest, passes only actionFoo2 since validate async', () => {
@@ -161,7 +163,9 @@ describe('createLogicMiddleware-latest', () => {
           nextAction: { type: 'FOO', id: 2 },
           name: 'L(FOO)-0',
           shouldProcess: true,
-          op: 'next' }
+          op: 'next' },
+        { nextAction: { type: 'FOO', id: 2 }, op: 'bottom' },
+        { action: { type: 'FOO', id: 2 }, name: 'L(FOO)-0', op: 'end' }
       ]);
     });
 
@@ -181,12 +185,13 @@ describe('createLogicMiddleware-latest', () => {
     const actionFoo2 = { type: 'FOO', id: 2 };
     beforeEach(done => {
       monArr = [];
-      next = expect.createSpy().andCall(() => done());
+      next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 0) {
-          done();
+          // whenComplete is calling done
+          // done();
         }
       }
       logicA = createLogic({
@@ -203,6 +208,7 @@ describe('createLogicMiddleware-latest', () => {
       const storeFn = mw({ dispatch })(next);
       storeFn(actionFoo1);
       storeFn(actionFoo2);
+      mw.whenComplete(done);
     });
 
     it('take only latest, passes only actionFoo2 since validate async', () => {
@@ -233,7 +239,9 @@ describe('createLogicMiddleware-latest', () => {
           nextAction: { type: 'FOO', id: 2 },
           name: 'L(FOO)-0',
           shouldProcess: false,
-          op: 'next' }
+          op: 'next' },
+        { nextAction: { type: 'FOO', id: 2 }, op: 'bottom' },
+        { action: { type: 'FOO', id: 2 }, name: 'L(FOO)-0', op: 'end' }
       ]);
     });
 
@@ -254,12 +262,13 @@ describe('createLogicMiddleware-latest', () => {
     const actionResult = { type: 'FOO', id: 2, trans: ['a'] };
     beforeEach(done => {
       monArr = [];
-      next = expect.createSpy().andCall(() => done());
+      next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 0) {
-          done();
+          // whenComplete is calling done
+          //           done();
         }
       }
       logicA = createLogic({
@@ -279,6 +288,7 @@ describe('createLogicMiddleware-latest', () => {
       const storeFn = mw({ dispatch })(next);
       storeFn(actionFoo1);
       storeFn(actionFoo2);
+      mw.whenComplete(done);
     });
 
     it('take only latest, passes only actionFoo2 since validate async', () => {
@@ -309,7 +319,10 @@ describe('createLogicMiddleware-latest', () => {
           nextAction: { type: 'FOO', id: 2, trans: ['a'] },
           name: 'L(FOO)-0',
           shouldProcess: true,
-          op: 'next' }
+          op: 'next' },
+        { nextAction: { type: 'FOO', id: 2, trans: ['a'] },
+          op: 'bottom' },
+        { action: { type: 'FOO', id: 2 }, name: 'L(FOO)-0', op: 'end' }
       ]);
     });
 
@@ -330,17 +343,8 @@ describe('createLogicMiddleware-latest', () => {
     const actionResultFoo2 = { type: 'BAR', id: 2 };
     beforeEach(done => {
       monArr = [];
-      next = expect.createSpy().andCall(() => cb({ next: true }));
-      dispatch = expect.createSpy().andCall(() => cb({ dispatch: true }));
-      let nextCount = 0;
-      let dispatchCount = 0;
-      function cb(obj) {
-        if (obj.next) { nextCount++; }
-        if (obj.dispatch) { dispatchCount++; }
-        if (nextCount >= 2 && dispatchCount >= 1) {
-          done();
-        }
-      }
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
       logicA = createLogic({
         type: 'FOO',
         latest: true,
@@ -360,6 +364,7 @@ describe('createLogicMiddleware-latest', () => {
       setTimeout(() => {
         storeFn(actionFoo2);
       }, 0);
+      mw.whenComplete(done);
     });
 
     it('passes both actionFoo1 and actionFoo2', () => {
@@ -393,11 +398,12 @@ describe('createLogicMiddleware-latest', () => {
         { nextAction: { type: 'FOO', id: 2 }, op: 'bottom' },
         { action: { type: 'FOO', id: 1 },
           name: 'L(FOO)-0',
-          op: 'cancelled' },
+          op: 'dispCancelled' },
         { action: { type: 'FOO', id: 1 }, name: 'L(FOO)-0', op: 'end' },
         { action: { type: 'FOO', id: 2 },
           dispAction: { type: 'BAR', id: 2 },
-          op: 'dispatch' }
+          op: 'dispatch' },
+        { action: { type: 'FOO', id: 2 }, name: 'L(FOO)-0', op: 'end' }
       ]);
     });
 
@@ -421,11 +427,7 @@ describe('createLogicMiddleware-latest', () => {
     beforeEach(done => {
       monArr = [];
       next = expect.createSpy();
-      dispatch = expect.createSpy().andCall(cb);
-      let dispatchCount = 0;
-      function cb() {
-        if (++dispatchCount >= 3) { done(); }
-      }
+      dispatch = expect.createSpy();
       logicA = createLogic({
         type: 'FOO',
         latest: true,
@@ -452,6 +454,7 @@ describe('createLogicMiddleware-latest', () => {
       setTimeout(() => {
         storeFn(actionFoo2);
       }, 10);
+      mw.whenComplete(done);
     });
 
     it('passes both actionFoo1 and actionFoo2', () => {
@@ -490,14 +493,15 @@ describe('createLogicMiddleware-latest', () => {
         { nextAction: { type: 'FOO', id: 2 }, op: 'bottom' },
         { action: { type: 'FOO', id: 1 },
           name: 'L(FOO)-0',
-          op: 'cancelled' },
+          op: 'dispCancelled' },
         { action: { type: 'FOO', id: 1 }, name: 'L(FOO)-0', op: 'end' },
         { action: { type: 'FOO', id: 2 },
           dispAction: { type: 'BAR', id: 2 },
           op: 'dispatch' },
         { action: { type: 'FOO', id: 2 },
           dispAction: { type: 'CAT', id: 2 },
-          op: 'dispatch' }
+          op: 'dispatch' },
+        { action: { type: 'FOO', id: 2 }, name: 'L(FOO)-0', op: 'end' }
       ]);
     });
 
@@ -521,11 +525,7 @@ describe('createLogicMiddleware-latest', () => {
     beforeEach(done => {
       monArr = [];
       next = expect.createSpy();
-      dispatch = expect.createSpy().andCall(cb);
-      let dispatchCount = 0;
-      function cb() {
-        if (++dispatchCount >= 3) { done(); }
-      }
+      dispatch = expect.createSpy();
       logicA = createLogic({
         type: 'FOO',
         latest: true,
@@ -543,6 +543,7 @@ describe('createLogicMiddleware-latest', () => {
                 ...action,
                 type: 'CAT'
               });
+              obs.complete();
             }, 10);
           }));
         }
@@ -554,6 +555,7 @@ describe('createLogicMiddleware-latest', () => {
       setTimeout(() => {
         storeFn(actionFoo2);
       }, 10);
+      mw.whenComplete(done);
     });
 
     it('passes both actionFoo1 and actionFoo2', () => {
@@ -592,14 +594,15 @@ describe('createLogicMiddleware-latest', () => {
         { nextAction: { type: 'FOO', id: 2 }, op: 'bottom' },
         { action: { type: 'FOO', id: 1 },
           name: 'L(FOO)-0',
-          op: 'cancelled' },
+          op: 'dispCancelled' },
         { action: { type: 'FOO', id: 1 }, name: 'L(FOO)-0', op: 'end' },
         { action: { type: 'FOO', id: 2 },
           dispAction: { type: 'BAR', id: 2 },
           op: 'dispatch' },
         { action: { type: 'FOO', id: 2 },
           dispAction: { type: 'CAT', id: 2 },
-          op: 'dispatch' }
+          op: 'dispatch' },
+        { action: { type: 'FOO', id: 2 }, name: 'L(FOO)-0', op: 'end' }
       ]);
     });
 

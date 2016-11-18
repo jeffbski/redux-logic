@@ -14,6 +14,7 @@ const allowedOptions = [
 
 const allowedProcessOptions = [
   'dispatchReturn',
+  'dispatchMultiple',
   'successType',
   'failType'
 ];
@@ -66,16 +67,25 @@ const allowedProcessOptions = [
      step) has been forwarded to other logic, middleware, and reducers.
      This hook will not be run if the validate/transform hook called
      reject. This hook is ideal for any additional processing or async
-     fetching and then to call dispatch once with the results. Dispatch
-     is expected to be called exactly once. You can call with undefined
-     if you do not need to dispatch anything. To make multiple
-     dispatches you can dispatch an observable or call with the option
-     `{ allowMore: true }` to allow any number of calls, see advanced
-     section of API docs for details.
+     fetching. The fn signature is `process(deps, ?dispatch, ?done)`
+     where dispatch and done are optional and if included in the
+     the signature will change the dispatch mode:
+     1. Neither dispatch, nor done - dispatches the returned/resolved val
+     2. Only dispatch - single dispatch mode, call dispatch exactly once
+     3. Both dispatch and done - multi-dispatch mode, call done when finished
+     Dispatch may be called with undefined when nothing needs to be
+     dispatched. Multiple dispatches may be made if including the done or
+     simply by dispatching an observable.
+     More details on dispatching modes are in the advanced API docs
    @param {object} logicOptions.processOptions options influencing
      process hook, default {}
    @param {boolean} logicOptions.processOptions.dispatchReturn dispatch
-     the return value or resolved/next promise/observable, default false
+     the return value or resolved/next promise/observable, default is
+     false when dispatch is included in process fn signature
+   @param {boolean} logicOptions.processOptions.dispatchMultiple
+     multi-dispatch mode is enabled and continues until done is called
+     or cancelled. The default is false unless the done cb is included
+     in the process fn signature.
    @param {string|function} logicOptions.processOptions.successType
      action type or action creator fn, use value as payload
    @param {string|function} logicOptions.processOptions.failType
@@ -114,6 +124,22 @@ export default function createLogic(logicOptions = {}) {
         identityValidation :
         validate;
 
+  // use process fn signature to determine some processOption defaults
+  // for dispatchReturn and dispatchMultiple
+  switch (process.length) {
+    case 0: // process() - dispatchReturn
+    case 1: // process(deps) - dispatchReturn
+      setIfUndefined(processOptions, 'dispatchReturn', true);
+      break;
+    case 2: // process(deps, dispatch) - single dispatch
+      // nothing to do, defaults are fine
+      break;
+    case 3: // process(deps, dispatch, done) - multi-dispatch
+    default: // allow for additional params to come later
+      setIfUndefined(processOptions, 'dispatchMultiple', true);
+      break;
+  }
+
   return {
     name: typeToStrFns(name),
     type: typeToStrFns(type),
@@ -143,4 +169,11 @@ function identityValidation({ action }, allow /* , reject */) {
 
 function emptyProcess(_, dispatch) {
   dispatch();
+}
+
+function setIfUndefined(obj, propName, propValue) {
+  if (typeof obj[propName] === 'undefined') {
+    // eslint-disable-next-line no-param-reassign
+    obj[propName] = propValue;
+  }
 }

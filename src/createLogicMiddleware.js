@@ -44,15 +44,18 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
     .scan((acc, x) => { // append a pending logic count
       let pending = acc.pending || 0;
       switch (x.op) { // eslint-disable-line default-case
-        case 'top' :
-        case 'begin' :
+        case 'top' : // action at top of logic stack
+        case 'begin' : // starting into a logic
           pending += 1;
           break;
-        case 'end' :
-        case 'bottom' :
-        case 'nextDisp' :
-        case 'filtered' :
-        case 'cancelled' :
+
+        case 'end' : // completed from a logic
+        case 'bottom' : // action cleared bottom of logic stack
+        case 'nextDisp' : // action changed type and dispatched
+        case 'filtered' : // action filtered
+        case 'cancelled' : // action cancelled before intercept complete
+                           // dispCancelled is not included here since
+                           // already accounted for in the 'end' op
           pending -= 1;
           break;
       }
@@ -106,7 +109,7 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
   mw.whenComplete = function whenComplete(fn = identity) {
     return lastPending$
       .filter(x => !logicCount || x.op !== OP_INIT) // no logic or not init
-      // .do(x => console.log('wc', x))
+      // .do(x => console.log('wc', x)) /* keep commented out */
       .takeWhile(x => x.pending)
       .map((/* x */) => undefined) // not passing along anything
       .toPromise()

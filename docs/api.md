@@ -55,7 +55,11 @@ const fooLogic = createLogic({
   // options influencing the process hook, defaults to {}
   processOptions: {
     // dispatch return value, or if returns promise/observable, dispatch resolved/next values
-    dispatchReturn: false, // default false
+    // default false unless dispatch cb is omitted from process signature
+    dispatchReturn: false,
+    // enable multi-dispatch mode until done cb called or cancelled
+    // default is false unless done is included in process signature
+    dispatchMultiple: false,
     // string or action creator fn wrapping dispatched value
     successType: undefined, // default undefined
     // string or action creator fn wrapping dispatched, rejected, or thrown errors
@@ -63,13 +67,18 @@ const fooLogic = createLogic({
   },
 
   // If validate/transform reject was used then this hook will not be
-  // executed. Call dispatch exactly once or read the advanced api about
-  // performing multiple dispatches
-  process({ getState, action, cancelled$ }, dispatch) {
+  // executed. Including dispatch and/or done callbacks will influence
+  // the default dispatching mode:
+  // 1. Neither dispatch, nor done - dispatches the returned/resolved val
+  // 2. Only dispatch - single dispatch mode, call dispatch exactly once
+  // 3. Both dispatch and done - multi-dispatch mode, call done when finished
+  // More details on dispatching modes are in the advanced API docs
+  process({ getState, action, cancelled$ }, ?dispatch, ?done) {
     // Perform your processing then call dispatch with an action
-    // or use dispatch() to complete without dispatching anything.
-    // Multi-dispatch: see advanced API docs
-    dispatch(myNewAction);
+    // Empty or undefined dispatch can be used if nothing to dispatch
+    // See advanced API for discussion of dispatching modes
+    dispatch(myNewAction); // in single dispatch mode this also completes
+    done(); // only when performing multiple dispatches (done in signature)
   })
 });
 
@@ -175,13 +184,14 @@ The `dispatch` function returns the value passed into it to make it easy to use 
 
 If you set the `processOptions` object, you can further influence how process behaves streamlining your code.
 
-  - `processOptions.dispatchReturn` - if true, then process will use the returned value to dispatch. If you return a promise then it will use the resolve/reject values for dispatching. If you return an observable then it will use its values or error for dispatching. Returning an undefined, promise that resolves to undefined, or observable value of undefined will cause no dispatch. Default is false.
+  - `processOptions.dispatchReturn` - if true, then process will use the returned value to dispatch. If you return a promise then it will use the resolve/reject values for dispatching. If you return an observable then it will use its values or error for dispatching. Returning an undefined, promise that resolves to undefined, or observable value of undefined will cause no dispatch. Default varies based on whether the process fn signature includes dispatch or not. If dispatch is included then dispatchReturn defaults to false and vice versa.
+  - `processOptions.dispatchMultiple` - if true, then dispatch function will not end the underlying observable until the `done` callback is called or it is cancelled. The default value for dispatchMultiple is determined by the process fn signature, if it includes the `done` callback then the default is true otherwise it is false.
   - `processOptions.successType` - if set to an action type string or an action creator function it will use this to create the action from the dispatched value. If the `successType` was a string then it will create an action of this type and set the payload to the dispatched value. If it was an action creator function then it will pass the value to the action creator and then dispatch that. Default undefined.
   - `processOptions.failType` - if set to an action type string or an action creator function it will use this to create the action from the dispatched error or rejected promise value or errored observable similar to how `successType` works. If `failType` is not defined and an error is thrown or dispatched that does not itself have a `type` (action type), then an UNHANDLED_LOGIC_ERROR will be dispatched with the error as the payload. Default undefined.
 
 Since the most common use case is to do a single dispatch, that's what `process` expects by default. You would call `dispatch` exactly one time passing whatever success or failure action. If you decide in your logic that you don't want to dispatch anything call `dispatch` empty `dispatch()` to complete the logic.
 
-If you want to perform multiple dispatches for a long running subscription or to dispatch many different things then there are a couple ways to do it. You may dispatch an observable and for every result it will dispatch. There is also a way to perform multiple dispatches by using dispatch's options 2nd argument. See advanced section for more details.
+If you want to perform multiple dispatches for a long running subscription or to dispatch many different things then there are a couple ways to do it. You may dispatch an observable and for every result it will dispatch. There is also a way to perform multiple dispatches by including the done callback or setting dispatchMultiple to true. See advanced section for more details.
 
 The default `process` hook if none is provided is:
 
@@ -197,13 +207,17 @@ An example of using `processOptions`:
 const logic = createLogic({
   type: FOO,
   processOptions: {
+    // if your process fn below omits the dispatch cb then
+    // dispatchReturn will default to true, so you could skip
+    // this line, but it is left for clarity
     dispatchReturn: true,       // use my return for dispatch
     successType: 'FOO_SUCCESS', // my action type for success
     failType: 'FOO_ERROR',      // my action type for failure
   },
   process({ getState, action }) {
-    // no need to dispatch when using dispatchReturn: true
-    // actions are created from the resolved or rejected promise
+    // since we didn't include dispatch cb in our signature
+    // dispatchReturn will default to true,  actions are created
+    // from the returned obj, resolved/rejected promise or obs
     return axios.get('https://server/api/users')
       .then(resp => resp.data.users); // select the data
   }
@@ -221,8 +235,8 @@ The signature of each execution phase hook is:
 
 ```js
 validate(depObj, allow, reject)
-transform(depObj, next, /*, reject */)
-process(depObj, dispatch)
+transform(depObj, next, ?reject)
+process(depObj, ?dispatch, ?done) // see multi-
 ```
 
 Supplying dependencies to createLogicMiddleware makes it easy to create testable code since you can use different injected deps in your tests than you do at runtime. It also makes it easy to inject different config or connections in development, staging, and production. Use of these is optional.
@@ -314,23 +328,76 @@ Alternatively if you just want to force the action being passed down (not dispat
 
 In most situations the default options `{ useDefault: 'auto' }` is the proper choice.
 
-### dispatch - multi-dispatching and optional second argument options
+### dispatch - multi-dispatching and process' variable signature
 
-The `process`'s `dispatch` function accepts a second `options` argument which changes its behavior slightly. It defaults to `{ allowMore: false }`.
+The `process` hook supports three different signatures that affect how dispatching works
 
-The `allowMore` option controls whether `dispatch` will complete our underlying wrapping observable after being called. By default, allowMore is set to false so that means that `process` is only expecting to be called exactly one time, typically with its results on success or the failure if it errored. Thus it will complete the underlying wrapping observable after dispatch is called. If the logic decided it didn't want to dispatch anything it should be called empty like `dispatch()`.
+The official signature for process is
+```js
+process({ getState, action }, ?dispatch, ?done)
+```
 
-Alternatively if you dispatch an observable instead of an action, then the underlying wrapping observable will stay alive until the dispatched observable completes. So dispatching an observable allows long running subscription type dispatching regardles of using allowMore. Process will dispatch each value that comes from the observable continuing until it completes.
+which results in the following three possible signatures:
 
-If you don't want to deal with creating observables of your own, the allowMore option allows you to perform multiple dispatch as well. Set `{ allowMore: true }` to keep open the dispatching until you are ready to complete, then call `dispatch` one final time with `{allowMore: false}` or just using the default options `dispatch(action)` or `dispatch()`.
+```js
+// dispatch from returned object, resolved promise, or observable
+// this defaults processOptions.dispatchReturn = true enabling
+// dispatching of the returned/resolved values
+process({ getState, action })
+```
+
+```js
+// single dispatch
+process({ getState, action }, dispatch)
+```
+
+```js
+// multiple dispatch, call done when finished dispatching
+// this defaults processOptions.dispatchMultiple = true
+// which enables the multiple dispatch mode
+process({ getState, action }, dispatch, done)
+```
+
+This should be somewhat intuitive so that you include the parameters when you need to use them. In the first case, you are returning an object, promise, or observable so the values returned or resolved will be dispatched.
+
+In the second case you only have dispatch so like with the other hooks (validate/transform) you would be expected to call it exactly once.
+
+And finally in the third case since done is included, it triggers multi-dispatch mode so you can freely dispatch as many items as necessary, just calling done when finished. You can also switch this mode on using processOptions.dispatchMultiple=true regardless of whether you include the `done` cb. In some situations like with a subscription, you might never need to end until cancelled, so you can just set the processOptions.dispatchMultiple to true and ignore the done since it isn't needed.
+
+Note that in any case if you do not wish to dispatch something you can make an empty call like `dispatch()` and the call will be ignored.
+
+Also note that in any case you can dispatch an observable which allows you to effectively dispatch any number of items. It will continue to keep dispatching alive until the observable completes.
+
+Note: the previous v0.9 mechanism for multiple dispatches setting the second parameter of the dispatch function to `{allowMore: true}` will also work but is deprecated in lieu of this simpler arity approach.
+
 
 An example of performing multiple dispatches without using an observable:
 
 ```js
+// including the done cb, triggers multi-dispatch mode
+process({ getState, action }, dispatch, done) {
+  dispatch({ type: BAR });
+  dispatch({ type: CAT });
+  dispatch({ type: DOG });
+  done(); // indicate when done dispatching
+}
+```
+
+For a subscription that never ends (except when cancelled) the relevant parts of our createLogic might look something like this
+
+```js
+cancelType: CANCEL_SUBSCRIPTION, // whatever action(s) cancel
+latest: true, // use only latest
+
+processOptions: {
+  dispatchMultiple: true // turn on multiple dispatch mode
+},
+
+// we didn't include done since we never use it, dispatchMultiple
+// has already turned on multi-dispatch mode for us
 process({ getState, action }, dispatch) {
-  dispatch({ type: BAR }, { allowMore: true }); // keep dispatch open
-  dispatch({ type: CAT }, { allowMore: true }); // keep dispatch open
-  dispatch({ type: DOG }); // dispatch and complete
+  apiSubscription()
+    .on('updated', result => dispatch(result));
 }
 ```
 
@@ -339,9 +406,9 @@ Alternatively you could dispatch an observable and perform any number of dispatc
 ```js
 process({ getState, action }, dispatch) {
   const ob$ = Observable.of(  // from rxjs
-    { type: 'BAR' },
-    { type: 'CAT' },
-    { type: 'DOG' }
+    { type: 'BAR' }, // first dispatch
+    { type: 'CAT' }, // second dispatch
+    { type: 'DOG' }  // third dispatch
   );
   dispatch(ob$);
 }
@@ -353,13 +420,14 @@ Or if dispatching things over time
 process({ getState, action }, dispatch) {
   const ob$ = Observable.create(obs => {
     // in parallel fire multiple requests and dispatch the results
+    // by calling obs.next on the action to dispatch
     // when they arrive, then complete when done
     Promise.all([
       axios.get('http://server/users')
         .then(users => obs.next({ type: USERS, payload: users })),
       axios.get('http://server/categories')
         .then(categories => obs.next({ type: CAT, payload: categories }))
-     ]).then(values => obs.complete()); // values already dispatched
+     ]).then(values => obs.complete()); // values dispatched
   });
   dispatch(ob$);
 }
@@ -385,8 +453,9 @@ The structure emitted by the observable is an object with properties:
    - next - validate or transform intercept has passed to the next logic/middleware
    - nextDisp - validate or transform intercept was successful but needs to be dispatched
    - filtered - validate or transform passed undefined so action is filtered and not passed to other logic/middleware/reducers
-   - cancelled - processing was cancelled either from cancel type or take latest
+   - cancelled - intercept was cancelled either from cancelType or take latest
    - dispatch - dispAction was dispatched to store
+   - dispCancelled - dispatch was cancelled either from cancelType or take latest
    - end - everything has completed for this logic including async processing
  - name - name of the logic operating on this action
  - nextAction - action being passed down to next logic/middleware/reducer

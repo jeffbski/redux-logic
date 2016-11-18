@@ -17,9 +17,10 @@ One place to keep all of your business logic and side effects with redux
 
 With simple code you can:
 
- - validate, verify, auth check actions and allow/reject or modify actions
- - transform - augment/enhance/modify actions
- - process - async processing and dispatching, orchestration, I/O (ajax, REST, web sockets, ...)
+ - intercept actions before they hit the reducer
+   - validate, verify, auth check actions and allow/reject or modify actions
+   - transform - augment/enhance/modify actions
+ - process - async processing and dispatching, orchestration, I/O (ajax, REST, subscriptions, web sockets, ...)
 
 Built-in declarative functionality
 
@@ -205,6 +206,8 @@ const fetchPollsLogic = createLogic({
   latest: true, // only take latest
 
   processOptions: {
+    // optional since the default is true when dispatch is omitted from
+    // the process fn signature
     dispatchReturn: true, // use returned/resolved value(s) for dispatching
     // provide action types or action creator functions to be used
     // with the resolved/rejected values from promise/observable returned
@@ -212,7 +215,8 @@ const fetchPollsLogic = createLogic({
     failType: FETCH_POLLS_FAILED, // dispatch this failed action type
   },
 
-  // dispatchReturn option allows you to simply return obj, promise, obs
+  // Omitting dispatch from the signature below makes the default for
+  // dispatchReturn true allowing you to simply return obj, promise, obs
   // not needing to use dispatch directly
   process({ getState, action }) {
     return axios.get('https://survey.codewinds.com/polls')

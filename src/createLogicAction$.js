@@ -21,12 +21,15 @@ const debug = (/* ...args */) => {};
 export default function createLogicAction$({ action, logic, store, deps, cancel$, monitor$ }) {
   const { getState } = store;
   const { name, process: processFn,
-          processOptions: { dispatchReturn,
+          processOptions: { dispatchReturn, dispatchMultiple,
                             successType, failType } } = logic;
   const intercept = logic.validate || logic.transform; // aliases
 
   debug('createLogicAction$', name, action);
   monitor$.next({ action, name, op: 'begin' });
+
+  // once action reaches bottom, filtered, nextDisp, or cancelled
+  let interceptComplete = false;
 
   // logicAction$ is used for the mw next(action) call
   const logicAction$ = Observable.create(logicActionObs => {
@@ -36,7 +39,13 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
           .take(1);
     cancel$.subscribe(cancelled$); // connect cancelled$ to cancel$
     cancelled$
-      .subscribe(() => monitor$.next({ action, name, op: 'cancelled' }));
+      .subscribe(() => {
+        if (!interceptComplete) {
+          monitor$.next({ action, name, op: 'cancelled' });
+        } else { // marking these different so not counted twice
+          monitor$.next({ action, name, op: 'dispCancelled' });
+        }
+      });
 
     const dispatch$ = (new Subject())
           .mergeAll()
@@ -92,7 +101,10 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
       return act;
     }
 
-
+    // allowMore is now deprecated in favor of variable process arity
+    // which sets processOptions.dispatchMultiple = true then
+    // expects done() cb to be called to end
+    // Might still be needed for internal use so keeping it for now
     const DispatchDefaults = {
       allowMore: false
     };
@@ -106,7 +118,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
             Observable.of(act)
         );
       }
-      if (!allowMore) { dispatch$.complete(); }
+      if (!(dispatchMultiple || allowMore)) { dispatch$.complete(); }
       return act;
     }
 
@@ -153,10 +165,15 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
       handleNextOrDispatch(false, act, options);
     }
 
+    function done() {
+      dispatch$.complete();
+    }
+
     function handleNextOrDispatch(shouldProcess, act, options) {
       const { useDispatch } = applyAllowRejectNextDefaults(options);
       if (shouldDispatch(act, useDispatch)) {
         monitor$.next({ action, dispAction: act, name, shouldProcess, op: 'nextDisp' });
+        interceptComplete = true;
         dispatch(act, { allowMore: true }); // will be completed later
         logicActionObs.complete(); // dispatched action, so no next(act)
       } else { // normal next
@@ -164,6 +181,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
           monitor$.next({ action, nextAction: act, name, shouldProcess, op: 'next' });
         } else { // act is undefined, filtered
           monitor$.next({ action, name, shouldProcess, op: 'filtered' });
+          interceptComplete = true;
         }
         postIfDefinedOrComplete(act, logicActionObs);
       }
@@ -177,7 +195,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
             // if action provided is empty, give process orig
             depObj.action = act || action;
             try {
-              const retValue = processFn(depObj, dispatch);
+              const retValue = processFn(depObj, dispatch, done);
               if (dispatchReturn) { // processOption.dispatchReturn true
                 handleDispatchReturn(retValue);
               }
@@ -214,6 +232,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
       if (act) {
         act$.next(act);
       }
+      interceptComplete = true;
       act$.complete();
     }
 

@@ -384,6 +384,96 @@ describe('createLogic', () => {
     });
   });
 
+  describe('process fn sig no params', () => {
+    let logic;
+    beforeEach(() => {
+      logic = createLogic({
+        type: 'foo',
+        process() { // eslint-disable-line no-unused-vars
+        }
+      });
+    });
+    it('defaults processOptions.dispatchReturn true', () => {
+      expect(logic.processOptions.dispatchReturn).toBe(true);
+    });
+    it('defaults processOptions.dispatchMultiple undefined', () => {
+      expect(logic.processOptions.dispatchMultiple).toBe(undefined);
+    });
+  });
+
+  describe('process fn sig without dispatch nor done', () => {
+    let logic;
+    beforeEach(() => {
+      logic = createLogic({
+        type: 'foo',
+        process(deps) { // eslint-disable-line no-unused-vars
+        }
+      });
+    });
+    it('defaults processOptions.dispatchReturn true', () => {
+      expect(logic.processOptions.dispatchReturn).toBe(true);
+    });
+    it('defaults processOptions.dispatchMultiple undefined', () => {
+      expect(logic.processOptions.dispatchMultiple).toBe(undefined);
+    });
+  });
+
+  describe('process fn sig with dispatch but not done', () => {
+    let logic;
+    beforeEach(() => {
+      logic = createLogic({
+        type: 'foo',
+        process(deps, dispatch) { // eslint-disable-line no-unused-vars
+          dispatch();
+        }
+      });
+    });
+    it('defaults processOptions.dispatchReturn undefined', () => {
+      expect(logic.processOptions.dispatchReturn).toBe(undefined);
+    });
+    it('defaults processOptions.dispatchMultiple undefined', () => {
+      expect(logic.processOptions.dispatchMultiple).toBe(undefined);
+    });
+  });
+
+  describe('process fn sig with dispatch and done', () => {
+    let logic;
+    beforeEach(() => {
+      logic = createLogic({
+        type: 'foo',
+        process(deps, dispatch, done) { // eslint-disable-line no-unused-vars
+          dispatch();
+          done();
+        }
+      });
+    });
+    it('defaults processOptions.dispatchReturn undefined', () => {
+      expect(logic.processOptions.dispatchReturn).toBe(undefined);
+    });
+    it('defaults processOptions.dispatchMultiple true', () => {
+      expect(logic.processOptions.dispatchMultiple).toBe(true);
+    });
+  });
+
+  describe('process fn sig with dispatch and done and extra', () => {
+    let logic;
+    beforeEach(() => {
+      logic = createLogic({
+        type: 'foo',
+        process(deps, dispatch, done, extra) { // eslint-disable-line no-unused-vars
+          dispatch();
+          done();
+        }
+      });
+    });
+    it('defaults processOptions.dispatchReturn undefined', () => {
+      expect(logic.processOptions.dispatchReturn).toBe(undefined);
+    });
+    it('defaults processOptions.dispatchMultiple true', () => {
+      expect(logic.processOptions.dispatchMultiple).toBe(true);
+    });
+  });
+
   describe('unknown or misspelled option', () => {
     it('throws an error', () => {
       expect(() => {
