@@ -16,7 +16,7 @@ It builds action creators and reducers without using any helper libraries.
 
 It showcases some of the declarative functionality built into redux-logic, so simply by specifying a cancelType, we enable this code to be cancellable. No code had to be written by us to leverage that functionality. Just be declaring the `cancelType`, when a cancellation action is received future dispatching is disabled, however to be a good citizen we should cleanup any resourses that we created, in this case we should stop the timer we started. We can listen to the cancelled$ observable and if it fires we can perform our cleanup.
 
-Finally this also shows how to use dispatch for a long running task with multiple dispatches. To perform multiple dispatches, pass `{ allowMore: true }` for the second argument `options`. Alternatively you can simply dispatch an observable. See [Advanced usage in the API docs](../../docs/api.md#advanced-usage)
+Finally this also shows how to use dispatch for a long running task with multiple dispatches. To perform multiple dispatches, include the `done` cb in the process hook and call it when done performing multiple dispatches. Alternatively you can simply dispatch an observable. See [Advanced usage in the API docs](../../docs/api.md#advanced-usage)
 
 
 ```js
@@ -40,10 +40,13 @@ const timerStartLogic = createLogic({
     }
   },
 
-  process({ cancelled$ }, dispatch) {
+  // by including the done cb we default this into multi-dispatch mode
+  // alternatively we could set the processOptions.dispatchMultiple true
+  // this process never ends until cancelled otherwise we would call done
+  process({ cancelled$ }, dispatch, done) {
     const interval = setInterval(() => {
       // passing allowMore: true option to keep open for more dispatches
-      dispatch(timerDecrement(), { allowMore: true });
+      dispatch(timerDecrement());
     }, 1000);
 
     // The declarative cancellation already stops future dispatches
@@ -51,7 +54,6 @@ const timerStartLogic = createLogic({
     // If cancelled, stop the time interval
     cancelled$.subscribe(() => {
       clearInterval(interval);
-      dispatch(); // dispatch nothing to tell logic we are done
     });
   }
 });

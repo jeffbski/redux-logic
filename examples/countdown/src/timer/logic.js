@@ -23,16 +23,20 @@ export const timerStartLogic = createLogic({
     }
   },
 
-  process({ cancelled$ }, dispatch) {
+  // by including the done cb we default this into multi-dispatch mode
+  // alternatively we could set the processOptions.dispatchMultiple true
+  // this process never ends until cancelled otherwise we would call done
+  process({ cancelled$ }, dispatch, done) {
     const interval = setInterval(() => {
       // passing allowMore: true option to keep open for more dispatches
-      dispatch(timerDecrement(), { allowMore: true });
+      dispatch(timerDecrement());
     }, 1000);
 
-    // if cancelled, stop the time interval
+    // The declarative cancellation already stops future dispatches
+    // but we should go ahead and stop the timer we created.
+    // If cancelled, stop the time interval
     cancelled$.subscribe(() => {
       clearInterval(interval);
-      dispatch(); // dispatch nothing to tell logic we are done
     });
   }
 });
