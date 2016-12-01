@@ -1,7 +1,11 @@
+import { Observable } from 'rxjs/Observable'; // eslint-disable-line no-unused-vars
 import { Subject } from 'rxjs/Subject';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import 'rxjs/add/operator/scan';
+import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/takeWhile';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/toPromise';
 import wrapper from './logicWrapper';
 
 const debug = (/* ...args */) => {};
