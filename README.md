@@ -13,10 +13,10 @@ Redux middleware that can:
 
 With redux-logic, you have the **freedom** to write your logic in **your favorite JS style**:
 
- - plain **callback** code
- - **promises**
- - **async/await**
- - **observables**
+ - plain **callback** code - `dispatch(resultAction)`
+ - **promises** - `return axios.get(url).then(...)`
+ - **async/await** - `result = await fetch(url)`
+ - **observables** - `ob$.next(action1)`
 
 > Use the type of code you and your team are comfortable and experienced with.
 
