@@ -13,34 +13,37 @@ Redux middleware that can:
 
 With redux-logic, you have the **freedom** to write your logic in **your favorite JS style**:
 
- - plain callback code
- - promises
- - async/await
- - observables
+ - plain **callback** code
+ - **promises**
+ - **async/await**
+ - **observables**
 
 Use the type of code you and your team are comfortable and experienced with.
 
 Leverage powerful **declarative** features by simply setting properties:
 
- - filtering for action type(s) or with regular expression(s)
- - cancellation on receiving action type(s)
- - use only response for the latest request
- - debouncing
- - throttling
- - dispatch actions - auto decoration of payloads
+ - **filtering** for action type(s) or with regular expression(s)
+ - **cancellation** on receiving action type(s)
+ - use only response for the **latest** request
+ - **debouncing**
+ - **throttling**
+ - dispatch actions - auto **decoration** of payloads
 
 Testing your logic is straight forward and simple.
 
-redux-logic makes it easy to know when all your async fetching is complete which simplifies server rendering.
+With simple code your logic can:
 
-Inspired by redux-observable epics, redux-saga, and custom redux middleware, redux-logic combines features of each into a simple easy to use API.
+ - **intercept** actions before they hit the reducer
+   - **validate**, verify, auth check actions and allow/reject or modify actions
+   - **transform** - augment/enhance/modify actions
+ - **process** - **async processing** and dispatching, orchestration, I/O (ajax, REST, subscriptions, GraphQL, web sockets, ...)
 
-With simple code you can:
+redux-logic makes it easy to use code that is split into bundles so you can dynamically load logic along with your split UI.
 
- - intercept actions before they hit the reducer
-   - validate, verify, auth check actions and allow/reject or modify actions
-   - transform - augment/enhance/modify actions
- - process - async processing and dispatching, orchestration, I/O (ajax, REST, subscriptions, web sockets, ...)
+redux-logic lets you know when all your async fetching is complete which simplifies server rendering.
+
+Inspired by redux-observable epics, redux-saga, and custom redux middleware, redux-logic combines ideas of each into a simple easy to use API.
+
 
 ## Quick Example
 
