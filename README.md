@@ -18,7 +18,7 @@ With redux-logic, you have the **freedom** to write your logic in **your favorit
  - **async/await**
  - **observables**
 
-Use the type of code you and your team are comfortable and experienced with.
+> Use the type of code you and your team are comfortable and experienced with.
 
 Leverage powerful **declarative** features by simply setting properties:
 

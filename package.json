@@ -1,7 +1,7 @@
 {
   "name": "redux-logic",
   "version": "0.10.2",
-  "description": "Redux middleware for organizing business logic and action side effects.",
+  "description": "Redux middleware for organizing all your business logic. Intercept actions and perform async processing.",
   "main": "build-lib/index.js",
   "browser": {
     "main": "dist/redux-logic.js"
@@ -57,7 +57,10 @@
     "domain logic",
     "epic",
     "saga",
-    "observable"
+    "observable",
+    "side effect",
+    "promise",
+    "async await"
   ],
   "authors": [
     "Jeff Barczewski <jeff.barczewski@gmail.com> (https://github.com/jeffbski)"
