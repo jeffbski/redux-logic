@@ -40,7 +40,7 @@ With simple code your logic can:
 
 redux-logic makes it easy to use code that is split into bundles so you can dynamically load logic along with your split UI.
 
-redux-logic lets you know when all your async fetching is complete which simplifies server rendering.
+Server rendering is simplified with redux-logic since it lets you know when all your async fetching is complete without manual tracking.
 
 Inspired by redux-observable epics, redux-saga, and custom redux middleware, redux-logic combines ideas of each into a simple easy to use API.
 
