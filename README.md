@@ -38,7 +38,7 @@ With simple code your logic can:
    - **transform** - augment/enhance/modify actions
  - **process** - **async processing** and dispatching, orchestration, I/O (ajax, REST, subscriptions, GraphQL, web sockets, ...)
 
-redux-logic makes it easy to use code that is split into bundles so you can dynamically load logic along with your split UI.
+Redux-logic makes it easy to use code that is split into bundles, so you can dynamically load logic right along with your split UI.
 
 Server rendering is simplified with redux-logic since it lets you know when all your async fetching is complete without manual tracking.
 
