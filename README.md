@@ -1,19 +1,39 @@
 # redux-logic
 
-Redux middleware for organizing business logic and action side effects.
+> "One place for all your business logic and action side effects"
 
-> "I wrote the rxjs code so you won't have to."
+Redux middleware that can:
+
+ - **intercept** (validate/transform/augment) actions AND
+ - **perform async processing** (fetching, I/O, side effects)
 
 [![Build Status](https://secure.travis-ci.org/jeffbski/redux-logic.png?branch=master)](http://travis-ci.org/jeffbski/redux-logic) [![Codacy Grade Badge](https://img.shields.io/codacy/grade/3687e7267e6d466b9d226c22b24f0061.svg)](https://www.codacy.com/app/jeff-barczewski/redux-logic) [![Codacy Coverage Badge](https://img.shields.io/codacy/coverage/3687e7267e6d466b9d226c22b24f0061.svg)](https://www.codacy.com/app/jeff-barczewski/redux-logic) [![Known Vulnerabilities](https://snyk.io/test/github/jeffbski/redux-logic/badge.svg)](https://snyk.io/test/github/jeffbski/redux-logic) [![NPM Version Badge](https://img.shields.io/npm/v/redux-logic.svg)](https://www.npmjs.com/package/redux-logic)
 
-
-You declare some behavior that wraps your code providing things like filtering, cancelation, limiting, etc., then write just the simple business logic code that runs in the center.
-
-Inspired by redux-observable epics, redux-saga, and custom redux middleware.
-
 ## tl;dr
 
-One place to keep all of your business logic and side effects with redux
+With redux-logic, you have the **freedom** to write your logic in **your favorite JS style**:
+
+ - plain callback code
+ - promises
+ - async/await
+ - observables
+
+Use the type of code you and your team are comfortable and experienced with.
+
+Leverage powerful **declarative** features by simply setting properties:
+
+ - filtering for action type(s) or with regular expression(s)
+ - cancellation on receiving action type(s)
+ - use only response for the latest request
+ - debouncing
+ - throttling
+ - dispatch actions - auto decoration of payloads
+
+Testing your logic is straight forward and simple.
+
+redux-logic makes it easy to know when all your async fetching is complete which simplifies server rendering.
+
+Inspired by redux-observable epics, redux-saga, and custom redux middleware, redux-logic combines features of each into a simple easy to use API.
 
 With simple code you can:
 
@@ -21,11 +41,6 @@ With simple code you can:
    - validate, verify, auth check actions and allow/reject or modify actions
    - transform - augment/enhance/modify actions
  - process - async processing and dispatching, orchestration, I/O (ajax, REST, subscriptions, web sockets, ...)
-
-Built-in declarative functionality
-
- - filtering, cancellation, takeLatest, throttling, debouncing
-
 
 ## Quick Example
 
