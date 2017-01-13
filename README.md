@@ -210,7 +210,7 @@ export default [
 
 `processOptions` has these new properties which affect the process hook behavior:
 
- - `dispatchReturn` - the returned value of the process function will be dispatched or if it is a promise or observable then the resolve, reject, or observable values will be dispatched applying any successType or failType logic if defined. Default: `false`.
+ - `dispatchReturn` - the returned value of the process function will be dispatched or if it is a promise or observable then the resolve, reject, or observable values will be dispatched applying any successType or failType logic if defined. Default is determined by arity of process fn, `true` if dispatch not provided, `false` otherwise. [Details](https://github.com/jeffbski/redux-logic/blob/master/docs/api.md#dispatch---multi-dispatching-and-process-variable-signature)
  - `successType` - dispatch this action type using contents of dispatch as the payload (also would work with with promise or observable). You may alternatively provide an action creator function to use instead. Deafult: `undefined`.
  - `failType` - dispatch this action type using contents of error as the payload, sets error: true (would also work for rejects of promises or error from observable). You may alternatively provide an action creator function to use instead. Default: `undefined`.
 
