@@ -48,6 +48,20 @@ describe('createLogicMiddleware', () => {
     it('mw.whenComplete() should resolve to promise', (done) => {
       mw.whenComplete().then(done);
     });
+
+    it('assigning a same store to mw instance is ok', () => {
+      const store = {};
+      mw(store); // assign to store
+      mw(store); // assign to same store is ok
+    });
+
+    it('assigning a mw instance to multple stores, throws', () => {
+      const assignToMultipleStores = () => {
+        mw({}); // assign to first store
+        mw({}); // assign to a different store
+      };
+      expect(assignToMultipleStores).toThrow('multiple stores');
+    });
   });
 
   describe('createLogicMiddleware(nonArray)', () => {

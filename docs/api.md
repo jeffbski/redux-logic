@@ -114,6 +114,10 @@ return logicMiddleware.whenComplete(() => { // returns promise
 
 // observable for monitoring the internal operations, see advanced
 logicMiddleware.monitor$
+
+// A logicMiddleware instance can only be used with one store, it
+// will throw an error if you try to reassociate it with another store.
+// Simply create a new instance for each store that you are using.
 ```
 
 ## Execution phase hooks - validate, transform, process

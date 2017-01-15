@@ -78,6 +78,9 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
   let savedLogicArr = arrLogic; // keep for uniqueness check
 
   function mw(store) {
+    if (savedStore && savedStore !== store) {
+      throw new Error('cannot assign logicMiddleware instance to multiple stores, create separate instance for each');
+    }
     savedStore = store;
 
     return next => {
@@ -128,6 +131,7 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
     @return {object} object with a property logicCount set to the count of logic items
    */
   mw.addLogic = function addLogic(arrNewLogic) {
+    if (!arrNewLogic.length) { return { logicCount }; }
     const combinedLogic = savedLogicArr.concat(arrNewLogic);
     const duplicateLogic = findDuplicates(combinedLogic);
     if (duplicateLogic.length) {
