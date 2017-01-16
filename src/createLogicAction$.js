@@ -2,7 +2,6 @@ import isObservable from 'is-observable';
 import isPromise from 'is-promise';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import { asap } from 'rxjs/scheduler/asap';
 import 'rxjs/add/observable/from';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/catch';
@@ -10,7 +9,6 @@ import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeAll';
-import 'rxjs/add/operator/observeOn';
 import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/takeUntil';
 
@@ -188,21 +186,16 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
 
       // unless rejected, we will process even if allow/next dispatched
       if (shouldProcess) { // processing, was an accept
-        // delay process slightly so state can be updated
-        Observable.of(true)
-          .observeOn(asap)
-          .subscribe(() => {
-            // if action provided is empty, give process orig
-            depObj.action = act || action;
-            try {
-              const retValue = processFn(depObj, dispatch, done);
-              if (dispatchReturn) { // processOption.dispatchReturn true
-                handleDispatchReturn(retValue);
-              }
-            } catch (err) {
-              dispatch(err);
-            }
-          });
+        // if action provided is empty, give process orig
+        depObj.action = act || action;
+        try {
+          const retValue = processFn(depObj, dispatch, done);
+          if (dispatchReturn) { // processOption.dispatchReturn true
+            handleDispatchReturn(retValue);
+          }
+        } catch (err) {
+          dispatch(err);
+        }
       } else { // not processing, must have been a reject
         dispatch$.complete();
       }
