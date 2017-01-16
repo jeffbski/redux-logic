@@ -491,18 +491,17 @@ describe('createLogicMiddleware-latest', () => {
           shouldProcess: true,
           op: 'next' },
         { nextAction: { type: 'FOO', id: 2 }, op: 'bottom' },
+        { action: { type: 'FOO', id: 2 },
+          dispAction: { type: 'BAR', id: 2 },
+          op: 'dispatch' },
         { action: { type: 'FOO', id: 1 },
           name: 'L(FOO)-0',
           op: 'dispCancelled' },
         { action: { type: 'FOO', id: 1 }, name: 'L(FOO)-0', op: 'end' },
         { action: { type: 'FOO', id: 2 },
-          dispAction: { type: 'BAR', id: 2 },
-          op: 'dispatch' },
-        { action: { type: 'FOO', id: 2 },
           dispAction: { type: 'CAT', id: 2 },
           op: 'dispatch' },
-        { action: { type: 'FOO', id: 2 }, name: 'L(FOO)-0', op: 'end' }
-      ]);
+        { action: { type: 'FOO', id: 2 }, name: 'L(FOO)-0', op: 'end' }        ]);
     });
 
     it('mw.whenComplete(fn) should be called when complete', (done) => {
@@ -544,7 +543,7 @@ describe('createLogicMiddleware-latest', () => {
                 type: 'CAT'
               });
               obs.complete();
-            }, 10);
+            }, 30);
           }));
         }
       });
@@ -592,13 +591,13 @@ describe('createLogicMiddleware-latest', () => {
           shouldProcess: true,
           op: 'next' },
         { nextAction: { type: 'FOO', id: 2 }, op: 'bottom' },
+        { action: { type: 'FOO', id: 2 },
+          dispAction: { type: 'BAR', id: 2 },
+          op: 'dispatch' },
         { action: { type: 'FOO', id: 1 },
           name: 'L(FOO)-0',
           op: 'dispCancelled' },
         { action: { type: 'FOO', id: 1 }, name: 'L(FOO)-0', op: 'end' },
-        { action: { type: 'FOO', id: 2 },
-          dispAction: { type: 'BAR', id: 2 },
-          op: 'dispatch' },
         { action: { type: 'FOO', id: 2 },
           dispAction: { type: 'CAT', id: 2 },
           op: 'dispatch' },
