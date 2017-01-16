@@ -1,6 +1,6 @@
 {
   "name": "redux-logic",
-  "version": "0.10.4",
+  "version": "0.10.5",
   "description": "Redux middleware for organizing all your business logic. Intercept actions and perform async processing.",
   "main": "build-lib/index.js",
   "browser": {
