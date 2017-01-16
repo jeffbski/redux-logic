@@ -51,6 +51,8 @@ describe('createLogicMiddleware-integration', () => {
 
       store.dispatch({ type: 'DEC' });
       store.dispatch({ type: 'DEC' });
+      // we could just call done() here since everything is sync
+      // but whenComplete is always the safe thing to do
       logicMiddleware.whenComplete(done);
     });
 
