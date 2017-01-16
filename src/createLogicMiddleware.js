@@ -177,6 +177,7 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
     actionEnd$ = action$;
     logicSub = sub;
     logicCount = cnt;
+    savedLogicArr = arrRepLogic;
     debug('replaced logic');
     return { logicCount: cnt };
   };

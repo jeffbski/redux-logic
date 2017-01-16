@@ -46,6 +46,22 @@ describe('createLogicMiddleware-add-replace', () => {
       });
     });
 
+    describe('mw.createLogicMiddleware(arr1), mw.replaceLogic([]), mw.addLogic(arr1)', () => {
+      it('should be ok', () => {
+        const next = expect.createSpy();
+        const fooLogic = createLogic({ type: 'FOO' });
+        const barLogic = createLogic({ type: 'BAR' });
+        const arrLogic = [
+          fooLogic,
+          barLogic
+        ];
+        const mw = createLogicMiddleware(arrLogic);
+        mw({})(next); // simulate store creation
+        mw.replaceLogic([]);
+        mw.addLogic(arrLogic);
+      });
+    });
+
     describe('mw.mergeNewLogic(duplicateInArray)', () => {
       it('throws an error', () => {
         const dispatch = expect.createSpy();
