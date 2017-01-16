@@ -501,7 +501,8 @@ describe('createLogicMiddleware-latest', () => {
         { action: { type: 'FOO', id: 2 },
           dispAction: { type: 'CAT', id: 2 },
           op: 'dispatch' },
-        { action: { type: 'FOO', id: 2 }, name: 'L(FOO)-0', op: 'end' }        ]);
+        { action: { type: 'FOO', id: 2 }, name: 'L(FOO)-0', op: 'end' }
+      ]);
     });
 
     it('mw.whenComplete(fn) should be called when complete', (done) => {
