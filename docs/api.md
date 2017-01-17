@@ -135,7 +135,7 @@ You may implement one or more hooks depending on your business logic. The lifecy
  1. validate(depObj, allow, reject) OR transform(depObj, next /*, reject */)
  2. Action from allow/reject/next is passed along to other logic, middleware, and reducers
 
- 3. process(depObj, dispatch) // only called if allow/next was called
+ 3. process(depObj, dispatch?, done?) // only called if allow/next was called
 
 Each `depObj` contains `getState`, `action`, along with any user injected deps and a few other advanced properties. See [advanced section](#additional-properties-available-to-execution-hooks) for full details.
 
@@ -194,15 +194,21 @@ If you set the `processOptions` object, you can further influence how process be
   - `processOptions.successType` - if set to an action type string or an action creator function it will use this to create the action from the dispatched value. If the `successType` was a string then it will create an action of this type and set the payload to the dispatched value (following [FSA format](https://github.com/acdlite/flux-standard-action "Flux Standard Actions format")). If it was an action creator function then it will pass the value to the action creator and then dispatch that. Default undefined.
   - `processOptions.failType` - if set to an action type string or an action creator function it will use this to create the action from the dispatched error or rejected promise value or errored observable similar to how `successType` works. If `failType` was a string then it uses the [FSA error format](https://github.com/acdlite/flux-standard-action "Flux Standard Actions format") otherwise it calls the action creator provided. If `failType` is not defined and an error is thrown or dispatched that does not itself have a `type` (action type), then an `UNHANDLED_LOGIC_ERROR` will be dispatched with the error as the payload. Default `undefined`.
 
-Since the most common use case is to do a single dispatch, that's what `process` expects by default. You would call `dispatch` exactly one time passing whatever success or failure action. If you decide in your logic that you don't want to dispatch anything call `dispatch` empty `dispatch()` to complete the logic.
+The process hook's full signature is `process(deps, dispatch?, done?)`.
 
-If you want to perform multiple dispatches for a long running subscription or to dispatch many different things then there are a couple ways to do it. You may dispatch an observable and for every result it will dispatch. There is also a way to perform multiple dispatches by including the done callback or setting dispatchMultiple to true. See advanced section for more details.
+If the done callback is provided in your code then it is assumed that you want to do multiple dispatching and thus you need to call done when you are finished.
+
+Since it is a really common use case to do a single dispatch, you can omit the done and the process hook switches into single dispatch mode, expecting that dispatch would be called exactly once. If you determine you don't need to dispatch anything then you can make an empty `dispatch()`.
+
+If you prefer to use promises, async/await, or observables then redux-logic makes it easy to use those as well ([see discussion later](/jeffbski/redux-logic/blob/master/docs/api.md#dispatch---multi-dispatching-and-process-variable-signature)).
+
 
 The default `process` hook if none is provided is:
 
 ```js
-process({ getState, action }, dispatch) {
+process({ getState, action }, dispatch, done) {
   dispatch(); // dispatch nothing and complete
+  done(); // done dispatching
 }
 ```
 
@@ -268,6 +274,8 @@ const usersFetchLogic = createLogic({
   cancelType: USERS_FETCH_CANCEL,
   latest: true, // take latest only
 
+  // By not including done in the hook, process is in single dispatch
+  // mode so it expects dispatch to be called exactly once
   process({ getState, action }, dispatch) {
     // dispatch the values from this observable
     // cancel and take latest will abort in-flight xhr requests
@@ -348,13 +356,16 @@ which results in the following three possible variations:
 // dispatch from returned object, resolved promise, or observable
 // this defaults processOptions.dispatchReturn = true enabling
 // dispatching of the returned/resolved values
+// If you decide that you do not need to dispatch anything you may
+// returning an undefined or promise resolving to undefined
 process({ getState, action }) {
   return objOrPromiseOrObservable;
 }
 ```
 
 ```js
-// single dispatch
+// single dispatch - call dispatch exactly once
+// call with undefined if you do not need to dispatch anything
 process({ getState, action }, dispatch) {
   dispatch(objOrPromiseOrObservable); // call exactly once
 }
