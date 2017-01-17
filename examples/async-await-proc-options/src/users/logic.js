@@ -21,7 +21,7 @@ export const usersFetchLogic = createLogic({
   async process({ httpClient }) {
       // the delay query param adds arbitrary delay to the response
       const users =
-        await httpClient.get(`http://reqres.in/api/users?delay=${delay}`)
+        await httpClient.get(`https://reqres.in/api/users?delay=${delay}`)
                         .then(resp => resp.data.data); // use data property of payload
       return users;
   }

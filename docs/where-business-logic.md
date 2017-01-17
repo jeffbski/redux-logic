@@ -436,15 +436,15 @@ const fetchUserLogic = createLogic({
 
   // execution phases: validate, transform, process
   // implement one or more of these
-  process({ getState, action }, dispatch) {
+  process({ getState, action }, dispatch, done) {
     axios.get(`https://server/user/${action.payload}`)
       .then(resp => resp.data)
       .then(user => dispatch({ type: USER_FETCH_SUCCESS, payload: user }))
       .catch(err => {
         console.error(err); // log since might be a render err
         dispatch({ type: USER_FETCH_FAILED, payload: err, error: true });
-      });
-
+      })
+      .then(() => done());
   }
 });
 ```
@@ -562,11 +562,12 @@ const fooLogic = createLogic({
     failType: undefined // default undefined
   },
 
-  process({ getState, action, cancelled$ }, dispatch) {
+  process({ getState, action, cancelled$ }, dispatch?, done?) {
     // Perform your processing then call dispatch with an action
-    // or use dispatch() to complete without dispatching anything.
-    // Multi-dispatch: see advanced API docs
+    // then call done() when finished dispatching
+    // See other ways to use process in advanced API docs
     dispatch(myNewAction);
+    done();
   })
 });
 

@@ -34,12 +34,12 @@ export const userProfFetchLogic = createLogic({
 async function fetchUserWithProfile(httpClient, uid) {
   // the delay query param adds arbitrary delay to the response
   const user =
-    await httpClient.get(`http://reqres.in/api/users/${uid}?delay=${delay}`)
+    await httpClient.get(`https://reqres.in/api/users/${uid}?delay=${delay}`)
       .then(resp => resp.data.data); // use data property of payload
 
   // we can use data from user to fetch fake profile
   const profile =
-    await httpClient.get(`http://reqres.in/api/profile/${user.id}`)
+    await httpClient.get(`https://reqres.in/api/profile/${user.id}`)
       .then(resp => resp.data.data);
 
   user.profile = profile; // combine profile into user object

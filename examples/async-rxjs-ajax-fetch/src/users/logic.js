@@ -11,17 +11,18 @@ export const usersFetchLogic = createLogic({
   cancelType: usersFetchCancel,
   latest: true, // take latest only
 
-  process({ httpClient }, dispatch) {
+  process({ httpClient }, dispatch, done) {
     // dispatch the results of the observable
     dispatch(
       // httpClient is RxJS ajax injected in the src/configureStore.js
       // as a dependency for logic hooks to use. It returns observable
       // the delay query param adds arbitrary delay to the response
-      httpClient.getJSON(`http://reqres.in/api/users?delay=${delay}`)
+      httpClient.getJSON(`https://reqres.in/api/users?delay=${delay}`)
         .map(payload => payload.data) // use data property of payload
         .map(users => usersFetchFulfilled(users))
         .catch(err => Observable.of(usersFetchRejected(err)))
     );
+    done(); // call when done dispatching
   }
 });
 

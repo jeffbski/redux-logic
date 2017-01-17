@@ -16,14 +16,15 @@ export const searchLogic = createLogic({
   },
 
   // use axios injected as httpClient from configureStore logic deps
-  process({ httpClient, getState, action }, dispatch) {
-    httpClient.get(`http://npmsearch.com/query?q=${action.payload}&fields=name,description`)
+  process({ httpClient, getState, action }, dispatch, done) {
+    httpClient.get(`https://npmsearch.com/query?q=${action.payload}&fields=name,description`)
       .then(resp => resp.data.results) // use results property of payload
       .then(results => dispatch(searchFulfilled(results)))
       .catch((err) => {
         console.error(err); // might be a render err
         dispatch(searchRejected(err))
-      });
+      })
+      .then(() => done()); // call done when finished dispatching
   }
 });
 

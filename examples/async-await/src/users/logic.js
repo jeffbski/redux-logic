@@ -12,17 +12,18 @@ export const usersFetchLogic = createLogic({
   // use axios injected as httpClient from configureStore logic deps
   // we also have access to getState and action in the first argument
   // but they were not needed for this particular code
-  async process({ httpClient }, dispatch) {
+  async process({ httpClient }, dispatch, done) {
     try {
       // the delay query param adds arbitrary delay to the response
       const users =
-        await httpClient.get(`http://reqres.in/api/users?delay=${delay}`)
+        await httpClient.get(`https://reqres.in/api/users?delay=${delay}`)
                         .then(resp => resp.data.data); // use data property of payload
       dispatch(usersFetchFulfilled(users));
     } catch(err) {
       console.error(err); // might be a render err
       dispatch(usersFetchRejected(err));
     }
+    done(); // call when finished dispatching
   }
 });
 

@@ -40,10 +40,12 @@ const timerStartLogic = createLogic({
     }
   },
 
-  process(depObj, dispatch) {
-    const ob$ = Rx.Observable.interval(1000)
-          .map(() => timerDecrement()); // send timerDecrement actions
-    dispatch(ob$);
+  // by omitting dispatch and done, process will use the return
+  // to determine what to dispatch. In this case we returned
+  // an observable so it will dispatch any values that were emitted
+  process(depObj) {
+    return Rx.Observable.interval(1000)
+      .map(() => timerDecrement()); // send timerDecrement actions
   }
 });
 
@@ -59,15 +61,14 @@ const timerDecrementLogic = createLogic({
     }
   },
 
-  process({ getState }, dispatch) {
+  process({ getState }, dispatch, done) {
     // unless other middleware/logic introduces async behavior, the
     // state will have been updated by the reducers by now
     const state = getState();
     if (timerSel.value(state) === 0) {
       dispatch(timerEnd());
-    } else { // not zero
-      dispatch(); // ends process logic, nothing is dispatched
     }
+    done(); // we are done dispatching
   }
 });
 ```

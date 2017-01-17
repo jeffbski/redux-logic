@@ -32,7 +32,7 @@ export const usersFetchLogic = createLogic({
     // the delay query param adds arbitrary delay to the response
     // since dispatchReturn is true and successType and failType set
     // our code becomes very clean, just return the observable
-    return httpClient.getJSON(`http://reqres.in/api/users?delay=${delay}`)
+    return httpClient.getJSON(`https://reqres.in/api/users?delay=${delay}`)
       .map(payload => payload.data); // use data property of payload
   }
 });

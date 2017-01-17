@@ -39,10 +39,11 @@ export const notifyCreateLogic = createLogic({
   },
 
   // if we had added directly then schedule remove
-  process({ action }, dispatch) {
+  process({ action }, dispatch, done) {
     const msg = action.payload;
     setTimeout(() => {
       dispatch(notifyRemove([msg]));
+      done(); // call when done dispatching
     }, DISPLAY_TIME);
   }
 });
@@ -51,17 +52,15 @@ export const notifyRemoveLogic = createLogic({
   type: NOTIFY_REMOVE,
 
   // everytime we remove an item, if queued, send action to display one
-  process({ getState, action }, dispatch) {
+  process({ getState, action }, dispatch, done) {
     // unless other middleware/logic introduces async behavior, the
     // state will have been updated by the reducers before process runs
     const state = getState();
     const queue = notifySel.queue(state);
     if (queue.length) {
       dispatch(notifyDisplayQueued());
-    } else { // nothing to do
-      //tell process we're done with empty dispatch
-      dispatch();
     }
+    done(); // we are done dispatching
   }
 });
 
@@ -70,7 +69,7 @@ export const notifyQueuedLogic = createLogic({
 
   // after we queue an item, if display is already clear
   // we add in a displayQueued to ensure things aren't stuck
-  process({ getState }, dispatch) {
+  process({ getState }, dispatch, done) {
     // just in case things had already cleared out,
     // check to see if can display yet, normally
     // any remove actions trigger this check but if already
@@ -80,9 +79,9 @@ export const notifyQueuedLogic = createLogic({
       const current = notifySel.messages(state);
       if (!current.length) {
         dispatch(notifyDisplayQueued());
-      } else { // the next remove will trigger display
-        dispatch(); // nothing to dispatch, but tell process we are done
       }
+      // the next remove will trigger display
+      done(); // we are done dispatching
     }, 100);
   }
 });
@@ -107,10 +106,11 @@ export const notifyDisplayQueuedLogic = createLogic({
   },
 
   // schedule removes for those displayed
-  process({ action }, dispatch) {
+  process({ action }, dispatch, done) {
     const arrMsgs = action.payload;
     setTimeout(() => {
       dispatch(notifyRemove(arrMsgs));
+      done(); // we are done dispatching
     }, DISPLAY_TIME);
   }
 });

@@ -40,12 +40,9 @@ const timerStartLogic = createLogic({
     }
   },
 
-  // by including the done cb we default this into multi-dispatch mode
-  // alternatively we could set the processOptions.dispatchMultiple true
   // this process never ends until cancelled otherwise we would call done
   process({ cancelled$ }, dispatch, done) {
     const interval = setInterval(() => {
-      // passing allowMore: true option to keep open for more dispatches
       dispatch(timerDecrement());
     }, 1000);
 

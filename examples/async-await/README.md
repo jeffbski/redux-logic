@@ -20,17 +20,18 @@ export const usersFetchLogic = createLogic({
   // use axios injected as httpClient from configureStore logic deps
   // we also have access to getState and action in the first argument
   // but they were not needed for this particular code
-  async process({ httpClient }, dispatch) {
+  async process({ httpClient }, dispatch, done) {
       try {
         // the delay query param adds arbitrary delay to the response
         const users =
-          await httpClient.get(`http://reqres.in/api/users?delay=${delay}`)
+          await httpClient.get(`https://reqres.in/api/users?delay=${delay}`)
             .then(resp => resp.data.data); // use data property of payload
         dispatch(usersFetchFulfilled(users));
       } catch(err) {
         console.error(err); // might be a render err
         dispatch(usersFetchRejected(err));
       }
+      done(); // call when finished dispatching
   }
 });
 ```
@@ -48,14 +49,15 @@ export const userProfFetchLogic = createLogic({
   // use axios injected as httpClient from configureStore logic deps
   // we also have access to getState and action in the first argument
   // but they were not needed for this particular code
-  process({ httpClient, action }, dispatch) {
+  process({ httpClient, action }, dispatch, done) {
     const uid = action.payload;
     fetchUserWithProfile(httpClient, uid)
       .then(user => dispatch(userProfileFetchFulfilled(user)))
       .catch(err => {
         console.error(err); // might be a render err
         dispatch(userProfileFetchRejected(err))
-      });
+      })
+      .then(() => done()); // call when finished dispatching
   }
 });
 
@@ -69,12 +71,12 @@ export const userProfFetchLogic = createLogic({
 async function fetchUserWithProfile(httpClient, uid) {
   // the delay query param adds arbitrary delay to the response
   const user =
-    await httpClient.get(`http://reqres.in/api/users/${uid}?delay=${delay}`)
+    await httpClient.get(`https://reqres.in/api/users/${uid}?delay=${delay}`)
       .then(resp => resp.data.data); // use data property of payload
 
   // we can use data from user to fetch fake profile
   const profile =
-    await httpClient.get(`http://reqres.in/api/profile/${user.id}`)
+    await httpClient.get(`https://reqres.in/api/profile/${user.id}`)
       .then(resp => resp.data.data);
 
   user.profile = profile; // combine profile into user object

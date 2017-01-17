@@ -69,16 +69,17 @@ export const usersAddLogic = createLogic({
   },
 
   // if it passed the validation hook then this will be executed
-  process({ httpClient, getState }, dispatch) {
+  process({ httpClient, getState }, dispatch, done) {
     const state = getState();
     const fields = userSel.fields(state);
-    httpClient.post('http://reqres.in/api/users', fields)
+    httpClient.post('https://reqres.in/api/users', fields)
       .then(resp => resp.data) // new user created is returned
       .then(user => dispatch(usersAddSuccess(user)))
       .catch(err => {
         console.error(err); // might be a render err
         dispatch(usersAddFailed(err))
-      });
+      })
+      .then(() => done()); // call when done dispatching
   }
 });
 

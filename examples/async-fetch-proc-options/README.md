@@ -32,7 +32,7 @@ export const usersFetchLogic = createLogic({
     // the delay query param adds arbitrary delay to the response
     // since dispatchReturn is true and successType and failType set
     // our code becomes very clean, just return the promise
-    return httpClient.get(`http://reqres.in/api/users?delay=${delay}`)
+    return httpClient.get(`https://reqres.in/api/users?delay=${delay}`)
       .then(resp => resp.data.data); // use data property of payload
   }
 });

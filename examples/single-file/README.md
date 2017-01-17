@@ -27,8 +27,8 @@ const npmSearchLogic = createLogic({
   },
 
   // use axios injected as httpClient from configureStore logic deps
-  process({ httpClient, getState, action }, dispatch) {
-    httpClient.get(`http://npmsearch.com/query?q=${action.payload}&fields=name,description`)
+  process({ httpClient, getState, action }, dispatch, done) {
+    httpClient.get(`https://npmsearch.com/query?q=${action.payload}&fields=name,description`)
       .then(resp => resp.data.results) // use results prop of payload
       .then(results => dispatch({
         type: NPM_SEARCH_FULFILLED,
@@ -41,7 +41,8 @@ const npmSearchLogic = createLogic({
           payload: err,
           error: true
         })
-      });
+      })
+      .then(() => done()); // call when done dispatching
   }
 });
 ```

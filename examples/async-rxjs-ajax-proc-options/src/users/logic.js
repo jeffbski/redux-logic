@@ -20,7 +20,7 @@ export const usersFetchLogic = createLogic({
   // but they were not needed for this particular code
   process({ httpClient }) {
     // the delay query param adds arbitrary delay to the response
-    return httpClient.getJSON(`http://reqres.in/api/users?delay=${delay}`)
+    return httpClient.getJSON(`https://reqres.in/api/users?delay=${delay}`)
       .map(payload => payload.data); // use data property of payload
   }
 });
