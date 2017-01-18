@@ -444,7 +444,7 @@ const fetchUserLogic = createLogic({
         console.error(err); // log since might be a render err
         dispatch({ type: USER_FETCH_FAILED, payload: err, error: true });
       })
-      .then(() => done());
+      .then(() => done()); // call when finished dispatching
   }
 });
 ```
@@ -567,7 +567,7 @@ const fooLogic = createLogic({
     // then call done() when finished dispatching
     // See other ways to use process in advanced API docs
     dispatch(myNewAction);
-    done();
+    done(); // call when done dispatching
   })
 });
 
