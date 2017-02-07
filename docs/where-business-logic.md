@@ -274,7 +274,7 @@ export default combineEpics(
 );
 ```
 
-Alternatively if you instead use the RxJS-DOM ajax library you can eliminate the create observable code
+Alternatively if you instead use the RxJS ajax utilities you can eliminate the create observable code. `import { ajax } from 'rxjs/observable/dom/ajax';`
 
 ```js
 // this action creator will be bound to dispatch
