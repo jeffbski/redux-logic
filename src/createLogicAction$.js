@@ -66,7 +66,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
     function mapAndDispatch(actionOrValue) {
       if (typeof actionOrValue === 'undefined') { return; }
       if (failType) {
-        if (actionOrValue.useFailType) {
+        if (!!actionOrValue && actionOrValue.useFailType) {
           return storeDispatch(mapToAction(failType, actionOrValue.value, true));
         }
         if (actionOrValue instanceof Error) {
@@ -109,7 +109,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
 
     function dispatch(act, options = DispatchDefaults) {
       const { allowMore } = applyDispatchDefaults(options);
-      if (act) { // ignore empty action
+      if (typeof actionOrValue === 'undefined') { // ignore empty action
         dispatch$.next( // create obs for mergeAll
           (isObservable(act)) ?
             act :
