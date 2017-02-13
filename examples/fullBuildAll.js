@@ -24,7 +24,7 @@ for (const dir of exampleDirs) {
       cwd: path.join(__dirname, dir),
       stdio: 'inherit'
     };
-    process.stdout.write(`${opts.cwd}\n`);
+    process.stdout.write(`${opts.cwd}: ${cmdArg.cmd} ${cmdArg.args.join(' ')}\n`);
     let result = {};
     if (process.platform === 'win32') {
       result = spawnSync(`${cmdArg.cmd}.cmd`, cmdArg.args, opts);
