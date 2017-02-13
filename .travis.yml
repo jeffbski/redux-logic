@@ -8,6 +8,7 @@ script:
   - npm run check:src
   - npm run build
   - npm run check:examples
+  - npm run test:rxbuild
   - npm run test:cov-codacy
 branches:
   except:
