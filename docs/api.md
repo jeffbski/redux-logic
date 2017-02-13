@@ -238,6 +238,49 @@ const logic = createLogic({
 
 ## Advanced Usage
 
+### dispatch and return (when dispatchReturn:true) handling of process hook
+
+When you call your process hook `dispatch` function with a value or when you return a value from the process hook (when `dispatchReturn:true` or omitting dispatch/done in process hook):
+
+ - `undefined` - nothing will be dispatched
+ - `Error` - check failType OR if has `type`, dispatch it, otherwise wrap with UNHANDLED_LOGIC_ERROR action with the error as the `payload`.
+ - `Promise` - once promise resolves or rejects, apply the rules:
+   - resolving - check successType OR if truthy dispatch
+   - rejecting - check failType OR handle as Error
+ - `Observable` - as observable emits next or error, apply the rules:
+   - next - check successType OR if truthy dispatch
+   - error - check failType OR handle as Error
+ - `null` - check successType OR dispatch nothing
+ - `Object`, `Function`, or anything else truthy - check successType OR dispatch
+
+The processOptions section next explain how successType and/or failType options can wrap your values into an action object.
+
+### processOptions - influencing process hook
+
+Simplifying code by declaring additional properties in processOptions.
+
+ - `dispatchReturn` - the returned value of the process function will be dispatched or if it is a promise or observable then the resolve, reject, or observable values will be dispatched applying any successType or failType logic if defined. Default is determined by arity of process fn, `true` if dispatch not provided, `false` otherwise. Most users will simply omit or include dispatch/done in the process hook to enable or disable this property. [Details](https://github.com/jeffbski/redux-logic/blob/master/docs/api.md#dispatch---multi-dispatching-and-process-variable-signature)
+
+ - `successType` - dispatch this action type using contents of dispatch as the payload (also would work with with promise or observable). You may alternatively provide an action creator function to use instead and it will receive the value as only parameter. Default: `undefined`.
+   - if successType is a string action type
+     - create action using successType and provide value as payload. ex: with `successType:'FOO'`, result would be `{ type: 'FOO', payload: value }`
+
+   - if successType is an action creator fn receiving the value as only parameter
+     - use the return value from the action creator fn for dispatching ex: `successType: x => ({ type: 'FOO', payload: x })`
+     - if the action creator fn returns a falsey value like undefined then nothing will be dispatched. This allows your action creator to control whether something is actually dispatched based on the value provided to it.
+
+ - `failType` - dispatch this action type using contents of error as the payload, sets error: true (would also work for rejects of promises or error from observable). You may alternatively provide an action creator function to use instead which will receive the error as the only parameter. Default: `undefined`.
+   - if failType is a string action type
+     - create action using failType, provide value as the payload, and set error to true. ex: with `failType:'BAR'`, result would be `{ type: 'BAR', payload: errorValue, error: true }`
+
+   - if failType is an action creator function receiving the error value as its only parameter
+     - use the return value from the action creator fn for dispatching. ex: `failType: x => ({ type: 'BAR', payload: x, error: true })`
+     - if the action creator fn returns a falsey value like undefined then nothing will be dispatched. This allows your action creator to control whether something is actually dispatched based on teh value provided to it.
+
+The successType and failType would enable clean code, where you can simply return a promise or observable that resolves to the payload and rejects on error. The resulting code doesn't have to deal with dispatch and actions directly.
+
+ - `dispatchMultiple` - Normally this is set automatically based on the arity of the function provided as the process hook. This governs whether process expects a single or multiple dispatches. [Details](https://github.com/jeffbski/redux-logic/blob/master/docs/api.md#dispatch---multi-dispatching-and-process-variable-signature). It is likely that a future version of redux-logic will drop the single dispatch mode to prevent confusion and misuse after which case this property will no longer be needed.
+
 ### Additional properties available to execution hooks
 
 The first argument of each execution phase hook, `depObj`, contains any dependencies that were supplied to the createLogicMiddleware command as well as built-in properties.
@@ -384,7 +427,7 @@ process({ getState, action }, dispatch, done) {
 
 This should be somewhat intuitive so that you include the parameters when you need to use them. In the first case, you are returning an object, promise, or observable so the values returned or resolved will be dispatched.
 
-In the second case you only have dispatch so like with the other hooks (validate/transform) you would be expected to call it exactly once.
+In the second case you only have dispatch so like with the other hooks (validate/transform) you would be expected to call it exactly once. Due to confusion and misuse, it is likely that future version or redux-logic will remove this single dispatch form.
 
 And finally in the third case since done is included, it triggers multi-dispatch mode so you can freely dispatch as many items as necessary, just calling done when finished. You can also switch this mode on using processOptions.dispatchMultiple=true regardless of whether you include the `done` cb. In some situations like with a subscription, you might never need to end until cancelled, so you can just set the processOptions.dispatchMultiple to true and ignore the done since it isn't needed.
 

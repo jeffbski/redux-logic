@@ -5,9 +5,11 @@
     "arrow-parens": 0,
     // don't require dangling commas
     "comma-dangle": 0,
+    "consistent-return": 1,
     // causing issues with codacy
     "import/no-unresolved": 0,
     "indent": 0,
+    "no-nested-ternary": 0,
     "no-plusplus": 0,
     "no-shadow": 0,
     // don't require functions to be declared before use

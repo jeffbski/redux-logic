@@ -2,9 +2,9 @@ import isObservable from 'is-observable';
 import isPromise from 'is-promise';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/observable/from';
+import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/catch';
+import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/map';
@@ -37,56 +37,93 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
           .take(1);
     cancel$.subscribe(cancelled$); // connect cancelled$ to cancel$
     cancelled$
-      .subscribe(() => {
-        if (!interceptComplete) {
-          monitor$.next({ action, name, op: 'cancelled' });
-        } else { // marking these different so not counted twice
-          monitor$.next({ action, name, op: 'dispCancelled' });
+      .subscribe(
+        () => {
+          if (!interceptComplete) {
+            monitor$.next({ action, name, op: 'cancelled' });
+          } else { // marking these different so not counted twice
+            monitor$.next({ action, name, op: 'dispCancelled' });
+          }
         }
-      });
+      );
+
 
     const dispatch$ = (new Subject())
           .mergeAll()
           .takeUntil(cancel$);
-    dispatch$.subscribe({
-      next: mapAndDispatch,
-      complete: () => {
-        monitor$.next({ action, name, op: 'end' });
-        cancelled$.complete();
-        cancelled$.unsubscribe();
-      }
-    });
+    dispatch$
+      .do(
+        mapToActionAndDispatch, // next
+        mapErrorToActionAndDispatch // error
+      )
+      .subscribe({
+        error: (/* err */) => {
+          monitor$.next({ action, name, op: 'end' });
+          // signalling complete here since error was dispatched
+          // accordingly, otherwise if we were to signal an error here
+          // then cancelled$ subscriptions would have to specifically
+          // handle error in subscribe otherwise it will throw. So
+          // it doesn't seem that it is worth it.
+          cancelled$.complete();
+          cancelled$.unsubscribe();
+        },
+        complete: () => {
+          monitor$.next({ action, name, op: 'end' });
+          cancelled$.complete();
+          cancelled$.unsubscribe();
+        }
+      });
 
     function storeDispatch(act) {
       monitor$.next({ action, dispAction: act, op: 'dispatch' });
       return store.dispatch(act);
     }
 
-    /* eslint-disable consistent-return */
-    function mapAndDispatch(actionOrValue) {
-      if (typeof actionOrValue === 'undefined') { return; }
-      if (failType) {
-        if (!!actionOrValue && actionOrValue.useFailType) {
-          return storeDispatch(mapToAction(failType, actionOrValue.value, true));
-        }
-        if (actionOrValue instanceof Error) {
-          return storeDispatch(mapToAction(failType, actionOrValue, true));
-        }
+    function mapToActionAndDispatch(actionOrValue) {
+      const act =
+        (successType) ? mapToAction(successType, actionOrValue, false) :
+        actionOrValue;
+      if (act) {
+        storeDispatch(act);
       }
-      // failType not defined, but we have an error with no action type
-      // let's console.error it and emit as an UNHANDLED_LOGIC_ERROR
-      if (actionOrValue instanceof Error && !actionOrValue.type) {
-        // eslint-disable-next-line no-console
-        console.error(`unhandled exception in logic named: ${name}`, actionOrValue);
-        return storeDispatch(mapToAction(UNHANDLED_LOGIC_ERROR,
-                                          actionOrValue,
-                                          true));
+    }
+
+    /* eslint-disable consistent-return */
+    function mapErrorToActionAndDispatch(actionOrValue) {
+      if (failType) {
+        // we have a failType, if truthy result we will use it
+        const act = mapToAction(failType, actionOrValue, true);
+        if (act) {
+          return storeDispatch(act);
+        }
+        return; // falsey result from failType, no dispatch
       }
 
-      const act = (successType) ?
-            mapToAction(successType, actionOrValue, false) :
-            actionOrValue;
-      return storeDispatch(act);
+      // no failType so must wrap values with no type
+      if (actionOrValue instanceof Error) {
+        const act =
+          (actionOrValue.type) ? actionOrValue : // has type
+          {
+            type: UNHANDLED_LOGIC_ERROR,
+            payload: actionOrValue,
+            error: true
+          };
+        return storeDispatch(act);
+      }
+
+      // dispatch objects or functions as is
+      const typeOfValue = typeof actionOrValue;
+      if (actionOrValue && ( // not null and is object | fn
+          typeOfValue === 'object' || typeOfValue === 'function')) {
+        return storeDispatch(actionOrValue);
+      }
+
+      // wasn't an error, obj, or fn, so we will wrap in unhandled
+      storeDispatch({
+        type: UNHANDLED_LOGIC_ERROR,
+        payload: actionOrValue,
+        error: true
+      });
     }
     /* eslint-enable consistent-return */
 
@@ -109,11 +146,13 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
 
     function dispatch(act, options = DispatchDefaults) {
       const { allowMore } = applyDispatchDefaults(options);
-      if (typeof actionOrValue === 'undefined') { // ignore empty action
+      if (typeof act !== 'undefined') { // ignore empty action
         dispatch$.next( // create obs for mergeAll
-          (isObservable(act)) ?
-            act :
-            Observable.of(act)
+          // eslint-disable-next-line no-nested-ternary
+          (isObservable(act)) ? act :
+          (isPromise(act)) ? Observable.fromPromise(act) :
+          (act instanceof Error) ? Observable.throw(act) :
+          Observable.of(act)
         );
       }
       if (!(dispatchMultiple || allowMore)) { dispatch$.complete(); }
@@ -191,32 +230,21 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
         try {
           const retValue = processFn(depObj, dispatch, done);
           if (dispatchReturn) { // processOption.dispatchReturn true
-            handleDispatchReturn(retValue);
+            // returning undefined won't dispatch
+            if (typeof retValue === 'undefined') {
+              dispatch$.complete();
+            } else { // defined return value, dispatch
+              dispatch(retValue);
+            }
           }
         } catch (err) {
-          dispatch(err);
+          // eslint-disable-next-line no-console
+          console.error(`unhandled exception in logic named: ${name}`, err);
+          // wrap in observable since might not be an error object
+          dispatch(Observable.throw(err));
         }
       } else { // not processing, must have been a reject
         dispatch$.complete();
-      }
-    }
-
-    function handleDispatchReturn(retValue) {
-      if (isPromise(retValue) || isObservable(retValue)) {
-        dispatch(
-          // convert promise to observable
-          // catch any errors and rejects, wrap them
-          Observable
-            .from(retValue)
-            .catch(err => { // eslint-disable-line arrow-body-style
-              return (failType) ?
-                     // wrap this value so we can apply failType later
-                     Observable.of({ useFailType: true, value: err }) :
-                     Observable.of(err);
-            })
-        );
-      } else {
-        dispatch(retValue);
       }
     }
 

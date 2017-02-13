@@ -189,6 +189,29 @@ describe('createLogicMiddleware-deps', () => {
       const storeFn = mw({ getState, dispatch })(next);
       storeFn(actionFoo);
     });
+
+    it('should indicate completion when error occurred', done => {
+      const getState = () => {};
+      const origDeps = undefined;
+      const next = expect.createSpy();
+      const dispatch = expect.createSpy();
+      const logicA = createLogic({
+        type: 'FOO',
+        cancelType: 'FOO_CANCEL',
+        // eslint-disable-next-line no-unused-vars
+        process({ cancelled$ }, dispatch) {
+          cancelled$.subscribe({
+            complete: () => done() // should be completed regardless
+          });
+
+          throw new Error('bar');
+        }
+      });
+      const mw = createLogicMiddleware([logicA], origDeps);
+      const storeFn = mw({ getState, dispatch })(next);
+      storeFn(actionFoo);
+    });
+
   });
 
   describe('cancelled$ dispatch(obs)', () => {

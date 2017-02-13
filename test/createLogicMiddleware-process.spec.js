@@ -55,6 +55,58 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
+  describe('[logicA] process dispatch(null)', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        process(deps, dispatch) {
+          dispatch(null);
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches nothing', () => {
+      expect(dispatch.calls.length).toBe(0);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
   describe('[logicA] process dispatch(x)', () => {
     let monArr = [];
     let mw;
@@ -115,7 +167,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatch(null)', () => {
+  describe('[logicA] process dispatch({ type: BAR, payload: null })', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -710,6 +762,72 @@ describe('createLogicMiddleware-process', () => {
         process(deps, dispatch, done) {
           dispatch(actionBar);
           dispatch();
+          done();
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches actionBar', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0]).toEqual(actionBar);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: { type: 'BAR', a: 1 },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatch(x) dispatch(null) done()', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    const actionBar = { type: 'BAR', a: 1 };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy().andCall(cb);
+      let dispatchCount = 0;
+      function cb() {
+        if (++dispatchCount >= 1) {
+          // done();
+          // use whenComplete to trigger done
+        }
+      }
+      logicA = createLogic({
+        type: 'FOO',
+        process(deps, dispatch, done) {
+          dispatch(actionBar);
+          dispatch(null);
           done();
         }
       });
@@ -2480,8 +2598,11 @@ describe('createLogicMiddleware-process', () => {
       expect(next.calls[0].arguments[0]).toEqual(actionFoo);
     });
 
-    it('does not dispatch', () => {
-      expect(dispatch.calls.length).toBe(0);
+    it('dispatches UNHANDLED_LOGIC_ERROR', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0].type).toBe('UNHANDLED_LOGIC_ERROR');
+      expect(dispatch.calls[0].arguments[0].payload).toBe(undefined);
+      expect(dispatch.calls[0].arguments[0].error).toBe(true);
     });
 
     it('mw.monitor$ should track flow', () => {
@@ -2494,6 +2615,373 @@ describe('createLogicMiddleware-process', () => {
           shouldProcess: true,
           op: 'next' },
         { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: {
+            type: 'UNHANDLED_LOGIC_ERROR',
+            payload: undefined,
+            error: true
+          },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true return rejecting promise null', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true
+        },
+        process() {
+          return Promise.reject(null);
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches UNHANDLED_LOGIC_ERROR', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0].type).toBe('UNHANDLED_LOGIC_ERROR');
+      expect(dispatch.calls[0].arguments[0].payload).toBe(null);
+      expect(dispatch.calls[0].arguments[0].error).toBe(true);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: {
+            type: 'UNHANDLED_LOGIC_ERROR',
+            payload: null,
+            error: true
+          },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true return rejecting promise throws error internally', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true
+        },
+        process() {
+          return new Promise(() => {
+            throw new Error('my error');
+          });
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches UNHANDLED_LOGIC_ERROR', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0].type).toBe('UNHANDLED_LOGIC_ERROR');
+      expect(dispatch.calls[0].arguments[0].payload.message).toBe('my error');
+      expect(dispatch.calls[0].arguments[0].error).toBe(true);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      // simplify error flattening Error object to error.message
+      monArr = monArr.map(x => {
+        if (x.dispAction) {
+          return {
+            ...x,
+            dispAction: {
+              ...x.dispAction,
+              payload: x.dispAction.payload.message
+            }
+          };
+        }
+        return x;
+      });
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: {
+            type: 'UNHANDLED_LOGIC_ERROR',
+            payload: 'my error', // simplified from actual Error
+            error: true
+          },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true return rejecting promise throws string internally', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true
+        },
+        process() {
+          return new Promise(() => {
+            // eslint-disable-next-line no-throw-literal
+            throw 'you should really throw an error';
+          });
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches UNHANDLED_LOGIC_ERROR', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0].type).toBe('UNHANDLED_LOGIC_ERROR');
+      expect(dispatch.calls[0].arguments[0].payload)
+        .toBe('you should really throw an error');
+      expect(dispatch.calls[0].arguments[0].error).toBe(true);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: {
+            type: 'UNHANDLED_LOGIC_ERROR',
+            payload: 'you should really throw an error',
+            error: true
+          },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true return promise throws internally', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true
+        },
+        process() {
+          return new Promise((/* resolve */) => {
+            throw new Error('my error');
+          });
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+      it('dispatches UNHANDLED_LOGIC_ERROR action', () => {
+        expect(dispatch.calls.length).toBe(1);
+        expect(dispatch.calls[0].arguments[0].type).toBe('UNHANDLED_LOGIC_ERROR');
+        expect(dispatch.calls[0].arguments[0].payload.message).toBe('my error');
+        expect(dispatch.calls[0].arguments[0].error).toBe(true);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      // simplify error flattening Error object to error.message
+      monArr = monArr.map(x => {
+        if (x.dispAction) {
+          return {
+            ...x,
+            dispAction: {
+              ...x.dispAction,
+              payload: x.dispAction.payload.message
+            }
+          };
+        }
+        return x;
+      });
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: {
+            type: 'UNHANDLED_LOGIC_ERROR',
+            payload: 'my error', // simplified from action Error
+            error: true },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true return promise throws str internally', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true
+        },
+        process() {
+          return new Promise((/* resolve */) => {
+            // eslint-disable-next-line no-throw-literal
+            throw 'you should really throw an error';
+          });
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches UNHANDLED_LOGIC_ERROR action', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0].type).toBe('UNHANDLED_LOGIC_ERROR');
+      expect(dispatch.calls[0].arguments[0].payload).toBe('you should really throw an error');
+      expect(dispatch.calls[0].arguments[0].error).toBe(true);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: {
+            type: 'UNHANDLED_LOGIC_ERROR',
+            payload: 'you should really throw an error',
+            error: true },
+          op: 'dispatch' },
         { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
       ]);
     });
@@ -2657,7 +3145,7 @@ describe('createLogicMiddleware-process', () => {
       expect(next.calls[0].arguments[0]).toEqual(actionFoo);
     });
 
-    it('dispatches { type: BAR }', () => {
+    it('dispatches { type: BAR, error: true }', () => {
       expect(dispatch.calls.length).toBe(1);
       expect(dispatch.calls[0].arguments[0]).toEqual(actionBar);
     });
@@ -2716,8 +3204,11 @@ describe('createLogicMiddleware-process', () => {
       expect(next.calls[0].arguments[0]).toEqual(actionFoo);
     });
 
-    it('does not dispatch', () => {
-      expect(dispatch.calls.length).toBe(0);
+    it('dispatches UNHANDLED_LOGIC_ERROR', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0].type).toBe('UNHANDLED_LOGIC_ERROR');
+      expect(dispatch.calls[0].arguments[0].payload).toBe(undefined);
+      expect(dispatch.calls[0].arguments[0].error).toBe(true);
     });
 
     it('mw.monitor$ should track flow', () => {
@@ -2730,6 +3221,298 @@ describe('createLogicMiddleware-process', () => {
           shouldProcess: true,
           op: 'next' },
         { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: { type: 'UNHANDLED_LOGIC_ERROR', payload: undefined, error: true },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true return error obs throws internally', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true
+        },
+        process() {
+          return Rx.Observable.create(() => {
+            throw new Error('my error');
+          });
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches error action', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0].type).toBe('UNHANDLED_LOGIC_ERROR');
+      expect(dispatch.calls[0].arguments[0].payload.message).toBe('my error');
+      expect(dispatch.calls[0].arguments[0].error).toBe(true);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      // simplify error flattening Error object to error.message
+      monArr = monArr.map(x => {
+        if (x.dispAction) {
+          return {
+            ...x,
+            dispAction: {
+              ...x.dispAction,
+              payload: x.dispAction.payload.message
+            }
+          };
+        }
+        return x;
+      });
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: {
+            type: 'UNHANDLED_LOGIC_ERROR',
+            payload: 'my error', // simplified from actual Error
+            error: true },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true return error obs throws str internally', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true
+        },
+        process() {
+          return Rx.Observable.create(() => {
+            // eslint-disable-next-line no-throw-literal
+            throw 'you should really throw an error';
+          });
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches error action', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0].type).toBe('UNHANDLED_LOGIC_ERROR');
+      expect(dispatch.calls[0].arguments[0].payload)
+        .toBe('you should really throw an error');
+      expect(dispatch.calls[0].arguments[0].error).toBe(true);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: {
+            type: 'UNHANDLED_LOGIC_ERROR',
+            payload: 'you should really throw an error',
+            error: true },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true throws error', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true
+        },
+        process() {
+          throw new Error('dog');
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches UNHANDLED_LOGIC_ERROR', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0].type).toBe('UNHANDLED_LOGIC_ERROR');
+      expect(dispatch.calls[0].arguments[0].payload.message).toBe('dog');
+      expect(dispatch.calls[0].arguments[0].error).toBe(true);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      // simplify error
+      monArr = monArr.map(x => {
+        if (x.dispAction) {
+          return {
+            ...x,
+            dispAction: {
+              ...x.dispAction,
+              payload: x.dispAction.payload.message
+            }
+          };
+        }
+        return x;
+      });
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction:
+                     { type: 'UNHANDLED_LOGIC_ERROR',
+                       payload: 'dog', // simplified for test
+                       error: true },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true throws string', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true
+        },
+        process() {
+          // eslint-disable-next-line no-throw-literal
+          throw 'you should throw an error'; // not a good practice
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches UNHANDLED_LOGIC_ERROR', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0].type).toBe('UNHANDLED_LOGIC_ERROR');
+      expect(dispatch.calls[0].arguments[0].payload).toBe('you should throw an error');
+      expect(dispatch.calls[0].arguments[0].error).toBe(true);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction:
+                     { type: 'UNHANDLED_LOGIC_ERROR',
+                       payload: 'you should throw an error',
+                       error: true },
+          op: 'dispatch' },
         { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
       ]);
     });
@@ -2928,86 +3711,6 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType return error', () => {
-    let monArr = [];
-    let mw;
-    let logicA;
-    let next;
-    let dispatch;
-    const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
-      monArr = [];
-      next = expect.createSpy();
-      dispatch = expect.createSpy();
-      logicA = createLogic({
-        type: 'FOO',
-        processOptions: {
-          dispatchReturn: true,
-          failType: 'BAZ'
-        },
-        process() {
-          const err = new Error('my error');
-          return err;
-        }
-      });
-      mw = createLogicMiddleware([logicA]);
-      mw.monitor$.subscribe(x => monArr.push(x));
-      mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
-    });
-
-    it('passes actionFoo through next', () => {
-      expect(next.calls.length).toBe(1);
-      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
-    });
-
-    it('dispatches erroredObject', () => {
-      expect(dispatch.calls.length).toBe(1);
-      expect(dispatch.calls[0].arguments[0].type).toBe('BAZ');
-      expect(dispatch.calls[0].arguments[0].payload.message).toBe('my error');
-      expect(dispatch.calls[0].arguments[0].error).toBe(true);
-    });
-
-    it('mw.monitor$ should track flow', () => {
-      // simplify error
-      monArr = monArr.map(x => {
-        if (x.dispAction) {
-          return {
-            ...x,
-            dispAction: {
-              ...x.dispAction,
-              payload: x.dispAction.payload.message
-            }
-          };
-        }
-        return x;
-      });
-
-      expect(monArr).toEqual([
-        { action: { type: 'FOO' }, op: 'top' },
-        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
-        { action: { type: 'FOO' },
-          nextAction: { type: 'FOO' },
-          name: 'L(FOO)-0',
-          shouldProcess: true,
-          op: 'next' },
-        { nextAction: { type: 'FOO' }, op: 'bottom' },
-        { action: { type: 'FOO' },
-          dispAction:
-                     { type: 'BAZ',
-                       payload: 'my error',
-                       error: true },
-          op: 'dispatch' },
-        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
-      ]);
-    });
-
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
-    });
-
-  });
-
   describe('[logicA] process dispatchReturn:true successType=BAR return promise null', () => {
     let monArr = [];
     let mw;
@@ -3134,68 +3837,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType return rejecting promise 32', () => {
-    let monArr = [];
-    let mw;
-    let logicA;
-    let next;
-    let dispatch;
-    const actionFoo = { type: 'FOO' };
-    const actionResult = { type: 'BAZ', payload: 32, error: true };
-    beforeEach(done => {
-      monArr = [];
-      next = expect.createSpy();
-      dispatch = expect.createSpy();
-      logicA = createLogic({
-        type: 'FOO',
-        processOptions: {
-          dispatchReturn: true,
-          failType: 'BAZ'
-        },
-        process() {
-          return new Promise((resolve, reject) => reject(32));
-        }
-      });
-      mw = createLogicMiddleware([logicA]);
-      mw.monitor$.subscribe(x => monArr.push(x));
-      mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
-    });
-
-    it('passes actionFoo through next', () => {
-      expect(next.calls.length).toBe(1);
-      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
-    });
-
-    it('dispatches { type: BAZ, payload: 32, error: true }', () => {
-      expect(dispatch.calls.length).toBe(1);
-      expect(dispatch.calls[0].arguments[0]).toEqual(actionResult);
-    });
-
-    it('mw.monitor$ should track flow', () => {
-      expect(monArr).toEqual([
-        { action: { type: 'FOO' }, op: 'top' },
-        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
-        { action: { type: 'FOO' },
-          nextAction: { type: 'FOO' },
-          name: 'L(FOO)-0',
-          shouldProcess: true,
-          op: 'next' },
-        { nextAction: { type: 'FOO' }, op: 'bottom' },
-        { action: { type: 'FOO' },
-          dispAction: { type: 'BAZ', payload: 32, error: true },
-          op: 'dispatch' },
-        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
-      ]);
-    });
-
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
-    });
-
-  });
-
-  describe('[logicA] process dispatchReturn:true successType return obs 42, 43', () => {
+  describe('[logicA] process dispatchReturn:true successType=BAR return obs 42, 43', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -3265,14 +3907,14 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType return error obs 32', () => {
+  describe('[logicA] process dispatchReturn:true successType=fn return promise 42', () => {
     let monArr = [];
     let mw;
     let logicA;
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    const actionResult = { type: 'BAZ', payload: 32, error: true };
+    const barFn = x => ({ type: 'BAR', payload: x });
     beforeEach(done => {
       monArr = [];
       next = expect.createSpy();
@@ -3281,10 +3923,10 @@ describe('createLogicMiddleware-process', () => {
         type: 'FOO',
         processOptions: {
           dispatchReturn: true,
-          failType: 'BAZ'
+          successType: barFn
         },
         process() {
-          return Rx.Observable.create(obs => obs.error(32));
+          return new Promise(resolve => resolve(42));
         }
       });
       mw = createLogicMiddleware([logicA]);
@@ -3298,9 +3940,12 @@ describe('createLogicMiddleware-process', () => {
       expect(next.calls[0].arguments[0]).toEqual(actionFoo);
     });
 
-    it('dispatches { type: BAZ, payload: 32, error: true }', () => {
+    it('dispatches { type: BAR, payload: 42 }', () => {
       expect(dispatch.calls.length).toBe(1);
-      expect(dispatch.calls[0].arguments[0]).toEqual(actionResult);
+      expect(dispatch.calls[0].arguments[0]).toEqual({
+        type: 'BAR',
+        payload: 42
+      });
     });
 
     it('mw.monitor$ should track flow', () => {
@@ -3314,7 +3959,7 @@ describe('createLogicMiddleware-process', () => {
           op: 'next' },
         { nextAction: { type: 'FOO' }, op: 'bottom' },
         { action: { type: 'FOO' },
-          dispAction: { type: 'BAZ', payload: 32, error: true },
+          dispAction: { type: 'BAR', payload: 42 },
           op: 'dispatch' },
         { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
       ]);
@@ -3325,8 +3970,6 @@ describe('createLogicMiddleware-process', () => {
     });
 
   });
-
-  // successType and failType action creator fn variants
 
   describe('[logicA] process dispatchReturn:true successType=fn return undefined', () => {
     let monArr = [];
@@ -3361,7 +4004,7 @@ describe('createLogicMiddleware-process', () => {
       expect(next.calls[0].arguments[0]).toEqual(actionFoo);
     });
 
-    it('dispatches nothing', () => {
+    it('should not dispatch', () => {
       expect(dispatch.calls.length).toBe(0);
     });
 
@@ -3509,15 +4152,14 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType=fn return error', () => {
+  describe('[logicA] process dispatchReturn:true successType=fn return promise undefined', () => {
     let monArr = [];
     let mw;
     let logicA;
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    const actionBazFn = x => ({ type: 'BAZ', payload: x, error: true });
-
+    const actionBarFn = x => ({ type: 'BAR', payload: x });
     beforeEach(done => {
       monArr = [];
       next = expect.createSpy();
@@ -3526,11 +4168,10 @@ describe('createLogicMiddleware-process', () => {
         type: 'FOO',
         processOptions: {
           dispatchReturn: true,
-          failType: actionBazFn
+          successType: actionBarFn
         },
         process() {
-          const err = new Error('my error');
-          return err;
+          return new Promise(resolve => resolve());
         }
       });
       mw = createLogicMiddleware([logicA]);
@@ -3544,28 +4185,15 @@ describe('createLogicMiddleware-process', () => {
       expect(next.calls[0].arguments[0]).toEqual(actionFoo);
     });
 
-    it('dispatches erroredObject', () => {
+    it('dispatches { type: BAR, payload: undefined }', () => {
       expect(dispatch.calls.length).toBe(1);
-      expect(dispatch.calls[0].arguments[0].type).toBe('BAZ');
-      expect(dispatch.calls[0].arguments[0].payload.message).toBe('my error');
-      expect(dispatch.calls[0].arguments[0].error).toBe(true);
+      expect(dispatch.calls[0].arguments[0]).toEqual({
+        type: 'BAR',
+        payload: undefined
+      });
     });
 
     it('mw.monitor$ should track flow', () => {
-      // simplify error
-      monArr = monArr.map(x => {
-        if (x.dispAction) {
-          return {
-            ...x,
-            dispAction: {
-              ...x.dispAction,
-              payload: x.dispAction.payload.message
-            }
-          };
-        }
-        return x;
-      });
-
       expect(monArr).toEqual([
         { action: { type: 'FOO' }, op: 'top' },
         { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
@@ -3576,10 +4204,7 @@ describe('createLogicMiddleware-process', () => {
           op: 'next' },
         { nextAction: { type: 'FOO' }, op: 'bottom' },
         { action: { type: 'FOO' },
-          dispAction:
-                     { type: 'BAZ',
-                       payload: 'my error',
-                       error: true },
+          dispAction: { type: 'BAR', payload: undefined },
           op: 'dispatch' },
         { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
       ]);
@@ -3719,68 +4344,6 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType=fn return rejecting promise 32', () => {
-    let monArr = [];
-    let mw;
-    let logicA;
-    let next;
-    let dispatch;
-    const actionFoo = { type: 'FOO' };
-    const actionBazFn = x => ({ type: 'BAZ', payload: x, error: true });
-    const actionResult = { type: 'BAZ', payload: 32, error: true };
-    beforeEach(done => {
-      monArr = [];
-      next = expect.createSpy();
-      dispatch = expect.createSpy();
-      logicA = createLogic({
-        type: 'FOO',
-        processOptions: {
-          dispatchReturn: true,
-          failType: actionBazFn
-        },
-        process() {
-          return new Promise((resolve, reject) => reject(32));
-        }
-      });
-      mw = createLogicMiddleware([logicA]);
-      mw.monitor$.subscribe(x => monArr.push(x));
-      mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
-    });
-
-    it('passes actionFoo through next', () => {
-      expect(next.calls.length).toBe(1);
-      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
-    });
-
-    it('dispatches { type: BAZ, payload: 32, error: true }', () => {
-      expect(dispatch.calls.length).toBe(1);
-      expect(dispatch.calls[0].arguments[0]).toEqual(actionResult);
-    });
-
-    it('mw.monitor$ should track flow', () => {
-      expect(monArr).toEqual([
-        { action: { type: 'FOO' }, op: 'top' },
-        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
-        { action: { type: 'FOO' },
-          nextAction: { type: 'FOO' },
-          name: 'L(FOO)-0',
-          shouldProcess: true,
-          op: 'next' },
-        { nextAction: { type: 'FOO' }, op: 'bottom' },
-        { action: { type: 'FOO' },
-          dispAction: { type: 'BAZ', payload: 32, error: true },
-          op: 'dispatch' },
-        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
-      ]);
-    });
-
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
-    });
-
-  });
-
   describe('[logicA] process dispatchReturn:true successType=fn return obs 42, 43', () => {
     let monArr = [];
     let mw;
@@ -3852,6 +4415,1127 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
+  /* failType */
+
+  describe('[logicA] process dispatchReturn:true failType return error', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true,
+          failType: 'BAZ'
+        },
+        process() {
+          const err = new Error('my error');
+          return err;
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches erroredObject', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0].type).toBe('BAZ');
+      expect(dispatch.calls[0].arguments[0].payload.message).toBe('my error');
+      expect(dispatch.calls[0].arguments[0].error).toBe(true);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      // simplify error
+      monArr = monArr.map(x => {
+        if (x.dispAction) {
+          return {
+            ...x,
+            dispAction: {
+              ...x.dispAction,
+              payload: x.dispAction.payload.message
+            }
+          };
+        }
+        return x;
+      });
+
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction:
+                     { type: 'BAZ',
+                       payload: 'my error',
+                       error: true },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true failType=BAZ return rejecting promise undefined', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    const actionResult = { type: 'BAZ', payload: undefined, error: true };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true,
+          failType: 'BAZ'
+        },
+        process() {
+          return new Promise((resolve, reject) => reject());
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches { type: BAZ, payload: undefined, error: true }', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0]).toEqual(actionResult);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: { type: 'BAZ', payload: undefined, error: true },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true failType=BAZ return rejecting promise null', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    const actionResult = { type: 'BAZ', payload: null, error: true };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true,
+          failType: 'BAZ'
+        },
+        process() {
+          return new Promise((resolve, reject) => reject(null));
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches { type: BAZ, payload: null, error: true }', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0]).toEqual(actionResult);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: { type: 'BAZ', payload: null, error: true },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true failType=BAZ return rejecting promise 32', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    const actionResult = { type: 'BAZ', payload: 32, error: true };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true,
+          failType: 'BAZ'
+        },
+        process() {
+          return new Promise((resolve, reject) => reject(32));
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches { type: BAZ, payload: 32, error: true }', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0]).toEqual(actionResult);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: { type: 'BAZ', payload: 32, error: true },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true failType=BAZ return rejecting promise string', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    const actionResult = { type: 'BAZ', payload: 'my reject', error: true };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true,
+          failType: 'BAZ'
+        },
+        process() {
+          return Promise.reject('my reject');
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches { type: BAZ, payload: "my reject", error: true }', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0]).toEqual(actionResult);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: { type: 'BAZ', payload: 'my reject', error: true },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true failType=BAZ return error obs 32', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    const actionResult = { type: 'BAZ', payload: 32, error: true };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true,
+          failType: 'BAZ'
+        },
+        process() {
+          return Rx.Observable.create(obs => obs.error(32));
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches { type: BAZ, payload: 32, error: true }', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0]).toEqual(actionResult);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: { type: 'BAZ', payload: 32, error: true },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+ });
+
+  describe('[logicA] process dispatchReturn:true failType=BAZ throw error', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true,
+          failType: 'BAZ'
+        },
+        process() {
+          throw new Error('dog');
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches erroredObject', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0].type).toBe('BAZ');
+      expect(dispatch.calls[0].arguments[0].payload.message).toBe('dog');
+      expect(dispatch.calls[0].arguments[0].error).toBe(true);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      // simplify error flattening Error object to error.message
+      monArr = monArr.map(x => {
+        if (x.dispAction) {
+          return {
+            ...x,
+            dispAction: {
+              ...x.dispAction,
+              payload: x.dispAction.payload.message
+            }
+          };
+        }
+        return x;
+      });
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          // payload is an error, but simplified above to just the msg
+          dispAction: { type: 'BAZ', payload: 'dog', error: true },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true failType=BAZ return error obs 32', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    const actionResult = {
+      type: 'BAZ',
+      payload: 'you should really throw an error',
+      error: true
+    };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true,
+          failType: 'BAZ'
+        },
+        process() {
+          // eslint-disable-next-line no-throw-literal
+          throw 'you should really throw an error';
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches { type: BAZ, payload: 32, error: true }', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0]).toEqual(actionResult);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: {
+            type: 'BAZ',
+            payload: 'you should really throw an error',
+            error: true },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true failType=fn throw error', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    const bazFn = x => ({ type: 'BAZ', payload: x, error: true });
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true,
+          failType: bazFn
+        },
+        process() {
+          throw new Error('dog');
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches error action', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0].type).toBe('BAZ');
+      expect(dispatch.calls[0].arguments[0].payload.message).toBe('dog');
+      expect(dispatch.calls[0].arguments[0].error).toBe(true);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      // simplify error flattening Error object to error.message
+      monArr = monArr.map(x => {
+        if (x.dispAction) {
+          return {
+            ...x,
+            dispAction: {
+              ...x.dispAction,
+              payload: x.dispAction.payload.message
+            }
+          };
+        }
+        return x;
+      });
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          // we had simplified the payload:Error to just the msg above
+          dispAction: { type: 'BAZ', payload: 'dog', error: true },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true failType=fn throw string', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    const bazFn = x => ({ type: 'BAZ', payload: x, error: true });
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true,
+          failType: bazFn
+        },
+        process() {
+          // eslint-disable-next-line no-throw-literal
+          throw 'you should really throw an error';
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches error action', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0].type).toBe('BAZ');
+      expect(dispatch.calls[0].arguments[0].payload).toBe('you should really throw an error');
+      expect(dispatch.calls[0].arguments[0].error).toBe(true);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: {
+            type: 'BAZ',
+            payload: 'you should really throw an error',
+            error: true },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true failType=fnUnd throw error', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    const bazFn = (/* x */) => undefined; // eats the error by returning undefined
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true,
+          failType: bazFn
+        },
+        process() {
+          throw new Error('dog');
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('should not dispatch since FTfn returned undefined', () => {
+      expect(dispatch.calls.length).toBe(0);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true failType=fnUnd throw error', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    const bazFn = (/* x */) => undefined; // eats the error by returning undefined
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true,
+          failType: bazFn
+        },
+        process() {
+          // eslint-disable-next-line no-throw-literal
+          throw 'you should really throw an error';
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('should not dispatch since FTfn returned undefined', () => {
+      expect(dispatch.calls.length).toBe(0);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true failType=fnVal return rejecting promise undefined', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    const bazFn = x => ({ type: 'BAZ', payload: x, error: true });
+    const actionResult = { type: 'BAZ', payload: undefined, error: true };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true,
+          failType: bazFn
+        },
+        process() {
+          return new Promise((resolve, reject) => reject());
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches { type: BAZ, payload: undefined, error: true }', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0]).toEqual(actionResult);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: { type: 'BAZ', payload: undefined, error: true },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true failType=fn return rejecting promise null', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    const bazFn = x => ({ type: 'BAZ', payload: x, error: true });
+    const actionResult = { type: 'BAZ', payload: null, error: true };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true,
+          failType: bazFn
+        },
+        process() {
+          return new Promise((resolve, reject) => reject(null));
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches { type: BAZ, payload: null, error: true }', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0]).toEqual(actionResult);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: { type: 'BAZ', payload: null, error: true },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true failType=fn return rejecting promise 32', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    const bazFn = x => ({ type: 'BAZ', payload: x, error: true });
+    const actionResult = { type: 'BAZ', payload: 32, error: true };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true,
+          failType: bazFn
+        },
+        process() {
+          return new Promise((resolve, reject) => reject(32));
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches { type: BAZ, payload: 32, error: true }', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0]).toEqual(actionResult);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: { type: 'BAZ', payload: 32, error: true },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true failType=fn return error', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    const actionBazFn = x => ({ type: 'BAZ', payload: x, error: true });
+
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true,
+          failType: actionBazFn
+        },
+        process() {
+          const err = new Error('my error');
+          return err;
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches erroredObject', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0].type).toBe('BAZ');
+      expect(dispatch.calls[0].arguments[0].payload.message).toBe('my error');
+      expect(dispatch.calls[0].arguments[0].error).toBe(true);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      // simplify error flattening Error object to error.message
+      monArr = monArr.map(x => {
+        if (x.dispAction) {
+          return {
+            ...x,
+            dispAction: {
+              ...x.dispAction,
+              payload: x.dispAction.payload.message
+            }
+          };
+        }
+        return x;
+      });
+
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction:
+                     { type: 'BAZ',
+                       payload: 'my error',
+                       error: true },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true failType=fn return rejecting promise 32', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    const actionBazFn = x => ({ type: 'BAZ', payload: x, error: true });
+    const actionResult = { type: 'BAZ', payload: 32, error: true };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true,
+          failType: actionBazFn
+        },
+        process() {
+          return new Promise((resolve, reject) => reject(32));
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches { type: BAZ, payload: 32, error: true }', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0]).toEqual(actionResult);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: { type: 'BAZ', payload: 32, error: true },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
   describe('[logicA] process dispatchReturn:true failType=fn return error obs 32', () => {
     let monArr = [];
     let mw;
@@ -3904,6 +5588,305 @@ describe('createLogicMiddleware-process', () => {
         { action: { type: 'FOO' },
           dispAction: { type: 'BAZ', payload: 32, error: true },
           op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true failType=fn return error obs throws error', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    const actionBazFn = x => ({ type: 'BAZ', payload: x, error: true });
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true,
+          failType: actionBazFn
+        },
+        process() {
+          return Rx.Observable.create((/* obs */) => {
+            throw new Error('my error');
+          });
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches error action', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0].type).toBe('BAZ');
+      expect(dispatch.calls[0].arguments[0].payload.message).toBe('my error');
+      expect(dispatch.calls[0].arguments[0].error).toBe(true);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      // simplify error flattening Error object to error.message
+      monArr = monArr.map(x => {
+        if (x.dispAction) {
+          return {
+            ...x,
+            dispAction: {
+              ...x.dispAction,
+              payload: x.dispAction.payload.message
+            }
+          };
+        }
+        return x;
+      });
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: {
+            type: 'BAZ',
+            payload: 'my error', // simplified from actual Error
+            error: true },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true failType=fn return error obs throws string', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    const actionBazFn = x => ({ type: 'BAZ', payload: x, error: true });
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true,
+          failType: actionBazFn
+        },
+        process() {
+          return Rx.Observable.create((/* obs */) => {
+            // eslint-disable-next-line no-throw-literal
+            throw 'you should really throw an error';
+          });
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches error action', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0].type).toBe('BAZ');
+      expect(dispatch.calls[0].arguments[0].payload)
+        .toBe('you should really throw an error');
+      expect(dispatch.calls[0].arguments[0].error).toBe(true);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: {
+            type: 'BAZ',
+            payload: 'you should really throw an error',
+            error: true },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true ST=fn FT=fn return obs undefined', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    const actionBarFn = x => ({ type: 'BAR', payload: x });
+    const actionBazFn = x => ({ type: 'BAZ', payload: x, error: true });
+
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true,
+          successType: actionBarFn,
+          failType: actionBazFn
+        },
+        process() {
+          return Rx.Observable.create(obs => {
+            obs.next();
+            obs.complete();
+          });
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches { type: BAR, payload: undefined }', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0]).toEqual({
+        type: 'BAR',
+        payload: undefined
+      });
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        {
+          action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next'
+        },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        {
+          action: { type: 'FOO' },
+          dispAction: { type: 'BAR', payload: undefined },
+          op: 'dispatch'
+        },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] process dispatchReturn:true ST=fn FT=fn return obs null', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    const actionBarFn = x => ({ type: 'BAR', payload: x });
+    const actionBazFn = x => ({ type: 'BAZ', payload: x, error: true });
+
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        processOptions: {
+          dispatchReturn: true,
+          successType: actionBarFn,
+          failType: actionBazFn
+        },
+        process() {
+          return Rx.Observable.create(obs => {
+            obs.next(null);
+            obs.complete();
+          });
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(1);
+      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
+    });
+
+    it('dispatches { type: BAR, payload: null }', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0]).toEqual({
+        type: 'BAR',
+        payload: null
+      });
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        {
+          action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next'
+        },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        {
+          action: { type: 'FOO' },
+          dispAction: { type: 'BAR', payload: null },
+          op: 'dispatch'
+        },
         { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
       ]);
     });
@@ -4000,78 +5983,5 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true ST=fn FT=fn return obs null', () => {
-    let monArr = [];
-    let mw;
-    let logicA;
-    let next;
-    let dispatch;
-    const actionFoo = { type: 'FOO' };
-    const actionBarFn = x => ({ type: 'BAR', payload: x });
-    const actionBazFn = x => ({ type: 'BAZ', payload: x, error: true });
-
-    beforeEach(done => {
-      monArr = [];
-      next = expect.createSpy();
-      dispatch = expect.createSpy();
-      logicA = createLogic({
-        type: 'FOO',
-        processOptions: {
-          dispatchReturn: true,
-          successType: actionBarFn,
-          failType: actionBazFn
-        },
-        process() {
-          return Rx.Observable.create(obs => {
-            obs.next(null);
-            obs.complete();
-          });
-        }
-      });
-      mw = createLogicMiddleware([logicA]);
-      mw.monitor$.subscribe(x => monArr.push(x));
-      mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
-    });
-
-    it('passes actionFoo through next', () => {
-      expect(next.calls.length).toBe(1);
-      expect(next.calls[0].arguments[0]).toEqual(actionFoo);
-    });
-
-    it('dispatches { type: BAR, payload: null }', () => {
-      expect(dispatch.calls.length).toBe(1);
-      expect(dispatch.calls[0].arguments[0]).toEqual({
-        type: 'BAR',
-        payload: null
-      });
-    });
-
-    it('mw.monitor$ should track flow', () => {
-      expect(monArr).toEqual([
-        { action: { type: 'FOO' }, op: 'top' },
-        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
-        {
-          action: { type: 'FOO' },
-          nextAction: { type: 'FOO' },
-          name: 'L(FOO)-0',
-          shouldProcess: true,
-          op: 'next'
-        },
-        { nextAction: { type: 'FOO' }, op: 'bottom' },
-        {
-          action: { type: 'FOO' },
-          dispAction: { type: 'BAR', payload: null },
-          op: 'dispatch'
-        },
-        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
-      ]);
-    });
-
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
-    });
-
-  });
 
 });
