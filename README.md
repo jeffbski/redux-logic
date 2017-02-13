@@ -221,7 +221,7 @@ export default [
 
    - if successType is an action creator fn receiving the value as only parameter
      - use the return value from the action creator fn for dispatching ex: `successType: x => ({ type: 'FOO', payload: x })`
-     - if the action creator fn returns a falsey value like undefined then nothing will be dispatched. This allows your action creator to control whether something is actually dispatched based on the value provided to it.
+     - if the action creator fn returns a falsey value like `undefined` then nothing will be dispatched. This allows your action creator to control whether something is actually dispatched based on the value provided to it.
 
  - `failType` - dispatch this action type using contents of error as the payload, sets error: true (would also work for rejects of promises or error from observable). You may alternatively provide an action creator function to use instead which will receive the error as the only parameter. Default: `undefined`.
    - if failType is a string action type
@@ -229,7 +229,7 @@ export default [
 
    - if failType is an action creator function receiving the error value as its only parameter
      - use the return value from the action creator fn for dispatching. ex: `failType: x => ({ type: 'BAR', payload: x, error: true })`
-     - if the action creator fn returns a falsey value like undefined then nothing will be dispatched. This allows your action creator to control whether something is actually dispatched based on teh value provided to it.
+     - if the action creator fn returns a falsey value like `undefined` then nothing will be dispatched. This allows your action creator to control whether something is actually dispatched based on teh value provided to it.
 
 The successType and failType would enable clean code, where you can simply return a promise or observable that resolves to the payload and rejects on error. The resulting code doesn't have to deal with dispatch and actions directly.
 
