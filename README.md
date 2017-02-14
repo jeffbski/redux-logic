@@ -398,6 +398,10 @@ If you have input or ideas or would like to get involved, you may:
  - fork the repo and send a pull request (ideally with tests) - <https://github.com/jeffbski/redux-logic>
  - See the [contributing guide](http://github.com/jeffbski/redux-logic/raw/master/CONTRIBUTING.md)
 
+## Supporters
+
+This project is supported by [CodeWinds Training](https://codewinds.com/)
+
 
 <a name="license"/>
 
