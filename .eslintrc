@@ -1,4 +1,5 @@
 {
+  /* Also check test/.eslintrc for test specific config */
   "extends": "airbnb-base",
   "rules": {
     "arrow-body-style": [1, "as-needed"],
