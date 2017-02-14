@@ -1,13 +1,6 @@
 import expect from 'expect';
 import { createLogic, createLogicMiddleware } from '../src/index';
 
-/*
-   Note: npm run test:rxbuild uses this to test the flow independently
-   of the other mocha files so that it can check that our custom Rx
-   imports bring in all the necessary operators. So do not import Rx
-   into this test.
- */
-
 describe('createLogicMiddleware', () => {
   describe('createLogicMiddleware()', () => {
     let mw;

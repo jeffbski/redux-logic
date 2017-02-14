@@ -26,7 +26,7 @@
     "test:watch": "npm test -- --watch",
     "test:cov": "cross-env NODE_ENV=test nyc --reporter=lcov --reporter=text mocha test --recursive",
     "test:cov-codacy": "cross-env NODE_ENV=test nyc --reporter=lcov --reporter=text mocha test --recursive && cat coverage/lcov.info | codacy-coverage",
-    "test:rxbuild": "cross-env BABEL_ENV=commonjs mocha --compilers js:babel-register test/createLogicMiddleware.spec.js -r ./test/setup.js",
+    "test:rxbuild": "cross-env BABEL_ENV=commonjs mocha --compilers js:babel-register test/rxbuild.spec.js -r ./test/setup.js",
     "test:examples": "cross-env BABEL_ENV=commonjs babel-node examples/testAll.js",
     "check:src": "npm run lint && npm run test",
     "check:examples": "npm run build:examples && npm run test:examples",

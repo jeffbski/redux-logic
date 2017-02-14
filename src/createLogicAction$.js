@@ -11,6 +11,13 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeAll';
 import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/takeUntil';
+import { confirmProps } from './utils';
+
+// confirm custom Rx build imports
+confirmProps(Observable, ['fromPromise', 'of', 'throw'], 'Observable');
+confirmProps(Observable.prototype, [
+  'do', 'filter', 'map', 'mergeAll', 'take', 'takeUntil'
+], 'Observable.prototype');
 
 const UNHANDLED_LOGIC_ERROR = 'UNHANDLED_LOGIC_ERROR';
 

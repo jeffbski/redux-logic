@@ -6,6 +6,14 @@ import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/share';
 import 'rxjs/add/operator/throttleTime';
 import createLogicAction$ from './createLogicAction$';
+import { confirmProps } from './utils';
+
+// confirm custom Rx build imports
+confirmProps(Observable, ['merge'], 'Observable');
+confirmProps(Observable.prototype, [
+  'debounceTime', 'filter', 'mergeMap', 'share', 'throttleTime'
+], 'Observable.prototype');
+
 
 export default function logicWrapper(logic, store, deps, monitor$) {
   const { type, cancelType, latest, debounce, throttle } = logic;
