@@ -257,7 +257,6 @@ const fetchPollsLogic = createLogic({
   process({ getState, action }) {
     return axios.get('https://survey.codewinds.com/polls')
       .then(resp => resp.data.polls);
-    )
   }
 });
 ```
