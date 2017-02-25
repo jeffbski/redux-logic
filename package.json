@@ -20,6 +20,7 @@
     "src"
   ],
   "scripts": {
+    "start": "npm run test:watch",
     "clean": "rimraf build-lib dist build-es coverage",
     "lint": "eslint src test",
     "test": "cross-env BABEL_ENV=commonjs mocha --compilers js:babel-register --recursive -r ./test/setup.js",
