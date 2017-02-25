@@ -129,6 +129,29 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
       .then(fn);
   };
 
+  /**
+     add additional deps after createStore has been run. Useful for
+     dynamically injecting dependencies for the hooks. Throws an error
+     if it tries to override an existing dependency with a new
+     value or instance.
+     @param {object} additionalDeps object of dependencies to add
+     @return {undefined}
+    */
+  mw.addDeps = function addDeps(additionalDeps) {
+    if (typeof additionalDeps !== 'object') {
+      throw new Error('addDeps should be called with an object');
+    }
+    Object.keys(additionalDeps).forEach(k => {
+      const existing = deps[k];
+      const newValue = additionalDeps[k];
+      if (typeof existing !== 'undefined' && // previously existing dep
+          existing !== newValue) { // no override
+        throw new Error(`addDeps cannot override an existing dep value: ${k}`);
+      }
+      // eslint-disable-next-line no-param-reassign
+      deps[k] = newValue;
+    });
+  };
 
   /**
     add logic after createStore has been run. Useful for dynamically

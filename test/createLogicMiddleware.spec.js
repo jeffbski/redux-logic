@@ -15,6 +15,10 @@ describe('createLogicMiddleware', () => {
       expect(mw.replaceLogic).toBeA(Function);
     });
 
+    it('returns a mw fn with an addDeps method', () => {
+      expect(mw.addDeps).toBeA(Function);
+    });
+
     it('works as middleware', () => {
       const next = expect.createSpy();
       const action = { type: 'FOO' };

@@ -9,6 +9,88 @@ describe('createLogicMiddleware-add-replace', () => {
       mw = createLogicMiddleware();
     });
 
+    describe('mw.addDeps(additionalDeps)', () => {
+      it('should make new deps available to hooks', done => {
+        const dispatch = expect.createSpy();
+        const next = expect.createSpy();
+        const storeFn = mw({ dispatch })(next);
+        const arrFlow = [];
+        mw.addDeps({ foo: 42, bar: 'hello' });
+        mw.addLogic([
+          createLogic({
+            type: 'CAT',
+            validate({ foo, bar, action }, allow) {
+              expect(foo).toBe(42);
+              expect(bar).toBe('hello');
+              arrFlow.push('validate');
+              allow(action);
+            },
+            process({ foo, bar }) {
+              expect(foo).toBe(42);
+              expect(bar).toBe('hello');
+              arrFlow.push('process');
+            }
+          })
+        ]);
+        storeFn({ type: 'CAT' });
+        mw.whenComplete(() => {
+          expect(arrFlow).toEqual(['validate', 'process']);
+          done();
+        });
+      });
+
+      it('should allow call with same values/instances', done => {
+        const dispatch = expect.createSpy();
+        const next = expect.createSpy();
+        const storeFn = mw({ dispatch })(next);
+        const arrFlow = [];
+        const egg = { hey: 'world' };
+        mw.addDeps({ foo: 42, bar: 'hello', egg });
+        mw.addDeps({ foo: 42, bar: 'hello', dog: 21, egg });
+        mw.addLogic([
+          createLogic({
+            type: 'CAT',
+            validate({ foo, bar, dog, egg, action }, allow) {
+              expect(foo).toBe(42);
+              expect(bar).toBe('hello');
+              expect(dog).toBe(21);
+              expect(egg).toEqual({ hey: 'world' });
+              arrFlow.push('validate');
+              allow(action);
+            },
+            process({ foo, bar, dog, egg }) {
+              expect(foo).toBe(42);
+              expect(bar).toBe('hello');
+              expect(dog).toBe(21);
+              expect(egg).toEqual({ hey: 'world' });
+              arrFlow.push('process');
+            }
+          })
+        ]);
+        storeFn({ type: 'CAT' });
+        mw.whenComplete(() => {
+          expect(arrFlow).toEqual(['validate', 'process']);
+          done();
+        });
+      });
+
+      it('should throw an error if values are overridden', () => {
+        mw.addDeps({ foo: 42, bar: 'hello' });
+        function fn() {
+          mw.addDeps({ foo: 30, dog: 21 });
+        }
+        expect(fn).toThrow('cannot override an existing dep value: foo');
+      });
+
+      it('should throw an error if called without an object', () => {
+        function fn() {
+          mw.addDeps(42);
+        }
+        expect(fn).toThrow('called with an object');
+      });
+
+    });
+
     describe('mw.addLogic(duplicateArray)', () => {
       it('throws an error', () => {
         const dispatch = expect.createSpy();
