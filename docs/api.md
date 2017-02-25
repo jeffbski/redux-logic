@@ -87,12 +87,12 @@ const logicMiddleware = createLogicMiddleware(
   deps   // optional injected deps/config, supplied to logic
 );
 
-// dynamically add injected deps at runtime, these are made available
-// to the logic hooks. The properties of the object `additionalDeps`
-// will be added to the existing deps. For safety, this method does not
-// allow existing deps to be overridden with a new value. It will throw
-// an error if you try to override with a new value (setting to the same
-// value/instance is fine).
+// dynamically add injected deps at runtime after createStore has been
+// called. These are made available to the logic hooks. The properties
+// of the object `additionalDeps` will be added to the existing deps.
+// For safety, this method does not allow existing deps to be overridden
+// with a new value. It will throw an error if you try to override
+// with a new value (setting to the same value/instance is fine).
 logicMiddleware.addDeps(additionalDeps);
 
 // dynamically add logic later at runtime, keeping logic state
