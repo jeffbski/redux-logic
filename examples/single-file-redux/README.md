@@ -11,6 +11,7 @@ Finally we are also showcasing that runtime dependencies can be injected rather 
 
 ```js
 // in src/index.js
+import { createLogic } from 'redux-logic';
 
 const usersFetchLogic = createLogic({
   type: USERS_FETCH,

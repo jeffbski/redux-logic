@@ -52,6 +52,8 @@ This is an example of logic which will listen for actions of type FETCH_POLLS an
 The developer can just declare the type filtering, cancellation, and take latest behavior, no code needs to be written for that. That leaves the developer to focus on the real business requirements which are invoked in the process hook.
 
 ```js
+import { createLogic } from 'redux-logic';
+
 const fetchPollsLogic = createLogic({
 
   // declarative built-in functionality wraps your code
@@ -120,7 +122,7 @@ npm install redux-logic --save
 
 ```js
 // in configureStore.js
-import { createLogic, createLogicMiddleware } from 'redux-logic';
+import { createLogicMiddleware } from 'redux-logic';
 import rootReducer from './rootReducer';
 import arrLogic from './logic';
 
@@ -153,6 +155,7 @@ export default [
 
 
 // in polls/logic.js
+import { createLogic } from 'redux-logic';
 
 const validationLogic = createLogic({
   type: ADD_USER,
@@ -234,6 +237,8 @@ export default [
 The successType and failType would enable clean code, where you can simply return a promise or observable that resolves to the payload and rejects on error. The resulting code doesn't have to deal with dispatch and actions directly.
 
 ```js
+import { createLogic } from 'redux-logic';
+
 const fetchPollsLogic = createLogic({
 
   // declarative built-in functionality wraps your code

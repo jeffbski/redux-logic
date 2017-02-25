@@ -3,6 +3,9 @@
 var webpack = require('webpack');
 
 var env = process.env.NODE_ENV;
+var modtype = process.env.MODTYPE;
+var transform = process.env.TRANSFORM;
+
 var config = {
   module: {
     loaders: [
@@ -21,7 +24,7 @@ var config = {
   ]
 };
 
-if (env === 'production') {
+if (modtype === 'umd' && transform === 'minify') {
   config.plugins.push(
     new webpack.optimize.UglifyJsPlugin({
       compressor: {

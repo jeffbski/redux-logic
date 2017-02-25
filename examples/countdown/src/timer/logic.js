@@ -50,15 +50,14 @@ const timerDecrementLogic = createLogic({
     }
   },
 
-  process({ getState }, dispatch) {
+  process({ getState }, dispatch, done) {
     // unless other middleware/logic introduces async behavior, the
     // state will have been updated by the reducers before process runs
     const state = getState();
     if (timerSel.value(state) === 0) {
       dispatch(timerEnd());
-    } else { // not zero
-      dispatch(); // ends process logic, nothing is dispatched
     }
+    done(); // we are done dispatching for this logic
   }
 });
 

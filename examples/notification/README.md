@@ -23,6 +23,8 @@ And since NOTIFY_REMOVES check the queue, they will continue the process until a
 
 ```js
 // in src/notify/logic.js
+import { createLogic } from 'redux-logic';
+
 export const notifyCreateLogic = createLogic({
   type: NOTIFY_CREATE,
 

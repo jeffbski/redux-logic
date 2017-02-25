@@ -11,6 +11,7 @@ Finally we are also showcasing that runtime dependencies can be injected rather 
 
 ```js
 // in src/search/logic.js
+import { createLogic } from 'redux-logic';
 
 export const searchLogic = createLogic({
   type: SEARCH,

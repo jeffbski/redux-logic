@@ -15,6 +15,7 @@ Finally we are also showcasing that runtime dependencies can be injected rather 
 
 ```js
 // in src/users/logic.js
+import { createLogic } from 'redux-logic';
 
 /**
  * Core business validation code, extracted so it can be used

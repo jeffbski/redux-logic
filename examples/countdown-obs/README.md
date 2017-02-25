@@ -21,6 +21,7 @@ Finally this also shows how to use dispatch for a long running task with multipl
 
 ```js
 // in src/timer/logic.js
+import { createLogic } from 'redux-logic';
 
 const timerStartLogic = createLogic({
   type: TIMER_START,

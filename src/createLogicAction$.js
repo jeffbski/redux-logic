@@ -5,6 +5,7 @@ import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
+import 'rxjs/add/observable/timer';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/map';
@@ -14,18 +15,20 @@ import 'rxjs/add/operator/takeUntil';
 import { confirmProps } from './utils';
 
 // confirm custom Rx build imports
-confirmProps(Observable, ['fromPromise', 'of', 'throw'], 'Observable');
+confirmProps(Observable, ['fromPromise', 'of', 'throw', 'timer'],
+             'Observable');
 confirmProps(Observable.prototype, [
   'do', 'filter', 'map', 'mergeAll', 'take', 'takeUntil'
 ], 'Observable.prototype');
 
 const UNHANDLED_LOGIC_ERROR = 'UNHANDLED_LOGIC_ERROR';
+const NODE_ENV = process.env.NODE_ENV;
 
 const debug = (/* ...args */) => {};
 
 export default function createLogicAction$({ action, logic, store, deps, cancel$, monitor$ }) {
   const { getState } = store;
-  const { name, process: processFn,
+  const { name, warnTimeout, process: processFn,
           processOptions: { dispatchReturn, dispatchMultiple,
                             successType, failType } } = logic;
   const intercept = logic.validate || logic.transform; // aliases
@@ -54,6 +57,19 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
         }
       );
 
+    // In non-production mode only we will setup a warning timeout that
+    // will console.error if logic has not completed by the time it fires
+    // warnTimeout can be set to 0 to disable
+    if (NODE_ENV !== 'production' && warnTimeout) {
+      Observable.timer(warnTimeout)
+        // take until cancelled, errored, or completed
+        .takeUntil(cancelled$.defaultIfEmpty(true))
+        .do(() => {
+          // eslint-disable-next-line no-console
+          console.error(`warning: logic (${name}) is still running after ${warnTimeout / 1000}s, forget to call done()? For non-ending logic, set warnTimeout: 0`);
+        })
+        .subscribe();
+    }
 
     const dispatch$ = (new Subject())
           .mergeAll()

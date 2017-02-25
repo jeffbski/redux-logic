@@ -13,6 +13,7 @@ Finally we are also showcasing that runtime dependencies can be injected rather 
 
 ```js
 // in src/users/logic.js
+import { createLogic } from 'redux-logic';
 
 export const usersFetchLogic = createLogic({
   type: USERS_FETCH,
@@ -42,6 +43,7 @@ export const usersFetchLogic = createLogic({
 // in src/user/logic.js
 // Here I chose to separate out the main fetch code into an external
 // async function
+import { createLogic } from 'redux-logic';
 
 export const userProfFetchLogic = createLogic({
   type: USER_PROFILE_FETCH,

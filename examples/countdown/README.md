@@ -21,6 +21,7 @@ Finally this also shows how to use dispatch for a long running task with multipl
 
 ```js
 // in src/timer/logic.js
+import { createLogic } from 'redux-logic';
 
 const timerStartLogic = createLogic({
   type: TIMER_START,
@@ -67,15 +68,14 @@ const timerDecrementLogic = createLogic({
     }
   },
 
-  process({ getState }, dispatch) {
+  process({ getState }, dispatch, done) {
     // unless other middleware/logic introduces async behavior, the
     // state will have been updated by the reducers by now
     const state = getState();
     if (timerSel.value(state) === 0) {
       dispatch(timerEnd());
-    } else { // not zero
-      dispatch(); // ends process logic, nothing is dispatched
     }
+    done(); // we are done dispatching for this logic
   }
 });
 ```

@@ -9,7 +9,8 @@ const allowedOptions = [
   'validate',
   'transform',
   'process',
-  'processOptions'
+  'processOptions',
+  'warnTimeout'
 ];
 
 const allowedProcessOptions = [
@@ -18,6 +19,8 @@ const allowedProcessOptions = [
   'successType',
   'failType'
 ];
+
+const NODE_ENV = process.env.NODE_ENV;
 
 /**
    Validate and augment logic object to be used in logicMiddleware.
@@ -71,7 +74,7 @@ const allowedProcessOptions = [
      where dispatch and done are optional and if included in the
      the signature will change the dispatch mode:
      1. Neither dispatch, nor done - dispatches the returned/resolved val
-     2. Only dispatch - single dispatch mode, call dispatch exactly once
+     2. Only dispatch - single dispatch mode, call dispatch exactly once (deprecated)
      3. Both dispatch and done - multi-dispatch mode, call done when finished
      Dispatch may be called with undefined when nothing needs to be
      dispatched. Multiple dispatches may be made if including the done or
@@ -90,6 +93,10 @@ const allowedProcessOptions = [
      action type or action creator fn, use value as payload
    @param {string|function} logicOptions.processOptions.failType
      action type or action creator fn, use value as payload
+   @param {number} logicOptions.warnTimeout In non-production environment
+     a console.error message will be logged if logic doesn't complete
+     before this timeout in ms fires. Set to 0 to disable. Defaults to
+     60000 (one minute)
    @returns {object} validated logic object which can be used in
      logicMiddleware contains the same properties as logicOptions but
      has defaults applied.
@@ -102,6 +109,7 @@ export default function createLogic(logicOptions = {}) {
   }
 
   const { name, type, cancelType,
+          warnTimeout = 60000,
           latest = false, debounce = 0, throttle = 0,
           validate, transform, process = emptyProcess,
           processOptions = {} } = logicOptions;
@@ -114,6 +122,10 @@ export default function createLogic(logicOptions = {}) {
     throw new Error('logic cannot define both the validate and transform hooks they are aliases');
   }
 
+  if (typeof processOptions.warnTimeout !== 'undefined') {
+    throw new Error('warnTimeout is a top level createLogic option, not a processOptions option');
+  }
+
   const invalidProcessOptions = Object.keys(processOptions)
         .filter(k => allowedProcessOptions.indexOf(k) === -1);
   if (invalidProcessOptions.length) {
@@ -124,6 +136,13 @@ export default function createLogic(logicOptions = {}) {
         identityValidation :
         validate;
 
+  if (NODE_ENV !== 'production' &&
+      typeof processOptions.dispatchMultiple !== 'undefined' &&
+      warnTimeout !== 0) {
+    // eslint-disable-next-line no-console
+    console.error(`warning: in logic for type(s): ${type} - dispatchMultiple is always true in next version. For non-ending logic, set warnTimeout to 0`);
+  }
+
   // use process fn signature to determine some processOption defaults
   // for dispatchReturn and dispatchMultiple
   switch (process.length) {
@@ -131,7 +150,13 @@ export default function createLogic(logicOptions = {}) {
     case 1: // process(deps) - dispatchReturn
       setIfUndefined(processOptions, 'dispatchReturn', true);
       break;
-    case 2: // process(deps, dispatch) - single dispatch
+    case 2: // process(deps, dispatch) - single dispatch (deprecated)
+      if (NODE_ENV !== 'production' &&
+          !processOptions.dispatchMultiple
+          && warnTimeout !== 0) {
+        // eslint-disable-next-line no-console
+        console.error(`warning: in logic for type(s): ${type} - single-dispatch mode is deprecated, call done when finished dispatching. For non-ending logic, set warnTimeout: 0`);
+      }
       // nothing to do, defaults are fine
       break;
     case 3: // process(deps, dispatch, done) - multi-dispatch
@@ -150,7 +175,8 @@ export default function createLogic(logicOptions = {}) {
     validate: validateDefaulted,
     transform,
     process,
-    processOptions
+    processOptions,
+    warnTimeout
   };
 }
 
@@ -167,8 +193,9 @@ function identityValidation({ action }, allow /* , reject */) {
   allow(action);
 }
 
-function emptyProcess(_, dispatch) {
+function emptyProcess(_, dispatch, done) {
   dispatch();
+  done();
 }
 
 function setIfUndefined(obj, propName, propValue) {
