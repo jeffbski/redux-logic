@@ -381,7 +381,7 @@ redux-logic was inspired from these projects:
 
 (redux-logic only includes the modules of RxJS 5 that it uses)
 ```
-redux-logic.min.js.gz 11KB
+redux-logic.min.js.gz 12KB
 ```
 
 Note: If you are already including RxJS 5 into your project then the resulting delta will be much smaller.

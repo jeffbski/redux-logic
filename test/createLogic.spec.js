@@ -2,6 +2,8 @@ import expect from 'expect';
 import Rx from 'rxjs';
 import { createLogic, createLogicMiddleware } from '../src/index';
 
+const NODE_ENV = process.env.NODE_ENV;
+
 describe('createLogic', () => {
   describe('createLogic()', () => {
     it('throws type is required error', () => {
@@ -534,18 +536,24 @@ describe('createLogic', () => {
       consoleErrorSpy.restore();
     });
 
-    it('warn that single-dispatch mode is deprecated', () => {
-      createLogic({
-        type: '*',
-        process(deps, dispatch) {
-          dispatch({ type: 'BAR' });
-        }
+    if (NODE_ENV === 'production') {
+      it('PROD should not have called console.error with warning', () => {
+        expect(consoleErrorSpy.calls.length).toBe(0);
       });
-      expect(consoleErrorSpy.calls.length).toBe(1);
-      expect(consoleErrorSpy.calls[0].arguments[0]).toBe(
-        'warning: in logic for type(s): * - single-dispatch mode is deprecated, call done when finished dispatching. For non-ending logic, set warnTimeout: 0'
-      );
-    });
+    } else { // not production
+      it('warn that single-dispatch mode is deprecated', () => {
+        createLogic({
+          type: '*',
+          process(deps, dispatch) {
+            dispatch({ type: 'BAR' });
+          }
+        });
+        expect(consoleErrorSpy.calls.length).toBe(1);
+        expect(consoleErrorSpy.calls[0].arguments[0]).toBe(
+          'warning: in logic for type(s): * - single-dispatch mode is deprecated, call done when finished dispatching. For non-ending logic, set warnTimeout: 0'
+        );
+      });
+    }
   });
 
   describe('use of single-dispatch mode warnTimeout: 200 w/o dispatchMultiple', () => {
@@ -557,19 +565,25 @@ describe('createLogic', () => {
       consoleErrorSpy.restore();
     });
 
-    it('warn that single-dispatch mode is deprecated', () => {
-      createLogic({
-        type: '*',
-        warnTimeout: 200,
-        process(deps, dispatch) {
-          dispatch({ type: 'BAR' });
-        }
+    if (NODE_ENV === 'production') {
+      it('PROD should not have called console.error with warning', () => {
+        expect(consoleErrorSpy.calls.length).toBe(0);
       });
-      expect(consoleErrorSpy.calls.length).toBe(1);
-      expect(consoleErrorSpy.calls[0].arguments[0]).toBe(
-        'warning: in logic for type(s): * - single-dispatch mode is deprecated, call done when finished dispatching. For non-ending logic, set warnTimeout: 0'
-      );
-    });
+    } else { // not production
+      it('warn that single-dispatch mode is deprecated', () => {
+        createLogic({
+          type: '*',
+          warnTimeout: 200,
+          process(deps, dispatch) {
+            dispatch({ type: 'BAR' });
+          }
+        });
+        expect(consoleErrorSpy.calls.length).toBe(1);
+        expect(consoleErrorSpy.calls[0].arguments[0]).toBe(
+          'warning: in logic for type(s): * - single-dispatch mode is deprecated, call done when finished dispatching. For non-ending logic, set warnTimeout: 0'
+        );
+      });
+    }
   });
 
   describe('use of single-dispatch mode w/dispatchMultiple=true', () => {
@@ -581,19 +595,25 @@ describe('createLogic', () => {
       consoleErrorSpy.restore();
     });
 
-    it('should only warn about dispatchMultiple true in next version', () => {
-      createLogic({
-        type: '*',
-        processOptions: { dispatchMultiple: true },
-        process(deps, dispatch) {
-          dispatch({ type: 'BAR' });
-        }
+    if (NODE_ENV === 'production') {
+      it('PROD should not have called console.error with warning', () => {
+        expect(consoleErrorSpy.calls.length).toBe(0);
       });
-      expect(consoleErrorSpy.calls.length).toBe(1);
-      expect(consoleErrorSpy.calls[0].arguments[0]).toBe(
-        'warning: in logic for type(s): * - dispatchMultiple is always true in next version. For non-ending logic, set warnTimeout to 0'
-      );
-    });
+    } else { // not production
+      it('should only warn about dispatchMultiple true in next version', () => {
+        createLogic({
+          type: '*',
+          processOptions: { dispatchMultiple: true },
+          process(deps, dispatch) {
+            dispatch({ type: 'BAR' });
+          }
+        });
+        expect(consoleErrorSpy.calls.length).toBe(1);
+        expect(consoleErrorSpy.calls[0].arguments[0]).toBe(
+          'warning: in logic for type(s): * - dispatchMultiple is always true in next version. For non-ending logic, set warnTimeout to 0'
+        );
+      });
+    }
   });
 
   describe('use of single-dispatch mode w/warnTimeout:0', () => {
@@ -626,24 +646,29 @@ describe('createLogic', () => {
       consoleErrorSpy.restore();
     });
 
-    it('should warn dispatchMultiple is always true in next version', () => {
-      createLogic({
-        type: /.*/,
-        warnTimeout: 100,
-        processOptions: {
-          dispatchMultiple: true
-        },
-        process(deps, dispatch, done) {
-          dispatch({ type: 'BAR' });
-          done();
-        }
+    if (NODE_ENV === 'production') {
+      it('PROD should not have called console.error with warning', () => {
+        expect(consoleErrorSpy.calls.length).toBe(0);
       });
-      expect(consoleErrorSpy.calls.length).toBe(1);
-      expect(consoleErrorSpy.calls[0].arguments[0]).toBe(
-        'warning: in logic for type(s): /.*/ - dispatchMultiple is always true in next version. For non-ending logic, set warnTimeout to 0'
-      );
-    });
-
+    } else { // not production
+      it('should warn dispatchMultiple is always true in next version', () => {
+        createLogic({
+          type: /.*/,
+          warnTimeout: 100,
+          processOptions: {
+            dispatchMultiple: true
+          },
+          process(deps, dispatch, done) {
+            dispatch({ type: 'BAR' });
+            done();
+          }
+        });
+        expect(consoleErrorSpy.calls.length).toBe(1);
+        expect(consoleErrorSpy.calls[0].arguments[0]).toBe(
+          'warning: in logic for type(s): /.*/ - dispatchMultiple is always true in next version. For non-ending logic, set warnTimeout to 0'
+        );
+      });
+    }
   });
 
   describe('dispatchMultiple=false warnTimeout != 0', () => {
@@ -655,24 +680,29 @@ describe('createLogic', () => {
       consoleErrorSpy.restore();
     });
 
-    it('should warn dispatchMultiple is always true in next version', () => {
-      createLogic({
-        type: ['FOO', 'BAR'],
-        warnTimeout: 100,
-        processOptions: {
-          dispatchMultiple: false
-        },
-        process(deps, dispatch, done) {
-          dispatch({ type: 'BAR' });
-          done();
-        }
+    if (NODE_ENV === 'production') {
+      it('PROD should not have called console.error with warning', () => {
+        expect(consoleErrorSpy.calls.length).toBe(0);
       });
-      expect(consoleErrorSpy.calls.length).toBe(1);
-      expect(consoleErrorSpy.calls[0].arguments[0]).toBe(
-        'warning: in logic for type(s): FOO,BAR - dispatchMultiple is always true in next version. For non-ending logic, set warnTimeout to 0'
-      );
-    });
-
+    } else { // not production
+      it('should warn dispatchMultiple is always true in next version', () => {
+        createLogic({
+          type: ['FOO', 'BAR'],
+          warnTimeout: 100,
+          processOptions: {
+            dispatchMultiple: false
+          },
+          process(deps, dispatch, done) {
+            dispatch({ type: 'BAR' });
+            done();
+          }
+        });
+        expect(consoleErrorSpy.calls.length).toBe(1);
+        expect(consoleErrorSpy.calls[0].arguments[0]).toBe(
+          'warning: in logic for type(s): FOO,BAR - dispatchMultiple is always true in next version. For non-ending logic, set warnTimeout to 0'
+        );
+      });
+    }
   });
 
   describe('warnTimeout != 0', () => {
@@ -756,21 +786,26 @@ describe('createLogic', () => {
       consoleErrorSpy.restore();
     });
 
-    it('should warn dispatchMultiple is always true in next version', () => {
-      createLogic({
-        type: '*',
-        warnTimeout: 0,
-        processOptions: {
-          dispatchMultiple: false
-        },
-        process(deps, dispatch, done) {
-          dispatch({ type: 'BAR' });
-          done();
-        }
+    if (NODE_ENV === 'production') {
+      it('PROD should not have called console.error with warning', () => {
+        expect(consoleErrorSpy.calls.length).toBe(0);
       });
-      expect(consoleErrorSpy.calls.length).toBe(0);
-    });
-
+    } else { // not production
+      it('should warn dispatchMultiple is always true in next version', () => {
+        createLogic({
+          type: '*',
+          warnTimeout: 0,
+          processOptions: {
+            dispatchMultiple: false
+          },
+          process(deps, dispatch, done) {
+            dispatch({ type: 'BAR' });
+            done();
+          }
+        });
+        expect(consoleErrorSpy.calls.length).toBe(0);
+      });
+    }
   });
 
 });

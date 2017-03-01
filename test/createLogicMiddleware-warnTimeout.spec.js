@@ -1,6 +1,8 @@
 import expect from 'expect';
 import { createLogic, createLogicMiddleware } from '../src/index';
 
+const NODE_ENV = process.env.NODE_ENV;
+
 describe('createLogicMiddleware-warnTimeout', () => {
   describe('process completes late', () => {
     let monArr = [];
@@ -40,10 +42,16 @@ describe('createLogicMiddleware-warnTimeout', () => {
       mw.whenComplete(done);
     });
 
-    it('should have called console.error with warning', () => {
-      expect(consoleErrorSpy.calls.length).toBe(1);
-      expect(consoleErrorSpy.calls[0].arguments[0]).toBe('warning: logic (L(FOO)-0) is still running after 0.1s, forget to call done()? For non-ending logic, set warnTimeout: 0');
-    });
+    if (NODE_ENV === 'production') {
+      it('PROD should not have called console.error with warning', () => {
+        expect(consoleErrorSpy.calls.length).toBe(0);
+      });
+    } else { // not production
+      it('should have called console.error with warning', () => {
+        expect(consoleErrorSpy.calls.length).toBe(1);
+        expect(consoleErrorSpy.calls[0].arguments[0]).toBe('warning: logic (L(FOO)-0) is still running after 0.1s, forget to call done()? For non-ending logic, set warnTimeout: 0');
+      });
+    }
 
     it('mw.monitor$ should track flow', () => {
       expect(monArr).toEqual([
@@ -163,10 +171,16 @@ describe('createLogicMiddleware-warnTimeout', () => {
       }, 200);
     });
 
-    it('should have called console.error with warning', () => {
-      expect(consoleErrorSpy.calls.length).toBe(1);
-      expect(consoleErrorSpy.calls[0].arguments[0]).toBe('warning: logic (L(FOO)-0) is still running after 0.1s, forget to call done()? For non-ending logic, set warnTimeout: 0');
-    });
+    if (NODE_ENV === 'production') {
+      it('PROD should not have called console.error with warning', () => {
+        expect(consoleErrorSpy.calls.length).toBe(0);
+      });
+    } else { // not production
+      it('should have called console.error with warning', () => {
+        expect(consoleErrorSpy.calls.length).toBe(1);
+        expect(consoleErrorSpy.calls[0].arguments[0]).toBe('warning: logic (L(FOO)-0) is still running after 0.1s, forget to call done()? For non-ending logic, set warnTimeout: 0');
+      });
+    }
 
     it('mw.monitor$ should track flow', () => {
       expect(monArr).toEqual([
@@ -292,10 +306,16 @@ describe('createLogicMiddleware-warnTimeout', () => {
       mw.whenComplete(done);
     });
 
-    it('should have called console.error with warning', () => {
-      expect(consoleErrorSpy.calls.length).toBe(1);
-      expect(consoleErrorSpy.calls[0].arguments[0]).toBe('warning: logic (L(FOO)-0) is still running after 0.1s, forget to call done()? For non-ending logic, set warnTimeout: 0');
-    });
+    if (NODE_ENV === 'production') {
+      it('PROD should not have called console.error with warning', () => {
+        expect(consoleErrorSpy.calls.length).toBe(0);
+      });
+    } else { // not production
+      it('should have called console.error with warning', () => {
+        expect(consoleErrorSpy.calls.length).toBe(1);
+        expect(consoleErrorSpy.calls[0].arguments[0]).toBe('warning: logic (L(FOO)-0) is still running after 0.1s, forget to call done()? For non-ending logic, set warnTimeout: 0');
+      });
+    }
 
     it('mw.monitor$ should track flow', () => {
       expect(monArr).toEqual([
