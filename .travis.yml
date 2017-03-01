@@ -8,7 +8,6 @@ script:
   - npm run check:src
   - npm run dev-build
   - npm run check:examples
-  - npm run test:rxbuild
   - npm run test:cov-codacy
   - npm run prod-build
 branches:
