@@ -6,6 +6,7 @@ import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/observable/timer';
+import 'rxjs/add/operator/defaultIfEmpty';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/map';
@@ -17,9 +18,8 @@ import { confirmProps } from './utils';
 // confirm custom Rx build imports
 confirmProps(Observable, ['fromPromise', 'of', 'throw', 'timer'],
              'Observable');
-confirmProps(Observable.prototype, [
-  'do', 'filter', 'map', 'mergeAll', 'take', 'takeUntil'
-], 'Observable.prototype');
+confirmProps(Observable.prototype, ['defaultIfEmpty', 'do', 'filter',
+  'map', 'mergeAll', 'take', 'takeUntil'], 'Observable.prototype');
 
 const UNHANDLED_LOGIC_ERROR = 'UNHANDLED_LOGIC_ERROR';
 const NODE_ENV = process.env.NODE_ENV;
