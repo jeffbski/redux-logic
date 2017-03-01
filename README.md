@@ -29,7 +29,7 @@ Leverage powerful **declarative** features by simply setting properties:
  - **throttling**
  - dispatch actions - auto **decoration** of payloads
 
-Testing your logic is straight forward and simple.
+Testing your logic is straight forward and simple. [redux-logic-test](https://github.com/jeffbski/redux-logic-test) provides additional utilities to make testing a breeze.
 
 With simple code your logic can:
 
@@ -391,7 +391,6 @@ Note: If you are already including RxJS 5 into your project then the resulting d
  - add typescript support
  - more docs
  - more examples
- - evaulate additional features as outlined above
 
 ## Get involved
 
