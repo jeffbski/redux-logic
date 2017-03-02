@@ -786,26 +786,21 @@ describe('createLogic', () => {
       consoleErrorSpy.restore();
     });
 
-    if (NODE_ENV === 'production') {
-      it('PROD should not have called console.error with warning', () => {
-        expect(consoleErrorSpy.calls.length).toBe(0);
+    it('should not log', () => {
+      createLogic({
+        type: '*',
+        warnTimeout: 0,
+        processOptions: {
+          dispatchMultiple: false
+        },
+        process(deps, dispatch, done) {
+          dispatch({ type: 'BAR' });
+          done();
+        }
       });
-    } else { // not production
-      it('should warn dispatchMultiple is always true in next version', () => {
-        createLogic({
-          type: '*',
-          warnTimeout: 0,
-          processOptions: {
-            dispatchMultiple: false
-          },
-          process(deps, dispatch, done) {
-            dispatch({ type: 'BAR' });
-            done();
-          }
-        });
-        expect(consoleErrorSpy.calls.length).toBe(0);
-      });
-    }
+      expect(consoleErrorSpy.calls.length).toBe(0);
+    });
+
   });
 
 });
