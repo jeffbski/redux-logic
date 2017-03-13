@@ -515,7 +515,7 @@ For debugging or gaining insight into the internal operations of redux-logic, yo
 ```js
 logicMiddleware.monitor$.subscribe(
   x => console.log(x)
-;)
+);
 ```
 
 The structure emitted by the observable is an object with properties:
