@@ -121,7 +121,6 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
     */
   mw.whenComplete = function whenComplete(fn = identity) {
     return lastPending$
-      .filter(x => !logicCount || x.op !== OP_INIT) // no logic or not init
       // .do(x => console.log('wc', x)) /* keep commented out */
       .takeWhile(x => x.pending)
       .map((/* x */) => undefined) // not passing along anything

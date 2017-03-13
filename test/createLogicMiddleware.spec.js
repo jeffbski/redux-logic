@@ -119,6 +119,78 @@ describe('createLogicMiddleware', () => {
     });
   });
 
+  describe('[logicA] no dispatch', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    beforeEach(() => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO'
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next);
+    });
+
+    it('mw.whenComplete(fn) should be called', (done) => {
+      mw.whenComplete(done);
+    });
+  });
+
+  describe('[logicA] non-matching dispatch', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    beforeEach(() => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO'
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      const storeFn = mw({ dispatch })(next);
+      storeFn({ type: 'BAR' });
+    });
+
+    it('mw.whenComplete(fn) should be called', (done) => {
+      mw.whenComplete(done);
+    });
+  });
+
+  describe('[logicA] non-matching dispatches', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    beforeEach(() => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO'
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      const storeFn = mw({ dispatch })(next);
+      storeFn({ type: 'BAR' });
+      storeFn({ type: 'BAZ' });
+    });
+
+    it('mw.whenComplete(fn) should be called', (done) => {
+      mw.whenComplete(done);
+    });
+  });
+
   describe('[logicA] type is string, match only', () => {
     let monArr = [];
     let mw;
