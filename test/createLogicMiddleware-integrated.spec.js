@@ -3,6 +3,125 @@ import { createStore, applyMiddleware } from 'redux';
 import { createLogic, createLogicMiddleware } from '../src/index';
 
 describe('createLogicMiddleware-integration', () => {
+
+  describe('throw error in reducer', () => {
+    let monArr = [];
+    beforeEach((done) => {
+      monArr = [];
+      const initialState = {};
+
+      function reducer(state, action) {
+        switch (action.type) {
+          case 'BAD':
+            throw new Error('something bad happened');
+          default:
+            return state;
+        }
+      }
+
+      const processLogic = createLogic({
+        type: 'FOO',
+        process({ getState, action }, dispatch, done) {
+          dispatch({ type: 'BAD' }); // throws error
+          done();
+        }
+      });
+
+      const logicMiddleware = createLogicMiddleware([processLogic]);
+      logicMiddleware.monitor$.subscribe(x => monArr.push(x));
+
+      const store = createStore(reducer, initialState,
+                                applyMiddleware(logicMiddleware));
+      store.dispatch({ type: 'FOO' });
+      // we could just call done() here since everything is sync
+      // but whenComplete is always the safe thing to do
+      logicMiddleware.whenComplete(done);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: { type: 'BAD' },
+          op: 'dispatch' },
+        { action: { type: 'BAD' }, op: 'top' },
+        { action: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          dispAction: { type: 'BAD' },
+          err: 'something bad happened',
+          op: 'dispatchError' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+  });
+
+  // throw string
+  describe('throw string in reducer', () => {
+    let monArr = [];
+    beforeEach((done) => {
+      monArr = [];
+      const initialState = {};
+
+      function reducer(state, action) {
+        switch (action.type) {
+          case 'BAD':
+            // eslint-disable-next-line no-throw-literal
+            throw 'you should throw an error instead';
+          default:
+            return state;
+        }
+      }
+
+      const processLogic = createLogic({
+        type: 'FOO',
+        process({ getState, action }, dispatch, done) {
+          dispatch({ type: 'BAD' }); // throws error
+          done();
+        }
+      });
+
+      const logicMiddleware = createLogicMiddleware([processLogic]);
+      logicMiddleware.monitor$.subscribe(x => monArr.push(x));
+
+      const store = createStore(reducer, initialState,
+                                applyMiddleware(logicMiddleware));
+      store.dispatch({ type: 'FOO' });
+      // we could just call done() here since everything is sync
+      // but whenComplete is always the safe thing to do
+      logicMiddleware.whenComplete(done);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          nextAction: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'FOO' },
+          dispAction: { type: 'BAD' },
+          op: 'dispatch' },
+        { action: { type: 'BAD' }, op: 'top' },
+        { action: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          dispAction: { type: 'BAD' },
+          err: 'you should throw an error instead',
+          op: 'dispatchError' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+  });
+
   describe('rapid call with single logic', () => {
     let storeUpdates;
     let monArr = [];
