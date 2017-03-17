@@ -63,6 +63,7 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
         case 'bottom' : // action cleared bottom of logic stack
         case 'nextDisp' : // action changed type and dispatched
         case 'filtered' : // action filtered
+        case 'dispatchError' : // error when dispatching
         case 'cancelled' : // action cancelled before intercept complete
                            // dispCancelled is not included here since
                            // already accounted for in the 'end' op

@@ -83,7 +83,15 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
 
     function storeDispatch(act) {
       monitor$.next({ action, dispAction: act, op: 'dispatch' });
-      return store.dispatch(act);
+      try {
+        return store.dispatch(act);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('error in dispatch/reducer:', err);
+        const msg = (err && err.message) ? err.message : err;
+        monitor$.next({ action, dispAction: act, name, err: msg, op: 'dispatchError' });
+        return err;
+      }
     }
 
     function mapToActionAndDispatch(actionOrValue) {

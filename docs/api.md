@@ -531,6 +531,7 @@ The structure emitted by the observable is an object with properties:
    - cancelled - intercept was cancelled either from cancelType or take latest
    - dispatch - dispAction was dispatched to store
    - dispCancelled - dispatch was cancelled either from cancelType or take latest
+   - dispatchError - error thrown while dispatching possibly from reducer
    - end - everything has completed for this logic including async processing
  - name - name of the logic operating on this action
  - nextAction - action being passed down to next logic/middleware/reducer
