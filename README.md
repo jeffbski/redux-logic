@@ -229,7 +229,7 @@ export default [
 
    - if failType is an action creator function receiving the error value as its only parameter
      - use the return value from the action creator fn for dispatching. ex: `failType: x => ({ type: 'BAR', payload: x, error: true })`
-     - if the action creator fn returns a falsey value like `undefined` then nothing will be dispatched. This allows your action creator to control whether something is actually dispatched based on teh value provided to it.
+     - if the action creator fn returns a falsey value like `undefined` then nothing will be dispatched. This allows your action creator to control whether something is actually dispatched based on the value provided to it.
 
 The successType and failType would enable clean code, where you can simply return a promise or observable that resolves to the payload and rejects on error. The resulting code doesn't have to deal with dispatch and actions directly.
 
@@ -326,7 +326,7 @@ For a more detailed comparison with examples, see by article in docs, [Where do 
 ### Compared to redux-observable
 
  - redux-logic doesn't require the developer to use rxjs observables. It uses observables under the covers to provide cancellation, throttling, etc. You simply configure these parameters to get this functionality. You can still use rxjs in your code if you want, but not a requirement.
- - redux-logic hooks in before the reducer stack like middleware allowing validation, verification, auth, tranformations. Allow, reject, tranform actions before they hit your reducers to update your state as well as accessing state after reducers have run. redux-observable hooks in after the reducers have updated state so they have no opportuntity to prevent the updates.
+ - redux-logic hooks in before the reducer stack like middleware allowing validation, verification, auth, transformations. Allow, reject, transform actions before they hit your reducers to update your state as well as accessing state after reducers have run. redux-observable hooks in after the reducers have updated state so they have no opportunity to prevent the updates.
 
 ### Compared to redux-saga
 
@@ -337,7 +337,7 @@ For a more detailed comparison with examples, see by article in docs, [Where do 
 
 ### Compared to custom redux middleware
 
- - Both are fully featured to do any type of business logic (validations, tranformations, processing)
+ - Both are fully featured to do any type of business logic (validations, transformations, processing)
  - redux-logic already has built-in capabilities for some of the hard stuff like cancellation, limiting, dynamic loading of code. With custom middleware you have to implement all functionality.
  - No safety net, if things break it could stop all of your future actions
  - Testing requires some mocking or setup
@@ -386,7 +386,7 @@ Note: If you are already including RxJS 5 into your project then the resulting d
  - add typescript support
  - more docs
  - more examples
- - evaulate additional features as outlined above
+ - evaluate additional features as outlined above
 
 ## Get involved
 
