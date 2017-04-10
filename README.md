@@ -83,6 +83,7 @@ Since redux-logic gives you the freedom to use your favorite style of JS code (c
 
 ## Table of contents
 
+ - <a href="#updates">Updates</a>
  - <a href="#goals">Goals</a>
  - <a href="#usage">Usage</a>
  - <a href="./docs/api.md">Full API</a>
@@ -90,6 +91,20 @@ Since redux-logic gives you the freedom to use your favorite style of JS code (c
  - <a href="#comparison-summaries">Comparison summaries</a> to <a href="#compared-to-fat-action-creators">fat action creators</a>, <a href="#compared-to-redux-thunk">thunks</a>, <a href="#compared-to-redux-observable">redux-observable</a>, <a href="#compared-to-redux-saga">redux-saga</a>, <a href="#compared-to-custom-redux-middleware">custom middleware</a>
  - <a href="#implementing-sampal-pattern">SAM/PAL pattern</a>
  - <a href="#other">Other</a> - todo, inspiration, license
+
+## Updates
+
+Full release notes of breaking and notable changes are available in [releases](/releases). This project follows semantic versioning.
+
+A few recent changes that are noteworthy:
+
+### v0.12
+
+These changes are not breaking but they are noteworthy since they prepare for the next version which will be breaking mainly to remove the single dispatch version of process hook which has been a source of confusion.
+
+  - Single dispatch signature for `process` hook is deprecated and warns in development build. This is when you use the signature `process(deps, dispatch)` (including dispatch but not done). To migrate change your use to include done `process(deps, dispatch, done)` and call the `done` cb when done dispatching.
+  - New option `warnTimeout` defaults to 60000 (ms == one minute) which warns (in development build only) when the logic exceeds the specified time without completion. Adjust this value or set it to 0 if you have logic that needs to exceed this time or purposefully never ends (like listening to a web socket)
+
 
 ## Goals
 
