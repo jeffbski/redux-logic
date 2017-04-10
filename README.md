@@ -94,7 +94,7 @@ Since redux-logic gives you the freedom to use your favorite style of JS code (c
 
 ## Updates
 
-Full release notes of breaking and notable changes are available in [releases](/releases). This project follows semantic versioning.
+Full release notes of breaking and notable changes are available in [releases](https://github.com/jeffbski/redux-logic/releases). This project follows semantic versioning.
 
 A few recent changes that are noteworthy:
 
