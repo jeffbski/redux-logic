@@ -78,7 +78,7 @@ const fetchPollsLogic = createLogic({
 });
 ```
 
-Since redux-logic gives you the freedom to use your favorite style of JS code (callbacks, promises, async/await, observables), it supports many features to make that easier, [explained in more detail](/jeffbski/redux-logic/blob/master/docs/api.md#dispatch---multi-dispatching-and-process-variable-signature).
+Since redux-logic gives you the freedom to use your favorite style of JS code (callbacks, promises, async/await, observables), it supports many features to make that easier, [explained in more detail](./docs/api.md#dispatch---multi-dispatching-and-process-variable-signature)
 
 
 ## Table of contents
