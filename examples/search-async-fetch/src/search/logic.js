@@ -3,14 +3,14 @@ import { SEARCH, searchFulfilled, searchRejected } from './actions';
 
 export const searchLogic = createLogic({
   type: SEARCH,
-  debounce: 500, // ms
-  latest: true, // take latest only
+  debounce: 500, /* ms */
+  latest: true,  /* take latest only */
 
-  // let's prevent empty requests
+  /* let's prevent empty requests */
   validate({ getState, action }, allow, reject) {
     if (action.payload) {
       allow(action);
-    } else { // empty request, silently reject
+    } else {  /* empty request, silently reject */
       reject();
     }
   },
