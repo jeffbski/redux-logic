@@ -3,6 +3,7 @@
  *
  * See https://github.com/jeffbski/redux-logic
  *
+ * These definitions make use of features released in TypeScript 2.3, namely default generic parameters
  */
 
 import {Middleware} from "redux";
@@ -90,14 +91,23 @@ interface LogicHookParams {
   // TODO cancelled$ observable - no idea yet on what its type signature should be
 }
 
+
+/**
+ * Type signature for an action creator function which can be used
+ * as the value of the 'successType' property of ProcessOptions or
+ * of the 'type' and 'cancelType' fields of Logic
+ */
+type ActionCreator = <P, M>(payload?: P) => FSA<P, M>;
+
 /**
  * This is primitive type of a value that
  * can be passed for the 'type' or 'cancelType' fields
  * of the LogicOptions
  *
- * TODO Extend to include "redux-actions" functions
+ * TODO The redux-logics state that this can also be a regex. Is that a real regexp
+ * TODO or just a string conatining a regex literal?
  */
-type ActionTypePrimitive = string;
+type ActionTypePrimitive = string | ActionCreator;
 
 /**
  * The is the actual type signature for the 'type' and 'cancelType' fields
@@ -133,18 +143,12 @@ type LogicDone = () => void;
  * Now we have all of the types needed to go ahead and define hook functions
  */
 
-type TransformHook = <D>(depObj: LogicHookParams & D, next: LogicAllow) => void;
+type TransformHook<D> = (depObj: LogicHookParams & D, next: LogicAllow) => void;
 
-type ValidateHook = <D>(depObj: LogicHookParams & D, allow: LogicAllow, reject: LogicReject) => void;
+type ValidateHook<D> = (depObj: LogicHookParams & D, allow: LogicAllow, reject: LogicReject) => void;
 
-type ProcessHook = <D>(depObj: LogicHookParams & D, dispatch: LogicDispatch, done: LogicDone) => any;
+type ProcessHook<D> = (depObj: LogicHookParams & D, dispatch: LogicDispatch, done: LogicDone) => any;
 
-
-/**
- * Type signature for an action creator function which can be used
- * as the value of the 'successType' property of ProcessOptions
- */
-type ActionCreator = <P, M>(payload?: P) => FSA<P, M>;
 
 interface ProcessOptions {
   dispatchReturn?: boolean;
@@ -156,7 +160,7 @@ interface ProcessOptions {
   failType?: string | ActionCreator;
 }
 
-interface Logic {
+interface Logic<D> {
   name?: string;
 
   type: ActionTypeMatcher;
@@ -171,34 +175,30 @@ interface Logic {
 
   warnTimeout?: number;
 
-  validate?: ValidateHook;
+  validate?: ValidateHook<D>;
 
-  transform?: TransformHook;
+  transform?: TransformHook<D>;
 
   processOptions?: ProcessOptions;
 
-  process?: ProcessHook;
+  process?: ProcessHook<D>;
 }
 
-type LogicCreator = (config: Logic) => Logic;
-
-declare const createLogic: LogicCreator;
+export function createLogic<D = {}>(config: Logic<D>): Logic<D>;
 
 
-interface LogicMiddleware extends Middleware {
-  addDeps: <D>(additionalDeps: D) => void;
+interface LogicMiddleware<D> extends Middleware {
+  addDeps: (additionalDeps: D) => void;
 
-  addLogic: (newLogics: Logic[]) => void;
+  addLogic: (newLogics: Logic<D>[]) => void;
 
-  mergeNewLogic: (newLogics: Logic[]) => void;
+  mergeNewLogic: (newLogics: Logic<D>[]) => void;
 
-  replaceLogic: (logics: Logic[]) => void;
+  replaceLogic: (logics: Logic<D>[]) => void;
 
   // TODO Add monitor$ Observable
 
   // TODO Figure out where whenComplete() comes from and what its type signature should be
 }
 
-type LogicMiddlewareCreator = <D>(logics: Logic[], deps?: D) => LogicMiddleware;
-
-declare const createLogicMiddleware: LogicMiddlewareCreator;
+export function createLogicMiddleware<D = {}>(logics: Logic<D>[], deps?: D): LogicMiddleware<D>;
