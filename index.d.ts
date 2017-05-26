@@ -24,8 +24,10 @@ type ActionType = string | symbol;
  * At least, they require specifying every value, even though they are documented as optional.
  * <p>
  * We include a copy here with all of properties except 'type' declared as optional.
+ *
+ * TODO Should we just re-use the type defintions from redux-actions, or more specifically @types/redux-actions
  */
-export interface FSA<P, M> {
+export interface FSA<P={}, M={}> {
   /**
    * The `type` of an action identifies to the consumer the nature of the action that has occurred.
    * Two actions with the same `type` MUST be strictly equivalent (using `===`)
@@ -143,11 +145,11 @@ type LogicDone = () => void;
  * Now we have all of the types needed to go ahead and define hook functions
  */
 
-type TransformHook<D> = (depObj: LogicHookParams & D, next: LogicAllow) => void;
+type TransformHook<D = {}> = (depObj: LogicHookParams & D, next: LogicAllow) => void;
 
-type ValidateHook<D> = (depObj: LogicHookParams & D, allow: LogicAllow, reject: LogicReject) => void;
+type ValidateHook<D = {}> = (depObj: LogicHookParams & D, allow: LogicAllow, reject: LogicReject) => void;
 
-type ProcessHook<D> = (depObj: LogicHookParams & D, dispatch: LogicDispatch, done: LogicDone) => any;
+type ProcessHook<D = {}> = (depObj: LogicHookParams & D, dispatch: LogicDispatch, done: LogicDone) => any;
 
 
 interface ProcessOptions {
