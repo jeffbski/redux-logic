@@ -228,10 +228,17 @@ function applyLogic(arrLogic, store, next, sub, actionIn$, deps,
                                          actionIn$);
   const newSub = actionOut$.subscribe(action => {
     debug('actionEnd$', action);
-    const result = next(action);
+    try {
+      const result = next(action);
+      debug('result', result);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('error in mw dispatch or next call, probably in middlware/reducer/render fn:', err);
+      const msg = (err && err.message) ? err.message : err;
+      monitor$.next({ action, err: msg, op: 'nextError' });
+    }
     // at this point, action is the transformed action, not original
     monitor$.next({ nextAction: action, op: 'bottom' });
-    debug('result', result);
   });
 
   return {

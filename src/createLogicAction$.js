@@ -99,15 +99,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
 
     function storeDispatch(act) {
       monitor$.next({ action, dispAction: act, op: 'dispatch' });
-      try {
-        return store.dispatch(act);
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.error('error in dispatch/reducer:', err);
-        const msg = (err && err.message) ? err.message : err;
-        monitor$.next({ action, dispAction: act, name, err: msg, op: 'dispatchError' });
-        return err;
-      }
+      return store.dispatch(act);
     }
 
     function mapToActionAndDispatch(actionOrValue) {
@@ -282,7 +274,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
     /* post if defined, then complete */
     function postIfDefinedOrComplete(act, act$) {
       if (act) {
-        act$.next(act);
+        act$.next(act);  // triggers call to middleware's next()
       }
       interceptComplete = true;
       act$.complete();
