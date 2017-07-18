@@ -167,7 +167,7 @@ export default function createLogic(logicOptions = {}) {
 
   return {
     name: typeToStrFns(name),
-    type: typeToStrFns(type),
+    type,
     cancelType: typeToStrFns(cancelType),
     latest,
     debounce,

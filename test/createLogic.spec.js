@@ -395,24 +395,21 @@ describe('createLogic', () => {
   describe('type given fn', () => {
     it('converts type to fn.toString()', () => {
       const fn = () => {};
-      fn.toString = () => 'myType';
       const logic = createLogic({
         type: fn
       });
-      expect(logic.type).toBe('myType');
+      expect(logic.type).toBe(fn);
     });
   });
 
   describe('type given array of fns', () => {
-    it('converts type to arr of fn.toString()', () => {
+    it('converts type to arr of fn', () => {
       const fn = () => {};
-      fn.toString = () => 'myType';
       const fn2 = () => {};
-      fn2.toString = () => 'myType2';
       const logic = createLogic({
         type: [fn, fn2]
       });
-      expect(logic.type).toEqual(['myType', 'myType2']);
+      expect(logic.type).toEqual([fn, fn2]);
     });
   });
 

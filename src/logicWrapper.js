@@ -65,6 +65,9 @@ function matchesType(tStrArrRe, type) {
   if (typeof tStrArrRe === 'string') {
     return (tStrArrRe === type || tStrArrRe === '*');
   }
+  if (typeof tStrArrRe === 'function') {
+    return tStrArrRe(type) === true;
+  }
   if (Array.isArray(tStrArrRe)) {
     return tStrArrRe.some(x => matchesType(x, type));
   }

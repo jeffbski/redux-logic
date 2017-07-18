@@ -515,6 +515,50 @@ describe('createLogicMiddleware', () => {
     });
   });
 
+  describe('[logicA] type is fn, matches fn result', () => {
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionA = { type: 'FOO' };
+    const actionAResult = { type: 'FOO', allowed: ['a'] };
+    const actionADispatch = { type: 'BAR', allowed: ['a'] };
+    const actionIgnore = { type: 'CATS' };
+    beforeEach(done => {
+      next = expect.createSpy();
+      dispatch = expect.createSpy().andCall(() => done());
+      logicA = createLogic({
+        type: actionType => actionType.length === 3,
+        validate({ action }, allow) {
+          allow({
+            ...action,
+            allowed: ['a']
+          });
+        },
+        process({ action }, dispatch) {
+          dispatch({
+            ...action,
+            type: 'BAR'
+          });
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      const storeFn = mw({ dispatch })(next);
+      storeFn(actionIgnore);
+      storeFn(actionA);
+    });
+
+    it('both messages hit next, one bypassed validation/transform', () => {
+      expect(next.calls.length).toBe(2);
+      expect(next.calls[0].arguments[0]).toEqual(actionIgnore);
+      expect(next.calls[1].arguments[0]).toEqual(actionAResult);
+    });
+
+    it('only matching is processed and dispatched', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0]).toEqual(actionADispatch);
+    });
+  });
 
   describe('[logicA] validate allow', () => {
     let monArr = [];
