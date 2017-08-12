@@ -14,7 +14,7 @@ var exampleDirs = fs.readdirSync(__dirname).filter(file =>
 var cmdArgs = [
   { cmd: 'rimraf', args: ['node_modules'] },
   { cmd: 'yarn', args: ['--no-lockfile'] },
-  { cmd: 'webpack', args: ['index.js'] }
+  { cmd: 'webpack', args: ['src/index.js'] }
 ];
 
 for (const dir of exampleDirs) {

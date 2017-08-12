@@ -13,7 +13,7 @@ var exampleDirs = fs.readdirSync(__dirname).filter(file =>
 // Ordering is important here. `npm install` must come first.
 var cmdArgs = [
   { cmd: 'yarn', args: ['--no-lockfile'] },
-  { cmd: 'webpack', args: ['index.js'] }
+  { cmd: 'webpack', args: ['src/index.js'] }
 ];
 
 for (const dir of exampleDirs) {
