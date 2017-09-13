@@ -78,11 +78,11 @@
   "dependencies": {
     "is-observable": "^0.2.0",
     "is-promise": "^2.1.0",
-    "loose-envify": "^1.2.0"
+    "loose-envify": "^1.2.0",
+    "rxjs": "^5.0.3"
   },
   "peerDependencies": {
-    "redux": "^3.5.2",
-    "rxjs": "^5.0.3"
+    "redux": "^3.5.2"
   },
   "devDependencies": {
     "babel-cli": "^6.3.15",
@@ -126,7 +126,6 @@
     "nyc": "^8.3.0",
     "redux": "^3.5.2",
     "rimraf": "^2.3.4",
-    "rxjs": "^5.0.3",
     "webpack": "^1.9.6",
     "yarn": "^0.27.5"
   },
