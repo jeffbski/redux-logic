@@ -2,9 +2,24 @@
 
 Contents:
 
+ - [Installation](#installation)
  - [Main usage](#main-usage)
  - [Execution phase hooks](#execution-phase-hooks---validate-transform-process) - [validate](#validate-hook), [transform](#transform-hook), [process](#process-hook)
  - [Advanced usage](#advanced-usage)
+
+## Installation
+
+redux-logic uses rxjs@5 under the covers and to prevent multiple copies (of different versions) from being installed, it is recommended to install rxjs first before redux-logic. That way you can use the same copy of rxjs elsewhere.
+
+If you are never using rxjs outside of redux-logic and don't plan to use Observables directly in your logic then you can skip the rxjs install and it will be installed as a redux-logic dependency. However if you think you might use Observables directly in the future (possibly creating Observables in your logic), it is still recommended to install rxjs separately first
+just to help ensure that only one copy will be in the project.
+
+The rxjs install below `npm install rxjs@^5` installs the lastest 5.x.x version of rxjs.
+
+```bash
+npm install rxjs@^5 --save  # optional see note above
+npm install redux-logic --save
+```
 
 ## Main usage
 
