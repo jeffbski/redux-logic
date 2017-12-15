@@ -4,7 +4,7 @@ Contents:
 
  - [Installation](#installation)
  - [Main usage](#main-usage)
- - [Execution phase hooks](#execution-phase-hooks---validate-transform-process) - [validate](#validate-hook), [transform](#transform-hook), [process](#process-hook)
+ - [Execution phase hooks](#execution-phase-hooks---validate-transform-process) - [validate](#validate-hook), [transform](#transform-hook-alias-for-validate-hook), [process](#process-hook)
  - [Advanced usage](#advanced-usage)
 
 ## Installation
