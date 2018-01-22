@@ -17,10 +17,58 @@ const allowedProcessOptions = [
   'dispatchReturn',
   'dispatchMultiple',
   'successType',
-  'failType'
+  'failType',
 ];
 
 const NODE_ENV = process.env.NODE_ENV;
+
+const defaultOptions = {
+  warnTimeout: 60000,
+  latest: false,
+  debounce: 0,
+  throttle: 0,
+};
+
+const globallyConfigurableOptions = ['warnTimeout'];
+
+/**
+   Configure the default `createLogic` options. Note that changing these values
+   will not affect `Logic` instances that have already been instantiated.
+
+   @param {object}  options object defining default values to be used when creating `Logic`
+     instances. The following options may be set globally:
+        - warnTimeout
+
+     See the `createLogic` API documentation for a description of these options.
+
+   @returns {undefined}
+
+   @example
+
+   ```
+   import { configureLogic, createLogic } from 'redux-logic';
+
+   configureLogic({ warnTimeout: 10000 })
+
+   // These will both timeout after 10 seconds instead of the library default of
+   // 1 minute.
+   const logicOne = createLogic({
+      type: 'ACTION_ONE',
+   })
+   const logicTwo = createLogic({
+      type: 'ACTION_TWO',
+   })
+   ```
+ */
+export const configureLogic = (options = {}) => {
+  const invalidOptions = getInvalidOptions(options, globallyConfigurableOptions);
+  if (invalidOptions.length) {
+    throw new Error(`${invalidOptions} are not globally configurable options.`);
+  }
+
+  Object.keys(options)
+    .forEach((option) => { defaultOptions[option] = options[option]; });
+};
 
 /**
    Validate and augment logic object to be used in logicMiddleware.
@@ -102,15 +150,16 @@ const NODE_ENV = process.env.NODE_ENV;
      has defaults applied.
  */
 export default function createLogic(logicOptions = {}) {
-  const invalidOptions = Object.keys(logicOptions)
-        .filter(k => allowedOptions.indexOf(k) === -1);
+  const invalidOptions = getInvalidOptions(logicOptions, allowedOptions);
   if (invalidOptions.length) {
     throw new Error(`unknown or misspelled option(s): ${invalidOptions}`);
   }
 
   const { name, type, cancelType,
-          warnTimeout = 60000,
-          latest = false, debounce = 0, throttle = 0,
+          warnTimeout = defaultOptions.warnTimeout,
+          latest = defaultOptions.latest,
+          debounce = defaultOptions.debounce,
+          throttle = defaultOptions.throttle,
           validate, transform, process = emptyProcess,
           processOptions = {} } = logicOptions;
 
@@ -126,8 +175,7 @@ export default function createLogic(logicOptions = {}) {
     throw new Error('warnTimeout is a top level createLogic option, not a processOptions option');
   }
 
-  const invalidProcessOptions = Object.keys(processOptions)
-        .filter(k => allowedProcessOptions.indexOf(k) === -1);
+  const invalidProcessOptions = getInvalidOptions(processOptions, allowedProcessOptions);
   if (invalidProcessOptions.length) {
     throw new Error(`unknown or misspelled processOption(s): ${invalidProcessOptions}`);
   }
@@ -178,6 +226,11 @@ export default function createLogic(logicOptions = {}) {
     processOptions,
     warnTimeout
   };
+}
+
+function getInvalidOptions(options, validOptions) {
+  return Object.keys(options)
+    .filter(k => validOptions.indexOf(k) === -1);
 }
 
 /* if type is a fn call toString() to get type, redux-actions

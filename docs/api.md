@@ -4,7 +4,13 @@ Contents:
 
  - [Installation](#installation)
  - [Main usage](#main-usage)
- - [Execution phase hooks](#execution-phase-hooks---validate-transform-process) - [validate](#validate-hook), [transform](#transform-hook), [process](#process-hook)
+    - [createLogic](#createlogic)
+    - [configureLogic](#configurelogic)
+    - [createLogicMiddleware](#createlogicmiddleware)
+ - [Execution phase hooks](#execution-phase-hooks---validate-transform-process)
+    - [validate](#validate-hook)
+    - [transform](#transform-hook)
+    - [process](#process-hook)
  - [Advanced usage](#advanced-usage)
 
 ## Installation
@@ -22,9 +28,9 @@ npm install redux-logic --save
 ```
 
 ## Main usage
-
+### createLogic
 ```js
-import { createLogic, createLogicMiddleware } from 'redux-logic';
+import { createLogic } from 'redux-logic';
 
 /* returns a logic object that resembles the same structure of the
    input except that some defaults are applied and values were
@@ -103,6 +109,27 @@ const fooLogic = createLogic({
     done(); // only when performing multiple dispatches (done in signature)
   })
 });
+```
+
+### configureLogic
+```js
+import { configureLogic } from 'redux-logic';
+
+// globally configure ALL Logic instance defaults instead of overriding these
+// properties on each call to `createLogic`. These defaults will not be applied
+// to `Logic` instances that have already been created.
+//
+// specify all or a subset of the following properties:
+configureLogic({
+
+  // provide different default values than the package defaults.
+  warnTimeout: 10000,
+})
+```
+
+### createLogicMiddleware
+```js
+import { createLogicMiddleware } from 'redux-logic';
 
 const logicMiddleware = createLogicMiddleware(
   arrLogic, // array of logic items, no duplicate refs to same logic
