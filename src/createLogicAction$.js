@@ -104,6 +104,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
 
     function mapToActionAndDispatch(actionOrValue) {
       const act =
+        (isInterceptAction(actionOrValue)) ? unwrapInterceptAction(actionOrValue) :
         (successType) ? mapToAction(successType, actionOrValue, false) :
         actionOrValue;
       if (act) {
@@ -113,6 +114,12 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
 
     /* eslint-disable consistent-return */
     function mapErrorToActionAndDispatch(actionOrValue) {
+      // action dispatched from intercept needs to be unwrapped and sent as is
+      if (isInterceptAction(actionOrValue)) {
+        const interceptAction = unwrapInterceptAction(actionOrValue);
+        return storeDispatch(interceptAction);
+      }
+
       if (failType) {
         // we have a failType, if truthy result we will use it
         const act = mapToAction(failType, actionOrValue, true);
@@ -229,12 +236,31 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
       dispatch$.complete();
     }
 
+    // we want to know that this was from intercept (validate/transform)
+    // so that we don't apply any processOptions wrapping to it
+    function wrapActionForIntercept(act) {
+      if (!act) { return act; }
+      return {
+        __interceptAction: act
+      };
+    }
+
+    function isInterceptAction(act) {
+      // eslint-disable-next-line no-underscore-dangle
+      return act && act.__interceptAction;
+    }
+
+    function unwrapInterceptAction(act) {
+      // eslint-disable-next-line no-underscore-dangle
+      return act.__interceptAction;
+    }
+
     function handleNextOrDispatch(shouldProcess, act, options) {
       const { useDispatch } = applyAllowRejectNextDefaults(options);
       if (shouldDispatch(act, useDispatch)) {
         monitor$.next({ action, dispAction: act, name, shouldProcess, op: 'nextDisp' });
         interceptComplete = true;
-        dispatch(act, { allowMore: true }); // will be completed later
+        dispatch(wrapActionForIntercept(act), { allowMore: true }); // will be completed later
         logicActionObs.complete(); // dispatched action, so no next(act)
       } else { // normal next
         if (act) {

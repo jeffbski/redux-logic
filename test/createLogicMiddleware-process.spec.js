@@ -1695,6 +1695,132 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
+  describe('[logicA] validate=allow process successType=BAR dispatch(42)', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    const actionCat = { type: 'CAT' };
+    const actionBar = { type: 'BAR', payload: 42 };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        validate(deps, allow /* , reject */) {
+          allow(actionCat);
+        },
+        processOptions: {
+          successType: 'BAR'
+        },
+        process(deps, dispatch) {
+          dispatch(42);
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('does not pass actionFoo through next', () => {
+      expect(next.calls.length).toBe(0);
+    });
+
+    it('dispatches actionCat, { type: BAR, payload: 42 }', () => {
+      expect(dispatch.calls.length).toBe(2);
+      expect(dispatch.calls[0].arguments[0]).toEqual(actionCat);
+      expect(dispatch.calls[1].arguments[0]).toEqual(actionBar);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          name: 'L(FOO)-0',
+          dispAction: { type: 'CAT' },
+          shouldProcess: true,
+          op: 'nextDisp' },
+        { action: { type: 'FOO' },
+          dispAction: { type: 'CAT' }, op: 'dispatch' },
+        { action: { type: 'FOO' },
+          dispAction: { type: 'BAR', payload: 42 },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
+  describe('[logicA] validate=reject process successType=BAR dispatch(42)', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionFoo = { type: 'FOO' };
+    const actionErr = { type: 'ERR1', payload: 'myerror', error: true };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'FOO',
+        validate(deps, allow, reject) {
+          reject(actionErr);
+        },
+        processOptions: {
+          successType: 'BAR'
+        },
+        process(deps, dispatch) {
+          dispatch(42);
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      mw({ dispatch })(next)(actionFoo);
+      mw.whenComplete(done);
+    });
+
+    it('does not pass actionFoo through next', () => {
+      expect(next.calls.length).toBe(0);
+    });
+
+    it('dispatches errAction', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0]).toEqual(actionErr);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO' },
+          dispAction: { error: true, payload: 'myerror', type: 'ERR1' },
+          name: 'L(FOO)-0',
+          shouldProcess: false,
+          op: 'nextDisp' },
+        { action: { type: 'FOO' },
+          dispAction: { error: true, payload: 'myerror', type: 'ERR1' },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
+
   describe('[logicA] process failType=BAZ dispatch(error)', () => {
     let monArr = [];
     let mw;
