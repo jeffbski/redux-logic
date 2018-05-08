@@ -1,6 +1,6 @@
 import expect from 'expect';
 import Rx from 'rxjs';
-import { createLogic, createLogicMiddleware } from '../src/index';
+import { createLogic, createLogicMiddleware, configureLogic } from '../src/index';
 
 const NODE_ENV = process.env.NODE_ENV;
 
@@ -35,6 +35,16 @@ describe('createLogic', () => {
         warnTimeout: 120000 // 120,000ms == 2 minutes
       });
       expect(fooLogic.warnTimeout).toBe(120000);
+    });
+
+    it('can be set globally', () => {
+      configureLogic({ warnTimeout: 0 });
+      const fooLogic = createLogic({
+        type: '*',
+      });
+      expect(fooLogic.warnTimeout).toBe(0);
+
+      configureLogic({ warnTimeout: 60000 }); // Reset to default to avoid polluting other tests.
     });
 
     it('errors if they try to set it as processOptions.warnTimeout', () => {
