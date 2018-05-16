@@ -156,15 +156,19 @@ export default function createLogic(logicOptions = {}) {
   }
 
   const { name, type, cancelType,
-          warnTimeout = defaultOptions.warnTimeout,
-          latest = defaultOptions.latest,
-          debounce = defaultOptions.debounce,
-          throttle = defaultOptions.throttle,
-          validate, transform, process = emptyProcess,
-          processOptions = {} } = logicOptions;
+    warnTimeout = defaultOptions.warnTimeout,
+    latest = defaultOptions.latest,
+    debounce = defaultOptions.debounce,
+    throttle = defaultOptions.throttle,
+    validate, transform, process = emptyProcess,
+    processOptions = {} } = logicOptions;
 
   if (!type) {
     throw new Error('type is required, use \'*\' to match all actions');
+  }
+
+  if (type === 'undefined') {
+    throw new Error('type is a string "undefined", check the logicOptions type field for a stringified undefined value');
   }
 
   if (validate && transform) {
@@ -181,12 +185,12 @@ export default function createLogic(logicOptions = {}) {
   }
 
   const validateDefaulted = (!validate && !transform) ?
-        identityValidation :
-        validate;
+    identityValidation :
+    validate;
 
   if (NODE_ENV !== 'production' &&
-      typeof processOptions.dispatchMultiple !== 'undefined' &&
-      warnTimeout !== 0) {
+    typeof processOptions.dispatchMultiple !== 'undefined' &&
+    warnTimeout !== 0) {
     // eslint-disable-next-line no-console
     console.error(`warning: in logic for type(s): ${type} - dispatchMultiple is always true in next version. For non-ending logic, set warnTimeout to 0`);
   }
@@ -200,8 +204,8 @@ export default function createLogic(logicOptions = {}) {
       break;
     case 2: // process(deps, dispatch) - single dispatch (deprecated)
       if (NODE_ENV !== 'production' &&
-          !processOptions.dispatchMultiple
-          && warnTimeout !== 0) {
+        !processOptions.dispatchMultiple
+        && warnTimeout !== 0) {
         // eslint-disable-next-line no-console
         console.error(`warning: in logic for type(s): ${type} - single-dispatch mode is deprecated, call done when finished dispatching. For non-ending logic, set warnTimeout: 0`);
       }
