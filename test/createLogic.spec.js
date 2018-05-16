@@ -400,7 +400,7 @@ describe('createLogic', () => {
 
   describe('name given fn', () => {
     it('converts name to fn.toString()', () => {
-      const fn = () => { };
+      const fn = () => {};
       fn.toString = () => 'myFn';
       const logic = createLogic({
         name: fn,
@@ -412,7 +412,7 @@ describe('createLogic', () => {
 
   describe('type given fn', () => {
     it('converts type to fn.toString()', () => {
-      const fn = () => { };
+      const fn = () => {};
       fn.toString = () => 'myType';
       const logic = createLogic({
         type: fn
@@ -423,9 +423,9 @@ describe('createLogic', () => {
 
   describe('type given array of fns', () => {
     it('converts type to arr of fn.toString()', () => {
-      const fn = () => { };
+      const fn = () => {};
       fn.toString = () => 'myType';
-      const fn2 = () => { };
+      const fn2 = () => {};
       fn2.toString = () => 'myType2';
       const logic = createLogic({
         type: [fn, fn2]
