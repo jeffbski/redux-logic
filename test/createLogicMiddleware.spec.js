@@ -327,6 +327,148 @@ describe('createLogicMiddleware', () => {
     });
   });
 
+  describe('[logicA] type is symbol, match only', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const FOO = Symbol('FOO');
+    const BAR = Symbol('BAR');
+    const CAT = Symbol('CAT');
+    const actionA = { type: FOO };
+    const actionAResult = { type: FOO, allowed: ['a'] };
+    const actionADispatch = { type: BAR, allowed: ['a'] };
+    const actionIgnore = { type: CAT };
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: FOO,
+        validate({ action }, allow) {
+          allow({
+            ...action,
+            allowed: ['a']
+          });
+        },
+        process({ action }, dispatch) {
+          dispatch({
+            ...action,
+            type: BAR
+          });
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      const storeFn = mw({ dispatch })(next);
+      storeFn(actionIgnore);
+      storeFn(actionA);
+      mw.whenComplete(done);
+    });
+
+    it('both messages hit next, one bypassed validation/transform', () => {
+      expect(next.calls.length).toBe(2);
+      expect(next.calls[0].arguments[0]).toEqual(actionIgnore);
+      expect(next.calls[1].arguments[0]).toEqual(actionAResult);
+    });
+
+    it('only matching is processed and dispatched', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0]).toEqual(actionADispatch);
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: CAT }, op: 'top' },
+        { nextAction: { type: CAT }, op: 'bottom' },
+        { action: { type: FOO }, op: 'top' },
+        { action: { type: FOO }, name: 'L(Symbol(FOO))-0', op: 'begin' },
+        { action: { type: FOO },
+          nextAction: { type: FOO, allowed: ['a'] },
+          name: 'L(Symbol(FOO))-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: FOO, allowed: ['a'] }, op: 'bottom' },
+        { action: { type: FOO },
+          dispAction: { type: BAR, allowed: ['a'] },
+          op: 'dispatch' },
+        { action: { type: FOO },
+          name: 'L(Symbol(FOO))-0',
+          op: 'end'
+         }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+    it('mw.whenComplete(fn) should resolve to promise', (done) => {
+      function fn() { }
+      mw.whenComplete(fn).then(done);
+    });
+
+    it('mw.whenComplete() should resolve to promise', (done) => {
+      mw.whenComplete().then(done);
+    });
+
+    it('delayed mw.whenComplete() should still resolve to promise', (done) => {
+      setTimeout(() => {
+        mw.whenComplete().then(done);
+      }, 100);
+    });
+  });
+
+  describe('[logicA] type is arr of Symbols, match any', () => {
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const FOO = Symbol('FOO');
+    const BAR = Symbol('BAR');
+    const CAT = Symbol('CAT');
+    const DOG = Symbol('DOG');
+    const actionA = { type: FOO };
+    const actionAResult = { type: FOO, allowed: ['a'] };
+    const actionADispatch = { type: BAR, allowed: ['a'] };
+    const actionIgnore = { type: CAT };
+    beforeEach(done => {
+      next = expect.createSpy();
+      dispatch = expect.createSpy().andCall(() => done());
+      logicA = createLogic({
+        type: [DOG, FOO],
+        validate({ action }, allow) {
+          allow({
+            ...action,
+            allowed: ['a']
+          });
+        },
+        process({ action }, dispatch) {
+          dispatch({
+            ...action,
+            type: BAR
+          });
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      const storeFn = mw({ dispatch })(next);
+      storeFn(actionIgnore);
+      storeFn(actionA);
+    });
+
+    it('both messages hit next, one bypassed validation/transform', () => {
+      expect(next.calls.length).toBe(2);
+      expect(next.calls[0].arguments[0]).toEqual(actionIgnore);
+      expect(next.calls[1].arguments[0]).toEqual(actionAResult);
+    });
+
+    it('only matching is processed and dispatched', () => {
+      expect(dispatch.calls.length).toBe(1);
+      expect(dispatch.calls[0].arguments[0]).toEqual(actionADispatch);
+    });
+  });
+
   describe('[logicA] type is regex, match', () => {
     let mw;
     let logicA;
