@@ -25,7 +25,7 @@ Leverage powerful **declarative** features by simply setting properties:
  - **filtering** for action type(s) or with regular expression(s)
  - **cancellation** on receiving action type(s)
  - use only response for the **latest** request
- - **debouncing**
+ - **debouncing**\
  - **throttling**
  - dispatch actions - auto **decoration** of payloads
 
