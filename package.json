@@ -122,6 +122,7 @@
     "eslint-plugin-react": "^6.3.0",
     "expect": "^1.8.0",
     "gitbook-cli": "^2.3.0",
+    "lodash": "^4.17.10",
     "mocha": "^3.1.0",
     "nyc": "^8.3.0",
     "redux": "^3.5.2",
