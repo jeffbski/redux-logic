@@ -168,6 +168,10 @@ export default function createLogic(logicOptions = {}) {
     throw new Error('type is required, use \'*\' to match all actions');
   }
 
+  if (type === 'undefined') {
+    throw new Error('type is a string "undefined", check the logicOptions type field for a stringified undefined value');
+  }
+
   if (validate && transform) {
     throw new Error('logic cannot define both the validate and transform hooks they are aliases');
   }

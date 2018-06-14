@@ -19,6 +19,14 @@ describe('createLogic', () => {
         createLogic({});
       }).toThrow(/type.*required/);
     });
+
+    it('throws type cannot be "undefined" error', () => {
+      expect(() => {
+        createLogic({
+          type: `${undefined}`
+        });
+      }).toThrow(/type.*undefined/);
+    });
   });
 
   describe('warnTimeout', () => {
