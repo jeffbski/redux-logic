@@ -62,6 +62,9 @@ export default function logicWrapper(logic, store, deps, monitor$) {
 function matchesType(tStrArrRe, type) {
   /* istanbul ignore if  */
   if (!tStrArrRe) { return false; } // nothing matches none
+  if (typeof tStrArrRe === 'symbol') {
+    return (tStrArrRe === type);
+  }
   if (typeof tStrArrRe === 'string') {
     return (tStrArrRe === type || tStrArrRe === '*');
   }

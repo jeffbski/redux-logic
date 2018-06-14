@@ -1,3 +1,4 @@
+import { stringifyType } from './utils';
 
 const allowedOptions = [
   'name',
@@ -188,7 +189,7 @@ export default function createLogic(logicOptions = {}) {
       typeof processOptions.dispatchMultiple !== 'undefined' &&
       warnTimeout !== 0) {
     // eslint-disable-next-line no-console
-    console.error(`warning: in logic for type(s): ${type} - dispatchMultiple is always true in next version. For non-ending logic, set warnTimeout to 0`);
+    console.error(`warning: in logic for type(s): ${stringifyType(type)} - dispatchMultiple is always true in next version. For non-ending logic, set warnTimeout to 0`);
   }
 
   // use process fn signature to determine some processOption defaults
@@ -203,7 +204,7 @@ export default function createLogic(logicOptions = {}) {
           !processOptions.dispatchMultiple
           && warnTimeout !== 0) {
         // eslint-disable-next-line no-console
-        console.error(`warning: in logic for type(s): ${type} - single-dispatch mode is deprecated, call done when finished dispatching. For non-ending logic, set warnTimeout: 0`);
+        console.error(`warning: in logic for type(s): ${stringifyType(type)} - single-dispatch mode is deprecated, call done when finished dispatching. For non-ending logic, set warnTimeout: 0`);
       }
       // nothing to do, defaults are fine
       break;

@@ -7,7 +7,7 @@ import 'rxjs/add/operator/scan';
 import 'rxjs/add/operator/takeWhile';
 import 'rxjs/add/operator/toPromise';
 import wrapper from './logicWrapper';
-import { confirmProps } from './utils';
+import { confirmProps, stringifyType } from './utils';
 
 // confirm custom Rx build imports
 confirmProps(Observable.prototype, [
@@ -258,7 +258,7 @@ function naming(logic, idx) {
   if (logic.name) { return logic; }
   return {
     ...logic,
-    name: `L(${logic.type.toString()})-${idx}`
+    name: `L(${stringifyType(logic.type)})-${idx}`
   };
 }
 
