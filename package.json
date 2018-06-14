@@ -41,12 +41,7 @@
     "dev-build": "cross-env NODE_ENV=development npm run build",
     "prod-build": "cross-env NODE_ENV=production npm run build",
     "fullbuild:examples": "cross-env BABEL_ENV=commonjs babel-node examples/fullBuildAll.js",
-    "prepublish": "npm run clean && npm run check:src && npm run prod-build && check-es3-syntax build-lib/ --kill",
-    "docs:clean": "rimraf _book",
-    "docs:prepare": "gitbook install",
-    "docs:build": "npm run docs:prepare && gitbook build -g jeffbski/redux-logic && cp logo/apple-touch-icon.png _book/gitbook/images/apple-touch-icon-precomposed-152.png && cp logo/favicon.ico _book/gitbook/images",
-    "docs:watch": "npm run docs:prepare && gitbook serve",
-    "docs:publish": "npm run docs:clean && npm run docs:build && cp CNAME _book && cd _book && git init && git commit --allow-empty -m 'update book' && git checkout -b gh-pages && touch .nojekyll && git add . && git commit -am 'update book' && git push git@github.com:jeffbski/redux-logic gh-pages --force"
+    "prepublish": "npm run clean && npm run check:src && npm run prod-build && check-es3-syntax build-lib/ --kill"
   },
   "repository": {
     "type": "git",
@@ -113,7 +108,7 @@
     "babel-plugin-transform-object-rest-spread": "^6.3.13",
     "babel-register": "^6.3.13",
     "check-es3-syntax-cli": "^0.1.2",
-    "codacy-coverage": "^2.0.0",
+    "codacy-coverage": "^3.0.0",
     "core-js": "^2.4.1",
     "cross-env": "^2.0.1",
     "eslint": "^3.2.0",
@@ -121,14 +116,12 @@
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-react": "^6.3.0",
     "expect": "^1.8.0",
-    "gitbook-cli": "^2.3.0",
     "lodash": "^4.17.10",
-    "mocha": "^3.1.0",
-    "nyc": "^8.3.0",
+    "mocha": "^5.2.0",
+    "nyc": "^13.0.0",
     "redux": "^3.5.2",
     "rimraf": "^2.3.4",
-    "webpack": "^1.9.6",
-    "yarn": "^0.27.5"
+    "webpack": "^1.9.6"
   },
   "npmName": "redux-logic",
   "npmFileMap": [
