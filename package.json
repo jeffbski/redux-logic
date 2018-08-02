@@ -145,5 +145,6 @@
     ],
     "sourceMap": false,
     "instrument": false
-  }
+  },
+  "typings": "index.d.ts"
 }
