@@ -410,7 +410,6 @@ Note: If you are already including RxJS 5 into your project then the resulting d
 
 ## TODO
 
- - add typescript support
  - more docs
  - more examples
 
