@@ -125,7 +125,7 @@
     "nyc": "^13.0.0",
     "redux": ">=3.5.2",
     "rimraf": "^2.3.4",
-    "typescript": "~2.8.0",
+    "typescript": "^2.9.2",
     "webpack": "^1.9.6"
   },
   "npmName": "redux-logic",
