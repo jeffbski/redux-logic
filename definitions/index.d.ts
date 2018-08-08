@@ -13,7 +13,6 @@
  * -------------------------------------------------------------------------
  */
 
-export * from './action';
-export * from './logic';
-export * from './middleware';
-export * from './utilities';
+export { Action, ErroneousAction, StandardAction } from './action';
+export { configureLogic, createLogic, Logic } from './logic';
+export { createLogicMiddleware, LogicMiddleware } from './middleware';

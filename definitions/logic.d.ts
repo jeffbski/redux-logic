@@ -17,14 +17,8 @@ import { Subject } from 'rxjs';
 
 import { Middleware } from 'redux';
 
-import {
-  ArgumentAction,
-  Action,
-  ActionBasis,
-  Override,
-  StandardAction
-} from './';
-import { Context } from 'vm';
+import { ArgumentAction, Action, ActionBasis, StandardAction } from './action';
+import { Object, Override } from './utilities';
 
 //
 // LOGIC
@@ -41,10 +35,10 @@ import { Context } from 'vm';
 
 export type Logic<
   State extends object = {},
-  Payload extends object = undefined,
-  Meta extends object = undefined,
+  Payload extends Object = undefined,
+  Meta extends Object = undefined,
   Dependency extends object = {},
-  Context extends object = undefined,
+  Context extends Object = undefined,
   Type extends string = string
 > = Override<
   CreateLogic.Config<
@@ -69,10 +63,10 @@ export interface CreateLogic {
   // full createLogic declaration
   <
     State extends object,
-    Payload extends object = undefined,
-    Meta extends object = undefined,
+    Payload extends Object = undefined,
+    Meta extends Object = undefined,
     Dependency extends object = {},
-    Context extends object = undefined,
+    Context extends Object = undefined,
     Type extends string = string
   >(
     config: CreateLogic.Config<
@@ -87,8 +81,8 @@ export interface CreateLogic {
   // createLogic wihout context
   <
     State extends object,
-    Payload extends object = undefined,
-    Meta extends object = undefined,
+    Payload extends Object = undefined,
+    Meta extends Object = undefined,
     Dependency extends object = {},
     Type extends string = string
   >(
@@ -105,7 +99,7 @@ export interface CreateLogic {
   <
     State extends object,
     Dependency extends object = {},
-    Context extends object = undefined,
+    Context extends Object = undefined,
     Type extends string = string
   >(
     config: CreateLogic.Config<State, Action<Type>, Dependency, Context, Type>
@@ -131,7 +125,7 @@ export namespace CreateLogic {
     State extends object,
     Action extends StandardAction,
     Dependency extends object,
-    Context extends object,
+    Context extends Object,
     Type extends string
   > = Config.Base<State, Action, Type> &
     (
@@ -154,10 +148,10 @@ export namespace CreateLogic {
 
     export type TypeMatcher<
       Type extends string | symbol,
-      Payload extends object
+      Payload extends Object
     > = PrimitiveType<Type, Payload> | PrimitiveType<Type, Payload>[];
 
-    export type Pass<Action extends ActionBasis, Context extends object> = (
+    export type Pass<Action extends ActionBasis, Context extends Object> = (
       action: ArgumentAction &
         (Context extends undefined
           ? {}
@@ -189,7 +183,7 @@ export namespace CreateLogic {
       State,
       Action extends ActionBasis,
       Dependency extends object,
-      Context extends object
+      Context extends Object
     > {
       validate?: Validate.Hook<State, Action, Dependency, Context>;
     }
@@ -199,7 +193,7 @@ export namespace CreateLogic {
         State,
         Action extends ActionBasis,
         Dependency extends object,
-        Context extends object = undefined
+        Context extends Object = undefined
       > = (
         depObj: DepObj<State, Action, Dependency>,
         allow: Pass<Action, Context>,
@@ -215,7 +209,7 @@ export namespace CreateLogic {
       State,
       Action extends ActionBasis,
       Dependency extends object,
-      Context extends object
+      Context extends Object
     > {
       transform?: Transform.Hook<State, Action, Dependency, Context>;
     }
@@ -225,7 +219,7 @@ export namespace CreateLogic {
         State,
         Action extends ActionBasis,
         Dependency extends object,
-        Context extends object = undefined
+        Context extends Object = undefined
       > = (
         depObj: DepObj<State, Action, Dependency>,
         next: Pass<Action, Context>
@@ -237,7 +231,7 @@ export namespace CreateLogic {
     /* ----- process ----- */
 
     type ActionCreator<
-      InputPayload extends object
+      InputPayload extends Object
     > = InputPayload extends undefined
       ? (payload?: InputPayload) => StandardAction<string, any>
       : (InputPayload extends Error
@@ -254,7 +248,7 @@ export namespace CreateLogic {
       State extends object,
       Action extends StandardAction<string>,
       Dependency extends object,
-      Context extends object = undefined
+      Context extends Object = undefined
     > {
       processOptions?: Process.Options<Action>;
       process?:
@@ -274,7 +268,7 @@ export namespace CreateLogic {
         State extends object,
         Action extends StandardAction,
         Dependency extends object,
-        Context extends object = undefined
+        Context extends Object = undefined
       > = Config.DepObj<State, Action, Dependency> & {
         cancelled$: Subject<void>;
         ctx: Context;
@@ -284,14 +278,14 @@ export namespace CreateLogic {
         State extends object,
         Action extends StandardAction,
         Dependency extends object,
-        Context extends object = undefined
+        Context extends Object = undefined
       > = (depObj: Process.DepObj<State, Action, Dependency, Context>) => void;
 
       export type AdvancedHook<
         State extends object,
         Action extends StandardAction,
         Dependency extends object,
-        Context extends object = undefined
+        Context extends Object = undefined
       > = ((
         depObj: Process.DepObj<State, Action, Dependency, Context>,
         dispatch: (action: ArgumentAction) => void,
