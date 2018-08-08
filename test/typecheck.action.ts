@@ -13,7 +13,7 @@
  * -------------------------------------------------------------------------
  */
 
-import { Action, ErroneousAction, StandardAction } from '../definitions';
+import { Action, ErroneousAction, StandardAction } from '../definitions/action';
 
 //
 // Action Type
@@ -143,7 +143,7 @@ interface TestMeta {
   let action: Action;
 
   {
-    const test: boolean = action.error;
+    const test: boolean | undefined = action.error;
   }
 
   if (action.error === true) {
@@ -159,7 +159,7 @@ interface TestMeta {
   let action: Action<TestType, TestPayload, TestMeta>;
 
   {
-    const test: boolean = action.error;
+    const test: boolean | undefined = action.error;
   }
 
   if (action.error === true) {

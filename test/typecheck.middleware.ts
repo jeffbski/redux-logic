@@ -17,7 +17,8 @@ import { Observable, Subject } from 'rxjs';
 
 import { createLogicMiddleware } from '../';
 
-import { Action, ArgumentAction, Logic } from '../';
+import { Action, ArgumentAction } from '../definitions/action';
+import { Logic } from '../definitions/logic';
 import { Payload, Meta } from './typecheck';
 
 //
@@ -48,10 +49,7 @@ let logicArray: Logic[];
   }
 
   {
-    let next: (action?: ArgumentAction) => Action;
-
-    const monArr = [];
-    let monitor: Subject<{
+    type Message = {
       action?:
         | 'op'
         | 'top'
@@ -69,8 +67,11 @@ let logicArray: Logic[];
       nextAction?: Action;
       shouldProcess?: boolean;
       dispAction?: Action;
-    }> =
-      middleware.monitor$;
+    };
+    let next: (action?: ArgumentAction) => Action;
+
+    const monArr: Message[] = [];
+    let monitor: Subject<Message> = middleware.monitor$;
     monitor.subscribe(x => monArr.push(x));
 
     const action = { type: 'type' };
