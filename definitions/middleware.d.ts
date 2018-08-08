@@ -17,7 +17,9 @@ import { Subject } from 'rxjs';
 
 import { Middleware } from 'redux';
 
-import { Action, ArgumentAction, Logic } from './';
+import { Action, ArgumentAction } from './action';
+import { Logic } from './logic';
+import { Object } from './utilities';
 
 //
 // MIDDLEWARE
@@ -26,7 +28,7 @@ import { Action, ArgumentAction, Logic } from './';
 interface LogicMiddleware<
   State extends object = {},
   Dependency extends object = {},
-  Context extends object = undefined,
+  Context extends Object = undefined,
   Type extends string = string
 > extends Middleware {
   (store: CreateLogicMiddleware.Store<State>): CreateLogicMiddleware.Next;
@@ -73,7 +75,7 @@ interface LogicMiddleware<
 export function createLogicMiddleware<
   State extends object = {},
   Dependency extends object = {},
-  Context extends object = undefined,
+  Context extends Object = undefined,
   Type extends string = string
 >(
   logics?: Logic<State, any, any, Dependency, Context, Type>[],

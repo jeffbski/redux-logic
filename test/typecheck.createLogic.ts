@@ -16,7 +16,7 @@
 import { configureLogic, createLogic } from '../';
 
 import { ErroneousAction, StandardAction } from '../';
-import { ActionBasis, MetaBasis, PayloadBasis } from '../';
+import { ActionBasis, MetaBasis, PayloadBasis } from '../definitions/action';
 
 import { Dependency, Meta, Payload, State } from './typecheck';
 

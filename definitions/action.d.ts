@@ -13,6 +13,8 @@
  * -------------------------------------------------------------------------
  */
 
+import { Object } from './utilities';
+
 //
 // ACTION
 //
@@ -27,15 +29,15 @@
 /** Action as an agrument */
 export type ArgumentAction<
   Type extends string = string,
-  Payload extends object = undefined,
-  Meta extends object = undefined
+  Payload extends Object = undefined,
+  Meta extends Object = undefined
 > = ActionBasis<Type> & Partial<Action<string, object, object>>;
 
 /** all different types of Action */
 export type Action<
   Type extends string = string,
-  Payload extends object = undefined,
-  Meta extends object = undefined
+  Payload extends Object = undefined,
+  Meta extends Object = undefined
 > =
   | ErroneousAction<Type, Meta>
   | (StandardAction<Type, Payload, Meta> & { error?: false });
@@ -43,14 +45,14 @@ export type Action<
 /** Action without any error */
 export type StandardAction<
   Type extends string = string,
-  Payload extends object = undefined,
-  Meta extends object = undefined
+  Payload extends Object = undefined,
+  Meta extends Object = undefined
 > = ActionBasis<Type> & PayloadBasis<Payload> & MetaBasis<Meta>;
 
 /** Action with an Error */
 export type ErroneousAction<
   Type extends string = string,
-  Meta extends object = undefined
+  Meta extends Object = undefined
 > = ActionBasis<Type> & PayloadBasis<Error> & MetaBasis<Meta> & { error: true };
 
 /* ----- Auxiliary Types ----- */
@@ -62,11 +64,11 @@ export interface ActionBasis<Type extends string = string> {
 
 /** return an interface with payload only if it presents */
 export type PayloadBasis<
-  Payload extends object = undefined
+  Payload extends Object = undefined
 > = Payload extends undefined ? {} : { payload: Payload };
 
 /** return an interface with meta only if it presents */
-export type MetaBasis<Meta extends object = undefined> = Meta extends undefined
+export type MetaBasis<Meta extends Object = undefined> = Meta extends undefined
   ? {}
   : { meta: Meta };
 
