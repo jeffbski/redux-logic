@@ -1,8 +1,16 @@
 import Rx from 'rxjs';
 import expect from 'expect';
-import { createLogic, createLogicMiddleware } from '../src/index';
+import { createLogic, createLogicMiddleware, configureLogic } from '../src/index';
 
 describe('createLogicMiddleware-throttle', () => {
+  before(() => {
+    configureLogic({ warnTimeout: 0 });
+  });
+
+  after(() => {
+    configureLogic({ warnTimeout: 60000 });
+  });
+
   describe('[logicA] throttle validate async allow', () => {
     let mw;
     let logicA;
