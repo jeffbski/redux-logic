@@ -87,7 +87,7 @@ Since redux-logic gives you the freedom to use your favorite style of JS code (c
  - <a href="#goals">Goals</a>
  - <a href="#usage">Usage</a>
  - <a href="./docs/api.md">Full API</a>
- - <a href="#examples">Examples</a> - [JSFiddle](#jsfiddle-live-examples) and [full examples](#full-examples)
+ - <a href="#examples">Examples</a> - [Live](#live-examples) and [full examples](#full-examples)
  - <a href="#comparison-summaries">Comparison summaries</a> to <a href="#compared-to-fat-action-creators">fat action creators</a>, <a href="#compared-to-redux-thunk">thunks</a>, <a href="#compared-to-redux-observable">redux-observable</a>, <a href="#compared-to-redux-saga">redux-saga</a>, <a href="#compared-to-custom-redux-middleware">custom middleware</a>
  - <a href="#implementing-sampal-pattern">SAM/PAL pattern</a>
  - <a href="#other">Other</a> - todo, inspiration, license
@@ -297,19 +297,19 @@ See the [docs for the full api](./docs/api.md)
 
 ## Examples
 
-### JSFiddle live examples
+### Live examples
 
- - [search async axios fetch](https://jsfiddle.net/jeffbski/78vpf92k/) - live search using debounce and take latest functionality with axios fetch
- - [search rxjs ajax fetch](https://jsfiddle.net/jeffbski/uLh2add5/) - live search using debounce and take latest functionality with rxjs ajax fetch
- - [search rxjs ajax fetch - using processOptions](https://jsfiddle.net/jeffbski/rLz44jk9/) - live search using debounce and take latest with rxjs ajax fetch using processOptions to streamline the code
- - [async axios fetch - single page](https://jsfiddle.net/jeffbski/954g5n7h/) - displayed using React
- - [async rxjs-ajax fetch](https://jsfiddle.net/jeffbski/0fu407na/) - async fetching using RxJS ajax which supports XHR abort for cancels
- - [async axios fetch - single page redux only](https://jsfiddle.net/jeffbski/yzy8w4ve/) - just the redux and redux-logic code
- - [async axios fetch - using processOptions](https://jsfiddle.net/jeffbski/oL6jmp52/) - using processOptions to streamline your code further with React
- - [async rxjs-ajax fetch - using processOptions](https://jsfiddle.net/jeffbski/d4p6oo0d/) - async fetch using RxJS ajax (supporting XHR abort on cancel) and processOptions for clean code.
- - [async await - react](https://jsfiddle.net/jeffbski/rfc7oz9p/) - using ES7 async functions (async/await) displaying with React
- - [async await - redux only](https://jsfiddle.net/jeffbski/h485f6h5/) - using ES7 async functions (async/await) - just redux and redux-logic code
- - [async await - react processOptions](https://jsfiddle.net/jeffbski/0rodyekn/) - using ES7 async functions (async/await) with processOptions, displayed with React
+ - [search async axios fetch](https://codesandbox.io/s/6zv883qnqk) - live search using debounce and take latest functionality with axios fetch
+ - [search rxjs ajax fetch](https://codesandbox.io/s/rm16mzz94n) - live search using debounce and take latest functionality with rxjs ajax fetch
+ - [search rxjs ajax fetch - using processOptions](https://codesandbox.io/s/lyw0225pr9) - live search using debounce and take latest with rxjs ajax fetch using processOptions to streamline the code
+ - [async axios fetch - single page](https://codesandbox.io/s/82xjxx3kp2) - displayed using React
+ - [async rxjs-ajax fetch](https://codesandbox.io/s/1o14zmz4rq) - async fetching using RxJS ajax which supports XHR abort for cancels
+ - [async axios fetch - single page redux only](https://codesandbox.io/s/2w1lkpq19p) - just the redux and redux-logic code
+ - [async axios fetch - using processOptions](https://codesandbox.io/s/4w6r5mvxqx) - using processOptions to streamline your code further with React
+ - [async rxjs-ajax fetch - using processOptions](https://codesandbox.io/s/o45z24rpky) - async fetch using RxJS ajax (supporting XHR abort on cancel) and processOptions for clean code.
+ - [async await - react](https://codesandbox.io/s/0q0xw8vm6n) - using ES7 async functions (async/await) displaying with React
+ - [async await - redux only](https://codesandbox.io/s/742zx6w946) - using ES7 async functions (async/await) - just redux and redux-logic code
+ - [async await - react processOptions](https://codesandbox.io/s/64l8xv1po3) - using ES7 async functions (async/await) with processOptions, displayed with React
 
 ### Full examples
 
