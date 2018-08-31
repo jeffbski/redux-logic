@@ -1,4 +1,3 @@
-import isObservable from 'is-observable';
 import isPromise from 'is-promise';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -13,7 +12,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeAll';
 import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/takeUntil';
-import { confirmProps } from './utils';
+import { confirmProps, isObservable } from './utils';
 
 // confirm custom Rx build imports
 confirmProps(Observable, ['fromPromise', 'of', 'throw', 'timer'],

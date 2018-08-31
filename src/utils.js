@@ -1,3 +1,4 @@
+import symbolObservable from 'symbol-observable';
 
 // eslint-disable-next-line import/prefer-default-export
 export function confirmProps(obj, arrProps, objName = '') {
@@ -15,4 +16,9 @@ export function stringifyType(type) {
   return Array.isArray(type) ?
          type.map(type => type.toString()) :
          type.toString();
+}
+
+
+export function isObservable(input) {
+  return input && typeof input[symbolObservable] === 'function';
 }
