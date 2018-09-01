@@ -7,8 +7,7 @@ node_js:
 script:
   - npm run browserslist
   - npm run check:src
-  - npm run dev-build
-  - npm run prod-build
+  - npm run build
 branches:
   except:
     - experimental
