@@ -20,7 +20,7 @@
     "react-dom": "^16.4.2",
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
-    "redux-logic": "^0.15.5",
+    "redux-logic": "^1.0.0",
     "rxjs": "^5.5.12"
   },
   "scripts": {

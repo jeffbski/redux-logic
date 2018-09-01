@@ -21,7 +21,7 @@
     "react-redux": "^4.4.5",
     "redux": "^3.5.2",
     "redux-actions": "^0.10.1",
-    "redux-logic": "^0.15.5",
+    "redux-logic": "^1.0.0",
     "rxjs": "^5.5.12"
   },
   "scripts": {
