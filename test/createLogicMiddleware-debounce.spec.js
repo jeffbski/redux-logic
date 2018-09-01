@@ -1,4 +1,4 @@
-import Rx from 'rxjs';
+import { Observable } from 'rxjs';
 import expect from 'expect-legacy';
 import { createLogic, createLogicMiddleware, configureLogic } from '../src/index';
 
@@ -260,7 +260,7 @@ describe('createLogicMiddleware-debounce', () => {
         type: 'FOO',
         debounce: 20,
         process({ action }, dispatch) {
-          dispatch(Rx.Observable.create(obs => {
+          dispatch(Observable.create(obs => {
             // immediate dispatch
             obs.next({
               ...action,

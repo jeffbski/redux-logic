@@ -1,17 +1,6 @@
 import isPromise from 'is-promise';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/observable/fromPromise';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/observable/throw';
-import 'rxjs/add/observable/timer';
-import 'rxjs/add/operator/defaultIfEmpty';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/mergeAll';
-import 'rxjs/add/operator/take';
-import 'rxjs/add/operator/takeUntil';
+import { Observable, Subject, fromPromise, of, throwError, timer } from 'rxjs';
+import { defaultIfEmpty, tap, filter, map, mergeAll, take, takeUntil} from 'rxjs/operators';
 import { confirmProps, isObservable } from './utils';
 
 // confirm custom Rx build imports

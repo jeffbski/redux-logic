@@ -1,11 +1,5 @@
-import { Observable } from 'rxjs/Observable'; // eslint-disable-line no-unused-vars
-import { Subject } from 'rxjs/Subject';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/scan';
-import 'rxjs/add/operator/takeWhile';
-import 'rxjs/add/operator/toPromise';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import { filter, map, scan, takeWhile, toPromise } from 'rxjs/operators';
 import wrapper from './logicWrapper';
 import { confirmProps, stringifyType } from './utils';
 

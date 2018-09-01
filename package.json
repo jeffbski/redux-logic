@@ -73,7 +73,7 @@
   "dependencies": {
     "is-promise": "^2.1.0",
     "loose-envify": "^1.4.0",
-    "rxjs": "^5.5.11",
+    "rxjs": "^6.3.1",
     "symbol-observable": "^1.2.0"
   },
   "peerDependencies": {
