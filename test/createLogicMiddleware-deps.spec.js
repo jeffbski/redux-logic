@@ -1,5 +1,5 @@
 import Rx from 'rxjs';
-import expect from 'expect';
+import expect from 'expect-legacy';
 import { createLogic, createLogicMiddleware } from '../src/index';
 
 const actionFoo = { type: 'FOO' };

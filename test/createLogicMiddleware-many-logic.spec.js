@@ -1,4 +1,4 @@
-import expect from 'expect';
+import expect from 'expect-legacy';
 import range from 'lodash/fp/range';
 import { applyMiddleware, createStore } from 'redux';
 import { createLogic, createLogicMiddleware } from '../src/index';

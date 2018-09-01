@@ -1,4 +1,4 @@
-import expect from 'expect';
+import expect from 'expect-legacy';
 import mod, { createLogic, createLogicMiddleware, configureLogic } from '../src/index';
 
 describe('index.js', () => {

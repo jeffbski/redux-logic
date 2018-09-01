@@ -1,4 +1,4 @@
-import expect from 'expect';
+import expect from 'expect-legacy';
 import Rx from 'rxjs';
 import { createLogic, createLogicMiddleware, configureLogic } from '../src/index';
 

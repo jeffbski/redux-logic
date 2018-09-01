@@ -1,4 +1,4 @@
-import expect from 'expect';
+import expect from 'expect-legacy';
 import { createStore, applyMiddleware } from 'redux';
 import { createLogic, createLogicMiddleware } from '../src/index';
 

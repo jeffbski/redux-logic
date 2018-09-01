@@ -1,4 +1,4 @@
-import expect from 'expect';
+import expect from 'expect-legacy';
 import { confirmProps, stringifyType } from '../src/utils';
 
 

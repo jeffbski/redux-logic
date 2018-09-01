@@ -1,4 +1,4 @@
-import expect from 'expect';
+import expect from 'expect-legacy';
 import createLogicAction$ from '../src/createLogicAction$';
 import createLogicMiddleware from '../src/createLogicMiddleware';
 import logicWrapper from '../src/logicWrapper';

@@ -1,4 +1,4 @@
-import expect from 'expect';
+import expect from 'expect-legacy';
 import { createLogic, createLogicMiddleware } from '../src/index';
 
 const NODE_ENV = process.env.NODE_ENV;
