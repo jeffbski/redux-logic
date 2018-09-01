@@ -10,6 +10,8 @@
     // causing issues with codacy
     "import/no-unresolved": 0,
     "indent": 0,
+    "implicit-arrow-linebreak": 0,
+    "no-multi-spaces": 0,
     "no-nested-ternary": 0,
     "no-plusplus": 0,
     "no-shadow": 0,
@@ -17,17 +19,21 @@
     "no-use-before-define": [2, { "functions": false, "classes": true }],
     // Disable until Flow supports let and const
     "no-var": 0,
+    "no-unused-vars": 0,
+    "object-curly-newline": 0,
     "object-property-newline": 0,
+    "operator-linebreak": 0,
     "padded-blocks": 0,
+    "prefer-destructuring": 0,
+    "prefer-promise-reject-errors": 0,
     "react/jsx-uses-react": 1,
     "react/jsx-no-undef": 2,
     "react/jsx-wrap-multilines": 2,
+    "switch-colon-spacing": 0,
     "valid-jsdoc": 2
   },
   "parserOptions": {
-    "ecmaFeatures": {
-      "experimentalObjectRestSpread": true
-    }
+    "ecmaVersion": 9
   },
   "plugins": [
     "react"
