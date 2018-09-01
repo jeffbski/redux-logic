@@ -40,10 +40,8 @@
     "build:umd:min": "cross-env NODE_ENV=production BABEL_ENV=commonjs webpack --entry ./src/index.js --output ./dist/redux-logic.min.js",
     "build:examples": "cross-env BABEL_ENV=commonjs babel-node examples/buildAll.js",
     "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min",
-    "dev-build": "cross-env NODE_ENV=development npm run build",
-    "prod-build": "cross-env NODE_ENV=production npm run build",
     "fullbuild:examples": "cross-env BABEL_ENV=commonjs babel-node examples/fullBuildAll.js",
-    "prepublish": "npm run clean && npm run check:src && npm run prod-build"
+    "prepublish": "npm run clean && npm run check:src && npm run build"
   },
   "repository": {
     "type": "git",
