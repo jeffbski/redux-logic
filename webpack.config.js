@@ -1,15 +1,21 @@
 'use strict';
 
 var webpack = require('webpack');
+var babelOptions = require('./babel.config');
 
-var env = process.env.NODE_ENV;
-var modtype = process.env.MODTYPE;
-var transform = process.env.TRANSFORM;
+var env = process.env.NODE_ENV || 'production';
 
 var config = {
+  mode: env,
   module: {
-    loaders: [
-      { test: /\.js$/, loaders: ['babel-loader'], exclude: /node_modules/ }
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: [
+          { loader: 'babel-loader', options: babelOptions }
+        ]
+      }
     ]
   },
   output: {
@@ -17,24 +23,10 @@ var config = {
     libraryTarget: 'umd'
   },
   plugins: [
-    new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(env)
     })
   ]
 };
-
-if (modtype === 'umd' && transform === 'minify') {
-  config.plugins.push(
-    new webpack.optimize.UglifyJsPlugin({
-      compressor: {
-        pure_getters: true,
-        unsafe: true,
-        unsafe_comps: true,
-        warnings: false
-      }
-    })
-  );
-}
 
 module.exports = config;

@@ -5,6 +5,7 @@ node_js:
   - "10"
   - node
 script:
+  - npm run browserslist
   - npm run check:src
   - npm run dev-build
   - npm run prod-build
