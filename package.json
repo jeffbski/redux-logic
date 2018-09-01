@@ -37,7 +37,7 @@
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir build-lib",
     "build:es": "cross-env BABEL_ENV=es babel src --out-dir build-es",
     "build:umd": "cross-env NODE_ENV=development BABEL_ENV=commonjs webpack --entry ./src/index.js --output ./dist/redux-logic.js",
-    "build:umd:min": "cross-env NODE_ENV=production BABEL_ENV=commonjs webpack --optimize-minimize --entry ./src/index.js --output ./dist/redux-logic.min.js",
+    "build:umd:min": "cross-env NODE_ENV=production BABEL_ENV=commonjs webpack --entry ./src/index.js --output ./dist/redux-logic.min.js",
     "build:examples": "cross-env BABEL_ENV=commonjs babel-node examples/buildAll.js",
     "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min",
     "dev-build": "cross-env NODE_ENV=development npm run build",
