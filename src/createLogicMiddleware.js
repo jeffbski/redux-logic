@@ -1,12 +1,7 @@
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { filter, map, scan, takeWhile, toPromise } from 'rxjs/operators';
+import { Subject, BehaviorSubject } from 'rxjs';
+import { filter, map, scan, takeWhile } from 'rxjs/operators';
 import wrapper from './logicWrapper';
-import { confirmProps, stringifyType } from './utils';
-
-// confirm custom Rx build imports
-confirmProps(Observable.prototype, [
-  'filter', 'map', 'scan', 'takeWhile', 'toPromise'
-], 'Observable.prototype');
+import { stringifyType } from './utils';
 
 const debug = (/* ...args */) => {};
 const OP_INIT = 'init'; // initial monitor op before anything else
@@ -44,8 +39,8 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
   const actionSrc$ = new Subject(); // mw action stream
   const monitor$ = new Subject(); // monitor all activity
   const lastPending$ = new BehaviorSubject({ op: OP_INIT });
-  monitor$
-    .scan((acc, x) => { // append a pending logic count
+  monitor$.pipe(
+    scan((acc, x) => { // append a pending logic count
       let pending = acc.pending || 0;
       switch (x.op) { // eslint-disable-line default-case
         case 'top' : // action at top of logic stack
@@ -69,7 +64,7 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
         pending
       };
     }, { pending: 0 })
-    .subscribe(lastPending$); // pipe to lastPending
+  ).subscribe(lastPending$); // pipe to lastPending
 
   let savedStore;
   let savedNext;
@@ -115,11 +110,11 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
      @return {promise} promise resolves when all are complete
     */
   mw.whenComplete = function whenComplete(fn = identity) {
-    return lastPending$
-      // .do(x => console.log('wc', x)) /* keep commented out */
-      .takeWhile(x => x.pending)
-      .map((/* x */) => undefined) // not passing along anything
-      .toPromise()
+    return lastPending$.pipe(
+      // tap(x => console.log('wc', x)), /* keep commented out */
+      takeWhile(x => x.pending),
+      map((/* x */) => undefined) // not passing along anything
+    ).toPromise()
       .then(fn);
   };
 

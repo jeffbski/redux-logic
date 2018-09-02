@@ -1,4 +1,4 @@
-import Rx from 'rxjs';
+import { Observable } from 'rxjs';
 import expect from 'expect-legacy';
 import { createLogic, createLogicMiddleware } from '../src/index';
 
@@ -530,7 +530,7 @@ describe('createLogicMiddleware-latest', () => {
         type: 'FOO',
         latest: true,
         process({ action }, dispatch) {
-          dispatch(Rx.Observable.create(obs => {
+          dispatch(Observable.create(obs => {
             // immediate dispatch
             obs.next({
               ...action,

@@ -1,4 +1,4 @@
-import Rx from 'rxjs';
+import { Observable, of } from 'rxjs';
 import expect from 'expect-legacy';
 import { createLogic, createLogicMiddleware } from '../src/index';
 
@@ -893,7 +893,7 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         process(deps, dispatch) {
-          dispatch(Rx.Observable.of(actionBar, actionCat));
+          dispatch(of(actionBar, actionCat));
         }
       });
       mw = createLogicMiddleware([logicA]);
@@ -962,7 +962,7 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         process(deps, dispatch) {
-          dispatch(Rx.Observable.of(actionBar, actionCat),
+          dispatch(of(actionBar, actionCat),
                    { allowMore: true });
           dispatch();
         }
@@ -1034,7 +1034,7 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         process(deps, dispatch) {
-          dispatch(Rx.Observable.of(actionBar, actionCat),
+          dispatch(of(actionBar, actionCat),
                    { allowMore: true });
           dispatch(actionDog);
         }
@@ -1111,9 +1111,9 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         process(deps, dispatch) {
-          dispatch(Rx.Observable.of(actionBar, actionCat),
+          dispatch(of(actionBar, actionCat),
                    { allowMore: true });
-          dispatch(Rx.Observable.of(actionDog, actionEgg),
+          dispatch(of(actionDog, actionEgg),
                    { allowMore: true });
           dispatch();
         }
@@ -1195,9 +1195,9 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         process(deps, dispatch) {
-          dispatch(Rx.Observable.of(actionBar, actionCat),
+          dispatch(of(actionBar, actionCat),
                    { allowMore: true });
-          dispatch(Rx.Observable.of(actionDog, actionEgg),
+          dispatch(of(actionDog, actionEgg),
                    { allowMore: true });
           dispatch(actionFig);
         }
@@ -1283,7 +1283,7 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         process(deps, dispatch, done) {
-          dispatch(Rx.Observable.of(actionBar, actionCat));
+          dispatch(of(actionBar, actionCat));
           dispatch();
           done();
         }
@@ -1355,7 +1355,7 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         process(deps, dispatch, done) {
-          dispatch(Rx.Observable.of(actionBar, actionCat));
+          dispatch(of(actionBar, actionCat));
           dispatch(actionDog);
           done();
         }
@@ -1432,8 +1432,8 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         process(deps, dispatch, done) {
-          dispatch(Rx.Observable.of(actionBar, actionCat));
-          dispatch(Rx.Observable.of(actionDog, actionEgg));
+          dispatch(of(actionBar, actionCat));
+          dispatch(of(actionDog, actionEgg));
           done();
         }
       });
@@ -1514,8 +1514,8 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         process(deps, dispatch, done) {
-          dispatch(Rx.Observable.of(actionBar, actionCat));
-          dispatch(Rx.Observable.of(actionDog, actionEgg));
+          dispatch(of(actionBar, actionCat));
+          dispatch(of(actionDog, actionEgg));
           dispatch(actionFig);
           done();
         }
@@ -3251,7 +3251,7 @@ describe('createLogicMiddleware-process', () => {
           dispatchReturn: true
         },
         process() {
-          return Rx.Observable.create(obs => {
+          return Observable.create(obs => {
             obs.next(actionBar);
             obs.complete();
           });
@@ -3313,7 +3313,7 @@ describe('createLogicMiddleware-process', () => {
           dispatchReturn: true
         },
         process() {
-          return Rx.Observable.create(obs => {
+          return Observable.create(obs => {
             obs.next(undefined);
             obs.complete();
           });
@@ -3372,7 +3372,7 @@ describe('createLogicMiddleware-process', () => {
           dispatchReturn: true
         },
         process() {
-          return Rx.Observable.create(obs => obs.error(actionBar));
+          return Observable.create(obs => obs.error(actionBar));
         }
       });
       mw = createLogicMiddleware([logicA]);
@@ -3431,7 +3431,7 @@ describe('createLogicMiddleware-process', () => {
           dispatchReturn: true
         },
         process() {
-          return Rx.Observable.create(obs => obs.error(undefined));
+          return Observable.create(obs => obs.error(undefined));
         }
       });
       mw = createLogicMiddleware([logicA]);
@@ -3492,7 +3492,7 @@ describe('createLogicMiddleware-process', () => {
           dispatchReturn: true
         },
         process() {
-          return Rx.Observable.create(() => {
+          return Observable.create(() => {
             throw new Error('my error');
           });
         }
@@ -3571,7 +3571,7 @@ describe('createLogicMiddleware-process', () => {
           dispatchReturn: true
         },
         process() {
-          return Rx.Observable.create(() => {
+          return Observable.create(() => {
             // eslint-disable-next-line no-throw-literal
             throw 'you should really throw an error';
           });
@@ -4098,7 +4098,7 @@ describe('createLogicMiddleware-process', () => {
           successType: 'BAR'
         },
         process() {
-          return Rx.Observable.create(obs => {
+          return Observable.create(obs => {
             obs.next(42);
             obs.next(43);
             obs.complete();
@@ -4606,7 +4606,7 @@ describe('createLogicMiddleware-process', () => {
           successType: actionBarFn
         },
         process() {
-          return Rx.Observable.create(obs => {
+          return Observable.create(obs => {
             obs.next(42);
             obs.next(43);
             obs.complete();
@@ -5001,7 +5001,7 @@ describe('createLogicMiddleware-process', () => {
           failType: 'BAZ'
         },
         process() {
-          return Rx.Observable.create(obs => obs.error(32));
+          return Observable.create(obs => obs.error(32));
         }
       });
       mw = createLogicMiddleware([logicA]);
@@ -5797,7 +5797,7 @@ describe('createLogicMiddleware-process', () => {
           failType: actionBazFn
         },
         process() {
-          return Rx.Observable.create(obs => obs.error(32));
+          return Observable.create(obs => obs.error(32));
         }
       });
       mw = createLogicMiddleware([logicA]);
@@ -5858,7 +5858,7 @@ describe('createLogicMiddleware-process', () => {
           failType: actionBazFn
         },
         process() {
-          return Rx.Observable.create((/* obs */) => {
+          return Observable.create((/* obs */) => {
             throw new Error('my error');
           });
         }
@@ -5939,7 +5939,7 @@ describe('createLogicMiddleware-process', () => {
           failType: actionBazFn
         },
         process() {
-          return Rx.Observable.create((/* obs */) => {
+          return Observable.create((/* obs */) => {
             // eslint-disable-next-line no-throw-literal
             throw 'you should really throw an error';
           });
@@ -6012,7 +6012,7 @@ describe('createLogicMiddleware-process', () => {
           failType: actionBazFn
         },
         process() {
-          return Rx.Observable.create(obs => {
+          return Observable.create(obs => {
             obs.next();
             obs.complete();
           });
@@ -6086,7 +6086,7 @@ describe('createLogicMiddleware-process', () => {
           failType: actionBazFn
         },
         process() {
-          return Rx.Observable.create(obs => {
+          return Observable.create(obs => {
             obs.next(null);
             obs.complete();
           });
@@ -6160,7 +6160,7 @@ describe('createLogicMiddleware-process', () => {
           failType: actionBazFn
         },
         process() {
-          return Rx.Observable.create(obs => {
+          return Observable.create(obs => {
             obs.next(42);
             obs.next(43);
             obs.error(32);

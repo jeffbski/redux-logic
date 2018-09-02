@@ -1,4 +1,5 @@
-import Rx from 'rxjs';
+import { interval } from 'rxjs';
+import { map } from 'rxjs/operators';
 import expect from 'expect-legacy';
 import { createLogic, createLogicMiddleware } from '../src/index';
 
@@ -215,7 +216,7 @@ describe('createLogicMiddleware-deps', () => {
   });
 
   describe('cancelled$ dispatch(obs)', () => {
-    it('should not dispatch after cancelled', done => {
+    it('should not dispatch after cancelled', itDone => {
       const getState = () => {};
       const origDeps = undefined;
       const next = expect.createSpy();
@@ -223,24 +224,25 @@ describe('createLogicMiddleware-deps', () => {
       const dispatch = expect.createSpy().andCall(cb);
       function cb() {
         if (cancelFired) {
-          done(new Error('dispatched after cancelled'));
+          itDone(new Error('dispatched after cancelled'));
         }
       }
       const logicA = createLogic({
         type: 'FOO',
         cancelType: 'FOO_CANCEL',
-        process({ cancelled$ }, dispatch) {
+        process({ cancelled$ }, dispatch, done) {
           cancelled$.subscribe({
             next: () => {
               cancelFired = true;
               // let's delay to see if any dispatches occur
               setTimeout(() => {
-                done();
+                itDone();
               }, 10);
             }
           });
-          const ob$ = Rx.Observable.interval(1)
-                .map(x => ({ type: 'BAR', payload: x }));
+          const ob$ = interval(1).pipe(
+            map(x => ({ type: 'BAR', payload: x }))
+          );
           dispatch(ob$);
 
           fireNextAction(); // manually triggering to get timing right

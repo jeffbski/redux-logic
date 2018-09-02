@@ -1,14 +1,8 @@
 import { Observable, merge } from 'rxjs';
-import { debounceTime, filter, mergeMap, share, throttleTime } from 'rxjs/operators';
+import { debounceTime, filter, map, mergeMap, share, throttleTime } from 'rxjs/operators';
 import createLogicAction$ from './createLogicAction$';
-import { confirmProps } from './utils';
 
-// confirm custom Rx build imports
-confirmProps(Observable, ['merge'], 'Observable');
-confirmProps(Observable.prototype, [
-  'debounceTime', 'filter', 'mergeMap', 'share', 'throttleTime'
-], 'Observable.prototype');
-
+const identityFn = x => x;
 
 export default function logicWrapper(logic, store, deps, monitor$) {
   const { type, cancelType, latest, debounce, throttle } = logic;
@@ -18,36 +12,30 @@ export default function logicWrapper(logic, store, deps, monitor$) {
     .concat((type && latest) ? type : [])
     .concat(cancelType || []);
 
-  const debouncing = (debounce) ?
-        act$ => act$.debounceTime(debounce) :
-        act$ => act$;
-
-  const throttling = (throttle) ?
-        act$ => act$.throttleTime(throttle) :
-        act$ => act$;
-
-  const limiting = act =>
-        throttling(debouncing(act));
-
   return function wrappedLogic(actionIn$) {
     // we want to share the same copy amongst all here
-    const action$ = actionIn$.share();
+    const action$ = actionIn$.pipe(share());
 
     const cancel$ = (cancelTypes.length) ?
-          action$.filter(action => matchesType(cancelTypes, action.type)) :
-          Observable.create((/* obs */) => {}); // shouldn't complete
+      action$.pipe(
+        filter(action => matchesType(cancelTypes, action.type))
+      ) : Observable.create((/* obs */) => {}); // shouldn't complete
 
     // types that don't match will bypass this logic
-    const nonMatchingAction$ = action$
-      .filter(action => !matchesType(type, action.type));
+    const nonMatchingAction$ = action$.pipe(
+      filter(action => !matchesType(type, action.type))
+    );
 
-    const matchingAction$ =
-      limiting(action$.filter(action => matchesType(type, action.type)))
-        .mergeMap(action =>
-          createLogicAction$({ action, logic, store, deps,
-                               cancel$, monitor$ }));
+    const matchingAction$ = action$.pipe(
+      filter(action => matchesType(type, action.type)),
+      (debounce) ? debounceTime(debounce) : map(identityFn),
+      (throttle) ? throttleTime(throttle) : map(identityFn),
+      mergeMap(action =>
+        createLogicAction$({ action, logic, store, deps,
+          cancel$, monitor$ }))
+    );
 
-    return Observable.merge(
+    return merge(
       nonMatchingAction$,
       matchingAction$
     );

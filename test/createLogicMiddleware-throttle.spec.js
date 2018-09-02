@@ -1,4 +1,4 @@
-import Rx from 'rxjs';
+import { Observable } from 'rxjs';
 import expect from 'expect-legacy';
 import { createLogic, createLogicMiddleware, configureLogic } from '../src/index';
 
@@ -156,12 +156,13 @@ describe('createLogicMiddleware-throttle', () => {
       logicA = createLogic({
         type: 'FOO',
         throttle: 40,
-        process({ action }, dispatch) {
+        process({ action }, dispatch, done) {
           setTimeout(() => {
             dispatch({
               ...action,
               type: 'BAR'
             });
+            done();
           }, 40);
         }
       });
@@ -203,7 +204,7 @@ describe('createLogicMiddleware-throttle', () => {
       logicA = createLogic({
         type: 'FOO',
         throttle: 40,
-        process({ action }, dispatch) {
+        process({ action }, dispatch, done) {
           // immediate dispatch
           dispatch({
             ...action,
@@ -216,6 +217,7 @@ describe('createLogicMiddleware-throttle', () => {
               ...action,
               type: 'CAT'
             });
+            done();
           }, 40);
         }
       });
@@ -258,8 +260,8 @@ describe('createLogicMiddleware-throttle', () => {
       logicA = createLogic({
         type: 'FOO',
         throttle: 20,
-        process({ action }, dispatch) {
-          dispatch(Rx.Observable.create(obs => {
+        process({ action }, dispatch, done) {
+          dispatch(Observable.create(obs => {
             // immediate dispatch
             obs.next({
               ...action,
@@ -272,8 +274,10 @@ describe('createLogicMiddleware-throttle', () => {
                 ...action,
                 type: 'CAT'
               });
+              obs.complete();
             }, 30);
           }));
+          done();
         }
       });
       mw = createLogicMiddleware([logicA]);

@@ -1,5 +1,6 @@
 import expect from 'expect-legacy';
-import Rx from 'rxjs';
+import { merge, interval } from 'rxjs';
+import { take, map, delay } from 'rxjs/operators';
 import { createLogic, createLogicMiddleware, configureLogic } from '../src/index';
 
 const NODE_ENV = process.env.NODE_ENV;
@@ -92,16 +93,18 @@ describe('createLogic', () => {
       });
       const mw = createLogicMiddleware([logicA]);
       const storeFn = mw({ dispatch })(next);
-      Rx.Observable.merge(
+      merge(
         // fast 0, 1, 2
-        Rx.Observable.interval(10)
-          .take(3)
-          .map(x => ({ fast: x })),
+        interval(10).pipe(
+          take(3),
+          map(x => ({ fast: x }))
+        ),
         // slow 0, 1, 2, 3
-        Rx.Observable.interval(60)
-          .take(4)
-          .delay(40)
-          .map(x => ({ slow: x }))
+        interval(60).pipe(
+          take(4),
+          delay(40),
+          map(x => ({ slow: x }))
+        )
       ).subscribe(x => {
         storeFn({
           ...x,
@@ -143,16 +146,18 @@ describe('createLogic', () => {
       });
       const mw = createLogicMiddleware([logicA]);
       const storeFn = mw({ dispatch })(next);
-      Rx.Observable.merge(
+      merge(
         // fast 0, 1, 2
-        Rx.Observable.interval(10)
-          .take(3)
-          .map(x => ({ fast: x })),
+        interval(10).pipe(
+          take(3),
+          map(x => ({ fast: x }))
+        ),
         // slow 0, 1, 2, 3
-        Rx.Observable.interval(60)
-          .take(4)
-          .delay(40)
-          .map(x => ({ slow: x }))
+        interval(60).pipe(
+          take(4),
+          delay(40),
+          map(x => ({ slow: x }))
+        )
       ).subscribe(x => {
         storeFn({
           ...x,
@@ -190,16 +195,18 @@ describe('createLogic', () => {
       });
       const mw = createLogicMiddleware([logicA]);
       const storeFn = mw({ dispatch })(next);
-      Rx.Observable.merge(
+      merge(
         // fast 0, 1, 2
-        Rx.Observable.interval(10)
-          .take(3)
-          .map(x => ({ fast: x })),
+        interval(10).pipe(
+          take(3),
+          map(x => ({ fast: x }))
+        ),
         // slow 0, 1, 2, 3
-        Rx.Observable.interval(60)
-          .take(4)
-          .delay(40)
-          .map(x => ({ slow: x }))
+        interval(60).pipe(
+          take(4),
+          delay(40),
+          map(x => ({ slow: x }))
+        )
       ).subscribe({
         next: x => {
           storeFn({
@@ -243,16 +250,18 @@ describe('createLogic', () => {
       });
       const mw = createLogicMiddleware([logicA]);
       const storeFn = mw({ dispatch })(next);
-      Rx.Observable.merge(
+      merge(
         // fast 0, 1, 2
-        Rx.Observable.interval(10)
-          .take(3)
-          .map(x => ({ fast: x })),
+        interval(10).pipe(
+          take(3),
+          map(x => ({ fast: x }))
+        ),
         // slow 0, 1, 2, 3
-        Rx.Observable.interval(60)
-          .take(4)
-          .delay(40)
-          .map(x => ({ slow: x }))
+        interval(60).pipe(
+          take(4),
+          delay(40),
+          map(x => ({ slow: x }))
+        )
       ).subscribe({
         next: x => {
           storeFn({
@@ -298,16 +307,18 @@ describe('createLogic', () => {
       });
       const mw = createLogicMiddleware([logicA]);
       const storeFn = mw({ dispatch })(next);
-      Rx.Observable.merge(
+      merge(
         // fast 0, 1, 2
-        Rx.Observable.interval(10)
-          .take(3)
-          .map(x => ({ fast: x })),
+        interval(10).pipe(
+          take(3),
+          map(x => ({ fast: x }))
+        ),
         // slow 0, 1, 2, 3
-        Rx.Observable.interval(60)
-          .take(4)
-          .delay(40)
-          .map(x => ({ slow: x }))
+        interval(60).pipe(
+          take(4),
+          delay(40),
+          map(x => ({ slow: x }))
+        )
       ).subscribe({
         next: x => {
           storeFn({
@@ -352,16 +363,18 @@ describe('createLogic', () => {
       });
       const mw = createLogicMiddleware([logicA]);
       const storeFn = mw({ dispatch })(next);
-      Rx.Observable.merge(
+      merge(
         // fast 0, 1, 2
-        Rx.Observable.interval(10)
-          .take(3)
-          .map(x => ({ fast: x })),
+        interval(10).pipe(
+          take(3),
+          map(x => ({ fast: x }))
+        ),
         // slow 0, 1, 2, 3
-        Rx.Observable.interval(60)
-          .take(4)
-          .delay(40)
-          .map(x => ({ slow: x }))
+        interval(60).pipe(
+          take(4),
+          delay(40),
+          map(x => ({ slow: x }))
+        )
       ).subscribe({
         next: x => {
           storeFn({

@@ -1,13 +1,6 @@
 import isPromise from 'is-promise';
-import { Observable, Subject, fromPromise, of, throwError, timer } from 'rxjs';
+import { Observable, Subject, from, of, throwError, timer, isObservable } from 'rxjs';
 import { defaultIfEmpty, tap, filter, map, mergeAll, take, takeUntil} from 'rxjs/operators';
-import { confirmProps, isObservable } from './utils';
-
-// confirm custom Rx build imports
-confirmProps(Observable, ['fromPromise', 'of', 'throw', 'timer'],
-             'Observable');
-confirmProps(Observable.prototype, ['defaultIfEmpty', 'do', 'filter',
-  'map', 'mergeAll', 'take', 'takeUntil'], 'Observable.prototype');
 
 const UNHANDLED_LOGIC_ERROR = 'UNHANDLED_LOGIC_ERROR';
 const NODE_ENV = process.env.NODE_ENV;
@@ -31,8 +24,9 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
   const logicAction$ = Observable.create(logicActionObs => {
     // create notification subject for process which we dispose of
     // when take(1) or when we are done dispatching
-    const cancelled$ = (new Subject())
-          .take(1);
+    const cancelled$ = (new Subject()).pipe(
+      take(1)
+    );
     cancel$.subscribe(cancelled$); // connect cancelled$ to cancel$
     cancelled$
       .subscribe(
@@ -49,25 +43,26 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
     // will console.error if logic has not completed by the time it fires
     // warnTimeout can be set to 0 to disable
     if (NODE_ENV !== 'production' && warnTimeout) {
-      Observable.timer(warnTimeout)
+      timer(warnTimeout).pipe(
         // take until cancelled, errored, or completed
-        .takeUntil(cancelled$.defaultIfEmpty(true))
-        .do(() => {
+        takeUntil(cancelled$.pipe(defaultIfEmpty(true))),
+        tap(() => {
           // eslint-disable-next-line no-console
           console.error(`warning: logic (${name}) is still running after ${warnTimeout / 1000}s, forget to call done()? For non-ending logic, set warnTimeout: 0`);
         })
-        .subscribe();
+      ).subscribe();
     }
 
-    const dispatch$ = (new Subject())
-          .mergeAll()
-          .takeUntil(cancel$);
-    dispatch$
-      .do(
+    const dispatch$ = (new Subject()).pipe(
+      mergeAll(),
+      takeUntil(cancel$)
+    );
+    dispatch$.pipe(
+      tap(
         mapToActionAndDispatch, // next
         mapErrorToActionAndDispatch // error
       )
-      .subscribe({
+    ).subscribe({
         error: (/* err */) => {
           monitor$.next({ action, name, op: 'end' });
           // signalling complete here since error was dispatched
@@ -168,9 +163,9 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
         dispatch$.next( // create obs for mergeAll
           // eslint-disable-next-line no-nested-ternary
           (isObservable(act)) ? act :
-          (isPromise(act)) ? Observable.fromPromise(act) :
-          (act instanceof Error) ? Observable.throw(act) :
-          Observable.of(act)
+          (isPromise(act)) ? from(act) :
+          (act instanceof Error) ? throwError(act) :
+          of(act)
         );
       }
       if (!(dispatchMultiple || allowMore)) { dispatch$.complete(); }
@@ -278,7 +273,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
           // eslint-disable-next-line no-console
           console.error(`unhandled exception in logic named: ${name}`, err);
           // wrap in observable since might not be an error object
-          dispatch(Observable.throw(err));
+          dispatch(throwError(err));
         }
       } else { // not processing, must have been a reject
         dispatch$.complete();
@@ -300,9 +295,10 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
     }
 
     start();
-  })
-  .takeUntil(cancel$)
-  .take(1);
+  }).pipe(
+    takeUntil(cancel$),
+    take(1)
+  );
 
   return logicAction$;
 }
