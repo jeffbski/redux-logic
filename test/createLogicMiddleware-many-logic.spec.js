@@ -50,7 +50,7 @@ describe('createLogicMiddleware-many-logic', () => {
   });
 
   describe('with validate', () => {
-    const NUM_LOGICS = 320;
+    const NUM_LOGICS = 300;
     let mw;
     let store;
 
@@ -86,7 +86,7 @@ describe('createLogicMiddleware-many-logic', () => {
   });
 
   describe('with process', () => {
-    const NUM_LOGICS = 320;
+    const NUM_LOGICS = 300;
     let mw;
     let store;
 
