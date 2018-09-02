@@ -713,7 +713,6 @@ describe('createLogicMiddleware', () => {
     });
   });
 
-
   describe('[logicA] validate reject', () => {
     let monArr = [];
     let mw;

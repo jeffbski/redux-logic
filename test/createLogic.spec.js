@@ -30,6 +30,22 @@ describe('createLogic', () => {
     });
   });
 
+  describe('configureLogic', () => {
+    describe('empty options', () => {
+      it('should not error', () => {
+        configureLogic();
+      });
+    });
+    describe('invalid argument', () => {
+      it('should error', () => {
+        const setInvalidSettingFn = () => {
+          configureLogic({ aBadSetting: true });
+        };
+        expect(setInvalidSettingFn).toThrow('are not globally configurable options');
+      });
+    });
+  });
+
   describe('warnTimeout', () => {
     it('defaults to 60000 ms', () => {
       const fooLogic = createLogic({

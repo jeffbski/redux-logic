@@ -98,6 +98,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
     /* eslint-disable consistent-return */
     function mapErrorToActionAndDispatch(actionOrValue) {
       // action dispatched from intercept needs to be unwrapped and sent as is
+      /* istanbul ignore if  */
       if (isInterceptAction(actionOrValue)) {
         const interceptAction = unwrapInterceptAction(actionOrValue);
         return storeDispatch(interceptAction);
@@ -116,18 +117,18 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
       if (actionOrValue instanceof Error) {
         const act =
           (actionOrValue.type) ? actionOrValue : // has type
-          {
-            type: UNHANDLED_LOGIC_ERROR,
-            payload: actionOrValue,
-            error: true
-          };
+            {
+              type: UNHANDLED_LOGIC_ERROR,
+              payload: actionOrValue,
+              error: true
+            };
         return storeDispatch(act);
       }
 
       // dispatch objects or functions as is
       const typeOfValue = typeof actionOrValue;
       if (actionOrValue && ( // not null and is object | fn
-          typeOfValue === 'object' || typeOfValue === 'function')) {
+        typeOfValue === 'object' || typeOfValue === 'function')) {
         return storeDispatch(actionOrValue);
       }
 
@@ -222,6 +223,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
     // we want to know that this was from intercept (validate/transform)
     // so that we don't apply any processOptions wrapping to it
     function wrapActionForIntercept(act) {
+      /* istanbul ignore if  */
       if (!act) { return act; }
       return {
         __interceptAction: act
