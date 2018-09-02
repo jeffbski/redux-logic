@@ -5,7 +5,7 @@ import { createLogic, createLogicMiddleware } from '../src/index';
 
 describe('createLogicMiddleware-many-logic', () => {
   describe('with validate and process', () => {
-    const NUM_LOGICS = 210;
+    const NUM_LOGICS = 200;
     let mw;
     let store;
 
