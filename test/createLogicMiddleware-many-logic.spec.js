@@ -86,7 +86,7 @@ describe('createLogicMiddleware-many-logic', () => {
   });
 
   describe('with process', () => {
-    const NUM_LOGICS = 300;
+    const NUM_LOGICS = 280;
     let mw;
     let store;
 
