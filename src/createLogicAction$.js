@@ -239,6 +239,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
     }
 
     function handleNextOrDispatch(shouldProcess, act, options) {
+      const shouldProcessAndHasProcessFn = shouldProcess && processFn;
       const { useDispatch } = applyAllowRejectNextDefaults(options);
       if (shouldDispatch(act, useDispatch)) {
         monitor$.next({ action, dispAction: act, name, shouldProcess, op: 'nextDisp' });
@@ -256,7 +257,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
       }
 
       // unless rejected, we will process even if allow/next dispatched
-      if (shouldProcess) { // processing, was an accept
+      if (shouldProcessAndHasProcessFn) { // processing, was an accept
         // if action provided is empty, give process orig
         depObj.action = act || action;
         try {
@@ -291,6 +292,10 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
 
     // start use of the action
     function start() {
+      if (!intercept) { // shortcut to only do processing
+        return allow(depObj.action);
+      }
+      // normal intercept and processing
       intercept(depObj, allow, reject);
     }
 

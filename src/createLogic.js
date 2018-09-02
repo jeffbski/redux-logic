@@ -161,7 +161,7 @@ export default function createLogic(logicOptions = {}) {
           latest = defaultOptions.latest,
           debounce = defaultOptions.debounce,
           throttle = defaultOptions.throttle,
-          validate, transform, process = emptyProcess,
+          validate, transform, process, // these can be falsy
           processOptions = {} } = logicOptions;
 
   if (!type) {
@@ -185,10 +185,6 @@ export default function createLogic(logicOptions = {}) {
     throw new Error(`unknown or misspelled processOption(s): ${invalidProcessOptions}`);
   }
 
-  const validateDefaulted = (!validate && !transform) ?
-        identityValidation :
-        validate;
-
   if (NODE_ENV !== 'production' &&
       typeof processOptions.dispatchMultiple !== 'undefined' &&
       warnTimeout !== 0) {
@@ -196,9 +192,11 @@ export default function createLogic(logicOptions = {}) {
     console.error(`warning: in logic for type(s): ${stringifyType(type)} - dispatchMultiple is always true in next version. For non-ending logic, set warnTimeout to 0`);
   }
 
+  const processLength = (process) ? process.length : 0;
+
   // use process fn signature to determine some processOption defaults
   // for dispatchReturn and dispatchMultiple
-  switch (process.length) {
+  switch (processLength) {
     case 0: // process() - dispatchReturn
     case 1: // process(deps) - dispatchReturn
       setIfUndefined(processOptions, 'dispatchReturn', true);
@@ -225,7 +223,7 @@ export default function createLogic(logicOptions = {}) {
     latest,
     debounce,
     throttle,
-    validate: validateDefaulted,
+    validate,
     transform,
     process,
     processOptions,
@@ -245,15 +243,6 @@ function typeToStrFns(type) {
   return (typeof type === 'function') ?
     type.toString() :
     type;
-}
-
-function identityValidation({ action }, allow /* , reject */) {
-  allow(action);
-}
-
-function emptyProcess(_, dispatch, done) {
-  dispatch();
-  done();
 }
 
 function setIfUndefined(obj, propName, propValue) {

@@ -5,7 +5,7 @@ import { createLogic, createLogicMiddleware } from '../src/index';
 
 describe('createLogicMiddleware-many-logic', () => {
   describe('with validate and process', () => {
-    const NUM_LOGICS = 190;
+    const NUM_LOGICS = 210;
     let mw;
     let store;
 
@@ -50,7 +50,7 @@ describe('createLogicMiddleware-many-logic', () => {
   });
 
   describe('with validate', () => {
-    const NUM_LOGICS = 200;
+    const NUM_LOGICS = 320;
     let mw;
     let store;
 
@@ -86,7 +86,7 @@ describe('createLogicMiddleware-many-logic', () => {
   });
 
   describe('with process', () => {
-    const NUM_LOGICS = 190;
+    const NUM_LOGICS = 320;
     let mw;
     let store;
 

@@ -26,14 +26,16 @@ export default function logicWrapper(logic, store, deps, monitor$) {
       filter(action => !matchesType(type, action.type))
     );
 
-    const matchingAction$ = action$.pipe(
+    const matchingOps = [ // operations to perform, falsey filtered out
       filter(action => matchesType(type, action.type)),
-      (debounce) ? debounceTime(debounce) : map(identityFn),
-      (throttle) ? throttleTime(throttle) : map(identityFn),
+      (debounce) ? debounceTime(debounce) : null,
+      (throttle) ? throttleTime(throttle) : null,
       mergeMap(action =>
         createLogicAction$({ action, logic, store, deps,
           cancel$, monitor$ }))
-    );
+    ].filter(identityFn);
+
+    const matchingAction$ = action$.pipe(...matchingOps);
 
     return merge(
       nonMatchingAction$,
