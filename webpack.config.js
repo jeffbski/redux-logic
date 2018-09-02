@@ -1,6 +1,7 @@
 'use strict';
 
 var webpack = require('webpack');
+var rxPaths = require('rxjs/_esm5/path-mapping');
 var babelOptions = require('./babel.config');
 
 var env = process.env.NODE_ENV || 'production';
@@ -18,6 +19,9 @@ var config = {
       }
     ]
   },
+  resolve: {
+    alias: rxPaths()
+  },
   output: {
     library: 'ReduxLogic',
     libraryTarget: 'umd'
@@ -25,7 +29,8 @@ var config = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(env)
-    })
+    }),
+    new webpack.optimize.ModuleConcatenationPlugin()
   ]
 };
 

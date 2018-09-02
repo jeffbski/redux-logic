@@ -13,7 +13,7 @@ const plugins = [
 const env = {
   commonjs: {
     plugins: [
-      ['@babel/plugin-transform-modules-commonjs', { loose: true }]
+      //       ['@babel/plugin-transform-modules-commonjs', { loose: true }]
     ]
   },
   es: {
@@ -22,7 +22,7 @@ const env = {
   },
   test: {
     plugins: [
-      ['@babel/plugin-transform-modules-commonjs', { loose: true }],
+      //       ['@babel/plugin-transform-modules-commonjs', { loose: true }],
       'istanbul'
     ]
   }
