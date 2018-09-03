@@ -3,6 +3,8 @@ import { debounceTime, filter, map, mergeMap, share, throttleTime } from 'rxjs/o
 import createLogicAction$ from './createLogicAction$';
 import { identityFn } from './utils';
 
+const MATCH_ALL_TYPES = '*';
+
 export default function logicWrapper(logic, store, deps, monitor$) {
   const { type, cancelType, latest, debounce, throttle } = logic;
 
@@ -20,11 +22,6 @@ export default function logicWrapper(logic, store, deps, monitor$) {
         filter(action => matchesType(cancelTypes, action.type))
       ) : null;
 
-    // types that don't match will bypass this logic
-    const nonMatchingAction$ = action$.pipe(
-      filter(action => !matchesType(type, action.type))
-    );
-
     const matchingOps = [ // operations to perform, falsey filtered out
       filter(action => matchesType(type, action.type)),
       (debounce) ? debounceTime(debounce) : null,
@@ -35,6 +32,17 @@ export default function logicWrapper(logic, store, deps, monitor$) {
     ].filter(identityFn);
 
     const matchingAction$ = action$.pipe(...matchingOps);
+
+    // shortcut optimization
+    // if type is match all '*', then no need to create other side of pipe
+    if (type === MATCH_ALL_TYPES) {
+      return matchingAction$;
+    }
+
+    // types that don't match will bypass this logic
+    const nonMatchingAction$ = action$.pipe(
+      filter(action => !matchesType(type, action.type))
+    );
 
     return merge(
       nonMatchingAction$,
@@ -50,7 +58,7 @@ function matchesType(tStrArrRe, type) {
     return (tStrArrRe === type);
   }
   if (typeof tStrArrRe === 'string') {
-    return (tStrArrRe === type || tStrArrRe === '*');
+    return (tStrArrRe === type || tStrArrRe === MATCH_ALL_TYPES);
   }
   if (Array.isArray(tStrArrRe)) {
     return tStrArrRe.some(x => matchesType(x, type));
