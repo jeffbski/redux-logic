@@ -1,8 +1,7 @@
 import { Observable, merge } from 'rxjs';
 import { debounceTime, filter, map, mergeMap, share, throttleTime } from 'rxjs/operators';
 import createLogicAction$ from './createLogicAction$';
-
-const identityFn = x => x;
+import { identityFn } from './utils';
 
 export default function logicWrapper(logic, store, deps, monitor$) {
   const { type, cancelType, latest, debounce, throttle } = logic;
@@ -19,7 +18,7 @@ export default function logicWrapper(logic, store, deps, monitor$) {
     const cancel$ = (cancelTypes.length) ?
       action$.pipe(
         filter(action => matchesType(cancelTypes, action.type))
-      ) : Observable.create((/* obs */) => {}); // shouldn't complete
+      ) : null;
 
     // types that don't match will bypass this logic
     const nonMatchingAction$ = action$.pipe(

@@ -1,3 +1,5 @@
+export function identityFn(x) { return x; }
+
 // Symbols and Arrays containing Symbols cannot be interpolated in template strings,
 // they must be explicitly converted with toString()
 // eslint-disable-next-line import/prefer-default-export

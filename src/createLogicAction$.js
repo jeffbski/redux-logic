@@ -1,6 +1,7 @@
 import isPromise from 'is-promise';
 import { Observable, Subject, from, of, throwError, timer, isObservable } from 'rxjs';
 import { defaultIfEmpty, tap, filter, map, mergeAll, take, takeUntil} from 'rxjs/operators';
+import { identityFn } from './utils';
 
 const UNHANDLED_LOGIC_ERROR = 'UNHANDLED_LOGIC_ERROR';
 const NODE_ENV = process.env.NODE_ENV;
@@ -10,8 +11,8 @@ const debug = (/* ...args */) => {};
 export default function createLogicAction$({ action, logic, store, deps, cancel$, monitor$ }) {
   const { getState } = store;
   const { name, warnTimeout, process: processFn,
-          processOptions: { dispatchReturn, dispatchMultiple,
-                            successType, failType } } = logic;
+    processOptions: { dispatchReturn, dispatchMultiple,
+      successType, failType } } = logic;
   const intercept = logic.validate || logic.transform; // aliases
 
   debug('createLogicAction$', name, action);
@@ -20,6 +21,11 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
   // once action reaches bottom, filtered, nextDisp, or cancelled
   let interceptComplete = false;
 
+  const logicActionOps = [
+    (cancel$) ? takeUntil(cancel$) : null, // only takeUntil if cancel or latest
+    take(1)
+  ].filter(identityFn);
+
   // logicAction$ is used for the mw next(action) call
   const logicAction$ = Observable.create(logicActionObs => {
     // create notification subject for process which we dispose of
@@ -27,17 +33,19 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
     const cancelled$ = (new Subject()).pipe(
       take(1)
     );
-    cancel$.subscribe(cancelled$); // connect cancelled$ to cancel$
-    cancelled$
-      .subscribe(
-        () => {
-          if (!interceptComplete) {
-            monitor$.next({ action, name, op: 'cancelled' });
-          } else { // marking these different so not counted twice
-            monitor$.next({ action, name, op: 'dispCancelled' });
+    if (cancel$) {
+      cancel$.subscribe(cancelled$); // connect cancelled$ to cancel$
+      cancelled$
+        .subscribe(
+          () => {
+            if (!interceptComplete) {
+              monitor$.next({ action, name, op: 'cancelled' });
+            } else { // marking these different so not counted twice
+              monitor$.next({ action, name, op: 'dispCancelled' });
+            }
           }
-        }
-      );
+        );
+    }
 
     // In non-production mode only we will setup a warning timeout that
     // will console.error if logic has not completed by the time it fires
@@ -53,32 +61,34 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
       ).subscribe();
     }
 
-    const dispatch$ = (new Subject()).pipe(
+    const dispatchOps = [
       mergeAll(),
-      takeUntil(cancel$)
-    );
+      (cancel$) ? takeUntil(cancel$) : null // only takeUntil if cancel or latest
+    ].filter(identityFn);
+
+    const dispatch$ = (new Subject()).pipe(...dispatchOps);
     dispatch$.pipe(
       tap(
         mapToActionAndDispatch, // next
         mapErrorToActionAndDispatch // error
       )
     ).subscribe({
-        error: (/* err */) => {
-          monitor$.next({ action, name, op: 'end' });
-          // signalling complete here since error was dispatched
-          // accordingly, otherwise if we were to signal an error here
-          // then cancelled$ subscriptions would have to specifically
-          // handle error in subscribe otherwise it will throw. So
-          // it doesn't seem that it is worth it.
-          cancelled$.complete();
-          cancelled$.unsubscribe();
-        },
-        complete: () => {
-          monitor$.next({ action, name, op: 'end' });
-          cancelled$.complete();
-          cancelled$.unsubscribe();
-        }
-      });
+      error: (/* err */) => {
+        monitor$.next({ action, name, op: 'end' });
+        // signalling complete here since error was dispatched
+        // accordingly, otherwise if we were to signal an error here
+        // then cancelled$ subscriptions would have to specifically
+        // handle error in subscribe otherwise it will throw. So
+        // it doesn't seem that it is worth it.
+        cancelled$.complete();
+        cancelled$.unsubscribe();
+      },
+      complete: () => {
+        monitor$.next({ action, name, op: 'end' });
+        cancelled$.complete();
+        cancelled$.unsubscribe();
+      }
+    });
 
     function storeDispatch(act) {
       monitor$.next({ action, dispAction: act, op: 'dispatch' });
@@ -88,8 +98,8 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
     function mapToActionAndDispatch(actionOrValue) {
       const act =
         (isInterceptAction(actionOrValue)) ? unwrapInterceptAction(actionOrValue) :
-        (successType) ? mapToAction(successType, actionOrValue, false) :
-        actionOrValue;
+          (successType) ? mapToAction(successType, actionOrValue, false) :
+          actionOrValue;
       if (act) {
         storeDispatch(act);
       }
@@ -302,10 +312,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
     }
 
     start();
-  }).pipe(
-    takeUntil(cancel$),
-    take(1)
-  );
+  }).pipe(...logicActionOps); // take, takeUntil
 
   return logicAction$;
 }
