@@ -3233,7 +3233,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true return obs', () => {
+  describe('[logicA] process return obs', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -3247,9 +3247,6 @@ describe('createLogicMiddleware-process', () => {
       dispatch = expect.createSpy();
       logicA = createLogic({
         type: 'FOO',
-        processOptions: {
-          dispatchReturn: true
-        },
         process() {
           return Observable.create(obs => {
             obs.next(actionBar);
@@ -3296,7 +3293,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true return obs undefined', () => {
+  describe('[logicA] process return obs undefined', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -3309,9 +3306,6 @@ describe('createLogicMiddleware-process', () => {
       dispatch = expect.createSpy();
       logicA = createLogic({
         type: 'FOO',
-        processOptions: {
-          dispatchReturn: true
-        },
         process() {
           return Observable.create(obs => {
             obs.next(undefined);
@@ -3354,7 +3348,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true return error obs', () => {
+  describe('[logicA] process return error obs', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -3368,9 +3362,6 @@ describe('createLogicMiddleware-process', () => {
       dispatch = expect.createSpy();
       logicA = createLogic({
         type: 'FOO',
-        processOptions: {
-          dispatchReturn: true
-        },
         process() {
           return Observable.create(obs => obs.error(actionBar));
         }
@@ -3414,7 +3405,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true return error obs undefined', () => {
+  describe('[logicA] process return error obs undefined', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -3427,9 +3418,6 @@ describe('createLogicMiddleware-process', () => {
       dispatch = expect.createSpy();
       logicA = createLogic({
         type: 'FOO',
-        processOptions: {
-          dispatchReturn: true
-        },
         process() {
           return Observable.create(obs => obs.error(undefined));
         }
@@ -3475,7 +3463,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true return error obs throws internally', () => {
+  describe('[logicA] process return error obs throws internally', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -3488,9 +3476,6 @@ describe('createLogicMiddleware-process', () => {
       dispatch = expect.createSpy();
       logicA = createLogic({
         type: 'FOO',
-        processOptions: {
-          dispatchReturn: true
-        },
         process() {
           return Observable.create(() => {
             throw new Error('my error');
@@ -3554,7 +3539,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true return error obs throws str internally', () => {
+  describe('[logicA] process return error obs throws str internally', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -3567,9 +3552,6 @@ describe('createLogicMiddleware-process', () => {
       dispatch = expect.createSpy();
       logicA = createLogic({
         type: 'FOO',
-        processOptions: {
-          dispatchReturn: true
-        },
         process() {
           return Observable.create(() => {
             // eslint-disable-next-line no-throw-literal
@@ -3622,7 +3604,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true throws error', () => {
+  describe('[logicA] process throws error', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -3635,9 +3617,6 @@ describe('createLogicMiddleware-process', () => {
       dispatch = expect.createSpy();
       logicA = createLogic({
         type: 'FOO',
-        processOptions: {
-          dispatchReturn: true
-        },
         process() {
           throw new Error('dog');
         }
@@ -3699,7 +3678,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true throws string', () => {
+  describe('[logicA] process throws string', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -3712,9 +3691,6 @@ describe('createLogicMiddleware-process', () => {
       dispatch = expect.createSpy();
       logicA = createLogic({
         type: 'FOO',
-        processOptions: {
-          dispatchReturn: true
-        },
         process() {
           // eslint-disable-next-line no-throw-literal
           throw 'you should throw an error'; // not a good practice
@@ -3766,7 +3742,7 @@ describe('createLogicMiddleware-process', () => {
 
   // successType and failType string type variants
 
-  describe('[logicA] process dispatchReturn:true successType return undefined', () => {
+  describe('[logicA] process successType return undefined', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -3780,7 +3756,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           successType: 'BAR'
         },
         process() {
@@ -3822,7 +3797,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true successType=BAR return null', () => {
+  describe('[logicA] process successType=BAR return null', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -3837,7 +3812,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           successType: 'BAR'
         },
         process() {
@@ -3887,7 +3861,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true successType=BAR return 42', () => {
+  describe('[logicA] process successType=BAR return 42', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -3902,7 +3876,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           successType: 'BAR'
         },
         process() {
@@ -3952,7 +3925,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true successType=BAR return promise null', () => {
+  describe('[logicA] process successType=BAR return promise null', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -3966,7 +3939,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           successType: 'BAR'
         },
         process() {
@@ -4015,7 +3987,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true successType=BAR return promise 42', () => {
+  describe('[logicA] process successType=BAR return promise 42', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -4029,7 +4001,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           successType: 'BAR'
         },
         process() {
@@ -4078,7 +4049,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true successType=BAR return obs 42, 43', () => {
+  describe('[logicA] process successType=BAR return obs 42, 43', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -4094,7 +4065,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           successType: 'BAR'
         },
         process() {
@@ -4148,7 +4118,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true successType=fn return promise 42', () => {
+  describe('[logicA] process successType=fn return promise 42', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -4163,7 +4133,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           successType: barFn
         },
         process() {
@@ -4212,7 +4181,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true successType=fn return undefined', () => {
+  describe('[logicA] process successType=fn return undefined', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -4227,7 +4196,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           successType: actionBarFn
         },
         process() {
@@ -4269,7 +4237,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true successType=fn return null', () => {
+  describe('[logicA] process successType=fn return null', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -4285,7 +4253,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           successType: actionBarFn
         },
         process() {
@@ -4331,7 +4298,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true successType=fn return 42', () => {
+  describe('[logicA] process successType=fn return 42', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -4347,7 +4314,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           successType: actionBarFn
         },
         process() {
@@ -4393,7 +4359,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true successType=fn return promise undefined', () => {
+  describe('[logicA] process successType=fn return promise undefined', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -4408,7 +4374,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           successType: actionBarFn
         },
         process() {
@@ -4457,7 +4422,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true successType=fn return promise null', () => {
+  describe('[logicA] process successType=fn return promise null', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -4472,7 +4437,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           successType: actionBarFn
         },
         process() {
@@ -4521,7 +4485,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true successType=fn return promise 42', () => {
+  describe('[logicA] process successType=fn return promise 42', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -4536,7 +4500,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           successType: actionBarFn
         },
         process() {
@@ -4585,7 +4548,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true successType=fn return obs 42, 43', () => {
+  describe('[logicA] process successType=fn return obs 42, 43', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -4602,7 +4565,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           successType: actionBarFn
         },
         process() {
@@ -4658,7 +4620,7 @@ describe('createLogicMiddleware-process', () => {
 
   /* failType */
 
-  describe('[logicA] process dispatchReturn:true failType return error', () => {
+  describe('[logicA] process failType return error', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -4672,7 +4634,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           failType: 'BAZ'
         },
         process() {
@@ -4738,7 +4699,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType=BAZ return rejecting promise undefined', () => {
+  describe('[logicA] process failType=BAZ return rejecting promise undefined', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -4753,7 +4714,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           failType: 'BAZ'
         },
         process() {
@@ -4799,7 +4759,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType=BAZ return rejecting promise null', () => {
+  describe('[logicA] process failType=BAZ return rejecting promise null', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -4814,7 +4774,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           failType: 'BAZ'
         },
         process() {
@@ -4860,7 +4819,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType=BAZ return rejecting promise 32', () => {
+  describe('[logicA] process failType=BAZ return rejecting promise 32', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -4875,7 +4834,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           failType: 'BAZ'
         },
         process() {
@@ -4921,7 +4879,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType=BAZ return rejecting promise string', () => {
+  describe('[logicA] process failType=BAZ return rejecting promise string', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -4936,7 +4894,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           failType: 'BAZ'
         },
         process() {
@@ -4982,7 +4939,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType=BAZ return error obs 32', () => {
+  describe('[logicA] process failType=BAZ return error obs 32', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -4997,7 +4954,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           failType: 'BAZ'
         },
         process() {
@@ -5043,7 +4999,7 @@ describe('createLogicMiddleware-process', () => {
 
  });
 
-  describe('[logicA] process dispatchReturn:true failType=BAZ throw error', () => {
+  describe('[logicA] process failType=BAZ throw error', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -5057,7 +5013,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           failType: 'BAZ'
         },
         process() {
@@ -5119,7 +5074,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType=BAZ return error obs 32', () => {
+  describe('[logicA] process failType=BAZ return error obs 32', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -5138,7 +5093,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           failType: 'BAZ'
         },
         process() {
@@ -5188,7 +5142,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType=fn throw error', () => {
+  describe('[logicA] process failType=fn throw error', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -5203,7 +5157,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           failType: bazFn
         },
         process() {
@@ -5265,7 +5218,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType=fn throw string', () => {
+  describe('[logicA] process failType=fn throw string', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -5280,7 +5233,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           failType: bazFn
         },
         process() {
@@ -5332,7 +5284,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType=fnUnd throw error', () => {
+  describe('[logicA] process failType=fnUnd throw error', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -5347,7 +5299,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           failType: bazFn
         },
         process() {
@@ -5389,7 +5340,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType=fnUnd throw error', () => {
+  describe('[logicA] process failType=fnUnd throw error', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -5404,7 +5355,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           failType: bazFn
         },
         process() {
@@ -5447,7 +5397,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType=fnVal return rejecting promise undefined', () => {
+  describe('[logicA] process failType=fnVal return rejecting promise undefined', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -5463,7 +5413,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           failType: bazFn
         },
         process() {
@@ -5509,7 +5458,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType=fn return rejecting promise null', () => {
+  describe('[logicA] process failType=fn return rejecting promise null', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -5525,7 +5474,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           failType: bazFn
         },
         process() {
@@ -5571,7 +5519,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType=fn return rejecting promise 32', () => {
+  describe('[logicA] process failType=fn return rejecting promise 32', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -5587,7 +5535,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           failType: bazFn
         },
         process() {
@@ -5633,7 +5580,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType=fn return error', () => {
+  describe('[logicA] process failType=fn return error', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -5649,7 +5596,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           failType: actionBazFn
         },
         process() {
@@ -5715,7 +5661,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType=fn return rejecting promise 32', () => {
+  describe('[logicA] process failType=fn return rejecting promise 32', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -5731,7 +5677,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           failType: actionBazFn
         },
         process() {
@@ -5777,7 +5722,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType=fn return error obs 32', () => {
+  describe('[logicA] process failType=fn return error obs 32', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -5793,7 +5738,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           failType: actionBazFn
         },
         process() {
@@ -5839,7 +5783,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType=fn return error obs throws error', () => {
+  describe('[logicA] process failType=fn return error obs throws error', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -5854,7 +5798,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           failType: actionBazFn
         },
         process() {
@@ -5920,7 +5863,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true failType=fn return error obs throws string', () => {
+  describe('[logicA] process failType=fn return error obs throws string', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -5935,7 +5878,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           failType: actionBazFn
         },
         process() {
@@ -5990,7 +5932,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true ST=fn FT=fn return obs undefined', () => {
+  describe('[logicA] process ST=fn FT=fn return obs undefined', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -6007,7 +5949,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           successType: actionBarFn,
           failType: actionBazFn
         },
@@ -6064,7 +6005,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true ST=fn FT=fn return obs null', () => {
+  describe('[logicA] process ST=fn FT=fn return obs null', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -6081,7 +6022,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           successType: actionBarFn,
           failType: actionBazFn
         },
@@ -6138,7 +6078,7 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
-  describe('[logicA] process dispatchReturn:true ST=fn FT=fn return obs 42 43 error', () => {
+  describe('[logicA] process ST=fn FT=fn return obs 42 43 error', () => {
     let monArr = [];
     let mw;
     let logicA;
@@ -6155,7 +6095,6 @@ describe('createLogicMiddleware-process', () => {
       logicA = createLogic({
         type: 'FOO',
         processOptions: {
-          dispatchReturn: true,
           successType: actionBarFn,
           failType: actionBazFn
         },
