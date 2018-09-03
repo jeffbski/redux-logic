@@ -298,7 +298,7 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
         return allow(depObj.action);
       }
       // normal intercept and processing
-      intercept(depObj, allow, reject);
+      return intercept(depObj, allow, reject);
     }
 
     start();

@@ -11,8 +11,8 @@
       "loose-envify"
     ]
   },
+  "sideEffects": false,
   "module": "build-es/index.js",
-  "jsnext:main": "build-es/index.js",
   "files": [
     "dist",
     "build-lib",
@@ -28,20 +28,26 @@
     "test": "cross-env BABEL_ENV=commonjs mocha --require @babel/register --recursive -r ./test/setup.js",
     "test:prod": "cross-env BABEL_ENV=commonjs NODE_ENV=production mocha --require @babel/register --recursive -r ./test/setup.js",
     "test:watch": "npm test -- --watch",
-    "test:cov": "cross-env NODE_ENV=test nyc --reporter=lcov --reporter=text mocha test --recursive",
+    "test:cov": "cross-env NODE_ENV=test BABEL_ENV=cov nyc --reporter=lcov --reporter=text mocha test --recursive",
     "test:rxbuild": "cross-env BABEL_ENV=commonjs mocha --require @babel/register test/rxbuild.spec.js -r ./test/setup.js",
     "test:examples": "cross-env BABEL_ENV=commonjs babel-node examples/testAll.js",
     "test:typescript": "tsc --noEmit",
     "check:src": "npm run lint && npm run test && npm run test:rxbuild && npm run test:prod && npm run test:typescript",
+    "escheck": "npm run escheck:commonjs && npm run escheck:es && npm run escheck:umd",
+    "escheck:commonjs": "es-check es5 build-lib/**.js",
+    "escheck:es": "echo \"waiting for merge of PR to escheck for modules\"",
+    "escheck:es:eventually": "es-check --module true es6 build-es/**.js",
+    "escheck:umd": "es-check es5 dist/**.js",
     "check:examples": "npm run build:examples && npm run test:examples",
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir build-lib",
     "build:es": "cross-env BABEL_ENV=es babel src --out-dir build-es",
-    "build:umd": "cross-env NODE_ENV=development BABEL_ENV=commonjs webpack --entry ./src/index.js --output ./dist/redux-logic.js",
-    "build:umd:min": "cross-env NODE_ENV=production BABEL_ENV=commonjs webpack --entry ./src/index.js --output ./dist/redux-logic.min.js",
+    "build:umd": "cross-env NODE_ENV=production MINIMIZE=false BABEL_ENV=es webpack --entry ./src/index.js --output ./dist/redux-logic.js",
+    "build:umd:min": "cross-env NODE_ENV=production BABEL_ENV=es webpack --entry ./src/index.js --output ./dist/redux-logic.min.js",
     "build:examples": "cross-env BABEL_ENV=commonjs babel-node examples/buildAll.js",
     "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min",
+    "debug-build": "cross-env CI=true npm run build:commonjs && cross-env CI=true npm run build:es && cross-env CI=true npm run build:umd && cross-env CI=true npm run build:umd:min",
     "fullbuild:examples": "cross-env BABEL_ENV=commonjs babel-node examples/fullBuildAll.js",
-    "prepublish": "npm run clean && npm run check:src && npm run build"
+    "prepublish": "npm run clean && npm run check:src && npm run build && npm run escheck"
   },
   "repository": {
     "type": "git",
@@ -92,6 +98,7 @@
     "browserslist": "^4.1.0",
     "core-js": "^2.5.7",
     "cross-env": "^5.2.0",
+    "es-check": "^2.1.0",
     "eslint": "^5.5.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
