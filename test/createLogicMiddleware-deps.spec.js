@@ -61,7 +61,7 @@ describe('createLogicMiddleware-deps', () => {
       const { action, cancelled$, ctx } = allDeps.valDeps;
       const valCtx = allDeps.valCtx;
       expect(Object.keys(allDeps.valDeps).sort())
-        .toEqual(['action', 'cancelled$', 'ctx', 'getState']);
+        .toEqual(['action', 'action$', 'cancelled$', 'ctx', 'getState']);
       expect(valState).toEqual(origState);
       expect(action).toEqual(actionFoo);
       expect(cancelled$).toExist();
@@ -72,7 +72,7 @@ describe('createLogicMiddleware-deps', () => {
     it('process deps should have getState, action, cancelled$, ctx', () => {
       const { action, cancelled$, ctx } = allDeps.procDeps;
       expect(Object.keys(allDeps.procDeps).sort())
-        .toEqual(['action', 'cancelled$', 'ctx', 'getState']);
+        .toEqual(['action', 'action$', 'cancelled$', 'ctx', 'getState']);
       expect(action).toEqual(actionFoo);
       expect(cancelled$).toExist();
       expect(ctx).toEqual({ data: ['v'] }); // updated in validate
@@ -95,7 +95,7 @@ describe('createLogicMiddleware-deps', () => {
       const { action, cancelled$, ctx, y, z } = allDeps.valDeps;
       const valCtx = allDeps.valCtx;
       expect(Object.keys(allDeps.valDeps).sort())
-        .toEqual(['action', 'cancelled$', 'ctx', 'getState', 'y', 'z']);
+        .toEqual(['action', 'action$', 'cancelled$', 'ctx', 'getState', 'y', 'z']);
       expect(valState).toEqual(origState);
       expect(action).toEqual(actionFoo);
       expect(cancelled$).toExist();
@@ -108,7 +108,7 @@ describe('createLogicMiddleware-deps', () => {
     it('process deps should have getState, action, cancelled$, ctx, y, z', () => {
       const { action, cancelled$, ctx, y, z } = allDeps.procDeps;
       expect(Object.keys(allDeps.procDeps).sort())
-        .toEqual(['action', 'cancelled$', 'ctx', 'getState', 'y', 'z']);
+        .toEqual(['action', 'action$', 'cancelled$', 'ctx', 'getState', 'y', 'z']);
       expect(action).toEqual(actionFoo);
       expect(cancelled$).toExist();
       expect(ctx).toEqual({ data: ['v'] }); // updated in validate

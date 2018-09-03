@@ -8,7 +8,8 @@ const NODE_ENV = process.env.NODE_ENV;
 
 const debug = (/* ...args */) => {};
 
-export default function createLogicAction$({ action, logic, store, deps, cancel$, monitor$ }) {
+export default function createLogicAction$({ action, logic, store, deps,
+  cancel$, monitor$, action$ }) {
   const { getState } = store;
   const { name, warnTimeout, process: processFn,
     processOptions: { dispatchReturn, dispatchMultiple,
@@ -196,7 +197,8 @@ export default function createLogicAction$({ action, logic, store, deps, cancel$
       cancelled$,
       ctx: {}, // for sharing data between hooks
       getState,
-      action
+      action,
+      action$
     };
 
     function shouldDispatch(act, useDispatch) {

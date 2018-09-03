@@ -1,4 +1,5 @@
 import { Observable, of } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import expect from 'expect-legacy';
 import { createLogic, createLogicMiddleware } from '../src/index';
 
@@ -6163,5 +6164,113 @@ describe('createLogicMiddleware-process', () => {
 
   });
 
+  describe('[logicA] process return obs and uses action$', () => {
+    let monArr = [];
+    let mw;
+    let logicA;
+    let next;
+    let dispatch;
+    const actionStart = { type: 'ASTART' };
+    const actionFoo = { type: 'FOO' };
+    const actionBar = { type: 'BAR' };
+    const actionCat = { type: 'CAT' };
+    const actionEnd = { type: 'AEND' };
+    const actionStack = [
+      actionFoo,
+      actionStart,
+      actionFoo,
+      actionBar,
+      actionFoo,
+      actionCat,
+      actionEnd,
+      actionBar
+    ];
+    const dispatchStack = [
+      { type: 'MATCHED', payload: actionFoo },
+      { type: 'MATCHED', payload: actionBar },
+      { type: 'MATCHED', payload: actionFoo }
+    ];
+    beforeEach(done => {
+      monArr = [];
+      next = expect.createSpy();
+      dispatch = expect.createSpy();
+      logicA = createLogic({
+        type: 'ASTART',
+        cancelType: 'AEND',
+        // listen to action$
+        process({ action$ }) {
+          return action$.pipe(
+            filter(a => a.type === 'FOO' || a.type === 'BAR'),
+            map(a => ({
+              type: 'MATCHED',
+              payload: a
+            }))
+          );
+        }
+      });
+      mw = createLogicMiddleware([logicA]);
+      mw.monitor$.subscribe(x => monArr.push(x));
+      const mwInstance = mw({ dispatch })(next);
+      actionStack.forEach(x => mwInstance(x));
+      mw.whenComplete(done);
+    });
+
+    it('passes actionFoo through next', () => {
+      expect(next.calls.length).toBe(8);
+      actionStack.forEach((x, i) =>
+        expect(next.calls[i].arguments[0]).toEqual(x));
+    });
+
+    it('dispatches { type: BAR }', () => {
+      expect(dispatch.calls.length).toBe(3);
+      dispatchStack.forEach((x, i) =>
+        expect(dispatch.calls[i].arguments[0]).toEqual(x));
+    });
+
+    it('mw.monitor$ should track flow', () => {
+      expect(monArr).toEqual([
+        { action: { type: 'FOO' }, op: 'top' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'ASTART' }, op: 'top' },
+        { action: { type: 'ASTART' }, name: 'L(ASTART)-0', op: 'begin' },
+        { action: { type: 'ASTART' },
+          nextAction: { type: 'ASTART' },
+          name: 'L(ASTART)-0',
+          shouldProcess: true,
+          op: 'next' },
+        { nextAction: { type: 'ASTART' }, op: 'bottom' },
+        { action: { type: 'FOO' }, op: 'top' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'ASTART' },
+          dispAction: { type: 'MATCHED', payload: { type: 'FOO' } },
+          op: 'dispatch' },
+        { action: { type: 'BAR' }, op: 'top' },
+        { nextAction: { type: 'BAR' }, op: 'bottom' },
+        { action: { type: 'ASTART' },
+          dispAction: { type: 'MATCHED', payload: { type: 'BAR' } },
+          op: 'dispatch' },
+        { action: { type: 'FOO' }, op: 'top' },
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
+        { action: { type: 'ASTART' },
+          dispAction: { type: 'MATCHED', payload: { type: 'FOO' } },
+          op: 'dispatch' },
+        { action: { type: 'CAT' }, op: 'top' },
+        { nextAction: { type: 'CAT' }, op: 'bottom' },
+        { action: { type: 'AEND' }, op: 'top' },
+        { nextAction: { type: 'AEND' }, op: 'bottom' },
+        { action: { type: 'ASTART' },
+          name: 'L(ASTART)-0',
+          op: 'dispCancelled' },
+        { action: { type: 'ASTART' }, name: 'L(ASTART)-0', op: 'end' },
+        { action: { type: 'BAR' }, op: 'top' },
+        { nextAction: { type: 'BAR' }, op: 'bottom' }
+      ]);
+    });
+
+    it('mw.whenComplete(fn) should be called when complete', (done) => {
+      mw.whenComplete(done);
+    });
+
+  });
 
 });

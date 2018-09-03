@@ -28,7 +28,7 @@ export default function logicWrapper(logic, store, deps, monitor$) {
       (throttle) ? throttleTime(throttle) : null,
       mergeMap(action =>
         createLogicAction$({ action, logic, store, deps,
-          cancel$, monitor$ }))
+          cancel$, monitor$, action$ }))
     ].filter(identityFn);
 
     const matchingAction$ = action$.pipe(...matchingOps);
