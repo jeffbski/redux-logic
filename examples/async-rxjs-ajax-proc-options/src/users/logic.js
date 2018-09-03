@@ -1,3 +1,4 @@
+import { map } from 'rxjs/operators';
 import { createLogic } from 'redux-logic';
 import { USERS_FETCH, USERS_FETCH_CANCEL, usersFetchFulfilled,
          usersFetchRejected } from './actions';
@@ -20,8 +21,9 @@ export const usersFetchLogic = createLogic({
   // but they were not needed for this particular code
   process({ httpClient }) {
     // the delay query param adds arbitrary delay to the response
-    return httpClient.getJSON(`https://reqres.in/api/users?delay=${delay}`)
-      .map(payload => payload.data); // use data property of payload
+    return httpClient(`https://reqres.in/api/users?delay=${delay}`).pipe(
+      map(payload => payload.data) // use data property of payload
+    );
   }
 });
 
