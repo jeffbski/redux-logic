@@ -1,18 +1,18 @@
 'use strict';
 
-var webpack = require('webpack');
-var rxPaths = require('rxjs/_esm5/path-mapping');
-var babelOptions = require('./babel.config');
+const webpack = require('webpack');
+const rxPaths = require('rxjs/_esm5/path-mapping');
+const babelOptions = require('./babel.config');
 
-var env = process.env.NODE_ENV || 'production';
+const env = process.env.NODE_ENV || 'production';
 
 // default production build will tree shake and minimize
 // we have both a minimized and unminimized production build for umd
-var MINIMIZE = (process.env.MINIMIZE && process.env.MINIMIZE === 'false') ? false :
+const MINIMIZE = (process.env.MINIMIZE && process.env.MINIMIZE === 'false') ? false :
   (env === 'production') ? true :
   false;
 
-var config = {
+const config = {
   mode: env,
   optimization: {
     minimize: MINIMIZE
