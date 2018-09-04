@@ -71,6 +71,7 @@
   },
   "homepage": "https://github.com/jeffbski/redux-logic",
   "dependencies": {
+    "core-js": "^2.5.7",
     "is-promise": "^2.1.0",
     "loose-envify": "^1.4.0",
     "rxjs": "^5.5.11",
@@ -91,7 +92,6 @@
     "babel-loader": "^8.0.1",
     "babel-plugin-istanbul": "^5.0.1",
     "browserslist": "^4.1.0",
-    "core-js": "^2.5.7",
     "cross-env": "^5.2.0",
     "eslint": "^5.5.0",
     "eslint-config-airbnb-base": "^13.1.0",
