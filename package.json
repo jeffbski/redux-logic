@@ -47,7 +47,7 @@
     "debug-build": "cross-env CI=true npm run build:commonjs && cross-env CI=true npm run build:es && cross-env CI=true npm run build:umd && cross-env CI=true npm run build:umd:min",
     "fullbuild:examples": "cross-env BABEL_ENV=commonjs node examples/fullBuildAll.js",
     "prepublish": "npm run clean && npm run check:src && npm run build && npm run escheck",
-    "publish-tag-next": "npm publish --tag next"
+    "publish-tag-next": "npm publish --tag next && npm view"
   },
   "repository": {
     "type": "git",
