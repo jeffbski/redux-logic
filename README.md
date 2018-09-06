@@ -313,7 +313,8 @@ See the [docs for the full api](./docs/api.md)
 
  - [search async axios fetch](https://codesandbox.io/s/6zv883qnqk) - live search using debounce and take latest functionality with axios fetch
  - [search rxjs ajax fetch](https://codesandbox.io/s/rm16mzz94n) - live search using debounce and take latest functionality with rxjs ajax fetch
- - [search rxjs ajax fetch - using processOptions](https://codesandbox.io/s/lyw0225pr9) - live search using debounce and take latest with rxjs ajax fetch using processOptions to streamline the code
+ - [search rxjs ajax fetch - using processOptions](https://codesandbox.io/s/lyw0225pr9) - live search using debounce and take latest with rxjs ajax fetch using processOptions to streamline the code, user logic using rxjs@5
+ - [search rxjs6 ajax fetch - using processOptions](https://codesandbox.io/s/q7oo6wo2n6) - live search using debounce and take latest with rxjs ajax fetch using processOptions to streamline the code, user logic using rxjs@6
  - [async axios fetch - single page](https://codesandbox.io/s/82xjxx3kp2) - displayed using React
  - [async rxjs-ajax fetch](https://codesandbox.io/s/1o14zmz4rq) - async fetching using RxJS ajax which supports XHR abort for cancels
  - [async axios fetch - single page redux only](https://codesandbox.io/s/2w1lkpq19p) - just the redux and redux-logic code
