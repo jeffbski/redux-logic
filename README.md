@@ -98,6 +98,18 @@ Full release notes of breaking and notable changes are available in [releases](h
 
 A few recent changes that are noteworthy:
 
+### v2.0.0
+
+Updated to RxJS@6. Your logic code can continue to use RxJS@5 until
+you are ready to upgrade to 6.
+
+Optimizations to reduce the stack used, especially if a subset of
+features is used.
+
+### v1.0.0
+
+Transpilation switched to Babel 7 and Webpack 4
+
 ### v0.12
 
 These changes are not breaking but they are noteworthy since they prepare for the next version which will be breaking mainly to remove the single dispatch version of process hook which has been a source of confusion.
@@ -130,15 +142,15 @@ These changes are not breaking but they are noteworthy since they prepare for th
 
 ## Usage
 
-redux-logic uses rxjs@5 under the covers and to prevent multiple copies (of different versions) from being installed, it is recommended to install rxjs first before redux-logic. That way you can use the same copy of rxjs elsewhere.
+redux-logic uses rxjs@6 under the covers and to prevent multiple copies (of different versions) from being installed, it is recommended to install rxjs first before redux-logic. That way you can use the same copy of rxjs elsewhere.
 
 If you are never using rxjs outside of redux-logic and don't plan to use Observables directly in your logic then you can skip the rxjs install and it will be installed as a redux-logic dependency. However if you think you might use Observables directly in the future (possibly creating Observables in your logic), it is still recommended to install rxjs separately first
 just to help ensure that only one copy will be in the project.
 
-The rxjs install below `npm install rxjs@^5` installs the lastest 5.x.x version of rxjs.
+The rxjs install below `npm install rxjs@^6` installs the lastest 6.x.x version of rxjs.
 
 ```bash
-npm install rxjs@^5 --save  # optional see note above
+npm install rxjs@^6 --save  # optional see note above
 npm install redux-logic --save
 ```
 
@@ -401,12 +413,12 @@ redux-logic was inspired from these projects:
 
 ## Minimized/gzipped size with all deps
 
-(redux-logic only includes the modules of RxJS 5 that it uses)
+(redux-logic only includes the modules of RxJS 6 that it uses)
 ```
-redux-logic.min.js.gz 12KB
+redux-logic.min.js.gz 18KB
 ```
 
-Note: If you are already including RxJS 5 into your project then the resulting delta will be much smaller.
+Note: If you are already including RxJS 6 into your project then the resulting delta will be much smaller.
 
 ## TODO
 
