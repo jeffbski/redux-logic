@@ -1,26 +1,23 @@
 import isPromise from 'is-promise';
-import { Observable, Subject, from, of, throwError, timer, isObservable } from 'rxjs';
-import { defaultIfEmpty, tap, filter, map, mergeAll, take, takeUntil} from 'rxjs/operators';
-import { identityFn } from './utils';
-
-const UNHANDLED_LOGIC_ERROR = 'UNHANDLED_LOGIC_ERROR';
-const NODE_ENV = process.env.NODE_ENV;
+import { Observable, Subject } from 'rxjs';
+import { take, takeUntil} from 'rxjs/operators';
+import { identityFn, wrapActionForIntercept } from './utils';
+import createDepObject from './createDepObject';
+import execProcessFn from './execProcessFn';
+import createDispatch from './createDispatch';
+import createCancelled$ from './createCancelled$';
 
 const debug = (/* ...args */) => {};
 
 export default function createLogicAction$({ action, logic, store, deps,
   cancel$, monitor$, action$ }) {
   const { getState } = store;
-  const { name, warnTimeout, process: processFn,
-    processOptions: { dispatchReturn, dispatchMultiple,
-      successType, failType } } = logic;
+  const { name, process: processFn, processOptions: { dispatchReturn,
+    dispatchMultiple, successType, failType } } = logic;
   const intercept = logic.validate || logic.transform; // aliases
 
   debug('createLogicAction$', name, action);
-  monitor$.next({ action, name, op: 'begin' });
-
-  // once action reaches bottom, filtered, nextDisp, or cancelled
-  let interceptComplete = false;
+  monitor$.next({ action, name, op: 'begin' }); // also in logicWrapper
 
   const logicActionOps = [
     (cancel$) ? takeUntil(cancel$) : null, // only takeUntil if cancel or latest
@@ -31,175 +28,16 @@ export default function createLogicAction$({ action, logic, store, deps,
   const logicAction$ = Observable.create(logicActionObs => {
     // create notification subject for process which we dispose of
     // when take(1) or when we are done dispatching
-    const cancelled$ = (new Subject()).pipe(
-      take(1)
-    );
-    if (cancel$) {
-      cancel$.subscribe(cancelled$); // connect cancelled$ to cancel$
-      cancelled$
-        .subscribe(
-          () => {
-            if (!interceptComplete) {
-              monitor$.next({ action, name, op: 'cancelled' });
-            } else { // marking these different so not counted twice
-              monitor$.next({ action, name, op: 'dispCancelled' });
-            }
-          }
-        );
-    }
+    const { cancelled$, setInterceptComplete } = createCancelled$({
+      action, cancel$, monitor$, logic });
 
-    // In non-production mode only we will setup a warning timeout that
-    // will console.error if logic has not completed by the time it fires
-    // warnTimeout can be set to 0 to disable
-    if (NODE_ENV !== 'production' && warnTimeout) {
-      timer(warnTimeout).pipe(
-        // take until cancelled, errored, or completed
-        takeUntil(cancelled$.pipe(defaultIfEmpty(true))),
-        tap(() => {
-          // eslint-disable-next-line no-console
-          console.error(`warning: logic (${name}) is still running after ${warnTimeout / 1000}s, forget to call done()? For non-ending logic, set warnTimeout: 0`);
-        })
-      ).subscribe();
-    }
-
-    const dispatchOps = [
-      mergeAll(),
-      (cancel$) ? takeUntil(cancel$) : null // only takeUntil if cancel or latest
-    ].filter(identityFn);
-
-    const dispatch$ = (new Subject()).pipe(...dispatchOps);
-    dispatch$.pipe(
-      tap(
-        mapToActionAndDispatch, // next
-        mapErrorToActionAndDispatch // error
-      )
-    ).subscribe({
-      error: (/* err */) => {
-        monitor$.next({ action, name, op: 'end' });
-        // signalling complete here since error was dispatched
-        // accordingly, otherwise if we were to signal an error here
-        // then cancelled$ subscriptions would have to specifically
-        // handle error in subscribe otherwise it will throw. So
-        // it doesn't seem that it is worth it.
-        cancelled$.complete();
-        cancelled$.unsubscribe();
-      },
-      complete: () => {
-        monitor$.next({ action, name, op: 'end' });
-        cancelled$.complete();
-        cancelled$.unsubscribe();
-      }
-    });
-
-    function storeDispatch(act) {
-      monitor$.next({ action, dispAction: act, op: 'dispatch' });
-      return store.dispatch(act);
-    }
-
-    function mapToActionAndDispatch(actionOrValue) {
-      const act =
-        (isInterceptAction(actionOrValue)) ? unwrapInterceptAction(actionOrValue) :
-          (successType) ? mapToAction(successType, actionOrValue, false) :
-          actionOrValue;
-      if (act) {
-        storeDispatch(act);
-      }
-    }
-
-    /* eslint-disable consistent-return */
-    function mapErrorToActionAndDispatch(actionOrValue) {
-      // action dispatched from intercept needs to be unwrapped and sent as is
-      /* istanbul ignore if  */
-      if (isInterceptAction(actionOrValue)) {
-        const interceptAction = unwrapInterceptAction(actionOrValue);
-        return storeDispatch(interceptAction);
-      }
-
-      if (failType) {
-        // we have a failType, if truthy result we will use it
-        const act = mapToAction(failType, actionOrValue, true);
-        if (act) {
-          return storeDispatch(act);
-        }
-        return; // falsey result from failType, no dispatch
-      }
-
-      // no failType so must wrap values with no type
-      if (actionOrValue instanceof Error) {
-        const act =
-          (actionOrValue.type) ? actionOrValue : // has type
-            {
-              type: UNHANDLED_LOGIC_ERROR,
-              payload: actionOrValue,
-              error: true
-            };
-        return storeDispatch(act);
-      }
-
-      // dispatch objects or functions as is
-      const typeOfValue = typeof actionOrValue;
-      if (actionOrValue && ( // not null and is object | fn
-        typeOfValue === 'object' || typeOfValue === 'function')) {
-        return storeDispatch(actionOrValue);
-      }
-
-      // wasn't an error, obj, or fn, so we will wrap in unhandled
-      storeDispatch({
-        type: UNHANDLED_LOGIC_ERROR,
-        payload: actionOrValue,
-        error: true
-      });
-    }
-    /* eslint-enable consistent-return */
-
-    function mapToAction(type, payload, err) {
-      if (typeof type === 'function') { // action creator fn
-        return type(payload);
-      }
-      const act = { type, payload };
-      if (err) { act.error = true; }
-      return act;
-    }
-
-    // allowMore is now deprecated in favor of variable process arity
-    // which sets processOptions.dispatchMultiple = true then
-    // expects done() cb to be called to end
-    // Might still be needed for internal use so keeping it for now
-    const DispatchDefaults = {
-      allowMore: false
-    };
-
-    function dispatch(act, options = DispatchDefaults) {
-      const { allowMore } = applyDispatchDefaults(options);
-      if (typeof act !== 'undefined') { // ignore empty action
-        dispatch$.next( // create obs for mergeAll
-          // eslint-disable-next-line no-nested-ternary
-          (isObservable(act)) ? act :
-          (isPromise(act)) ? from(act) :
-          (act instanceof Error) ? throwError(act) :
-          of(act)
-        );
-      }
-      if (!(dispatchMultiple || allowMore)) { dispatch$.complete(); }
-      return act;
-    }
-
-    function applyDispatchDefaults(options) {
-      return {
-        ...DispatchDefaults,
-        ...options
-      };
-    }
+    const { dispatch, dispatch$, done } = createDispatch({
+      action, cancel$, cancelled$, logic, monitor$, store });
 
     // passed into each execution phase hook as first argument
-    const depObj = {
-      ...deps,
-      cancelled$,
-      ctx: {}, // for sharing data between hooks
-      getState,
-      action,
-      action$
-    };
+    const ctx = {}; // for sharing data between hooks
+    const depObj = createDepObject({ deps, cancelled$, ctx, getState, action, action$ });
+
 
     function shouldDispatch(act, useDispatch) {
       if (!act) { return false; }
@@ -228,36 +66,13 @@ export default function createLogicAction$({ action, logic, store, deps,
       handleNextOrDispatch(false, act, options);
     }
 
-    function done() {
-      dispatch$.complete();
-    }
-
-    // we want to know that this was from intercept (validate/transform)
-    // so that we don't apply any processOptions wrapping to it
-    function wrapActionForIntercept(act) {
-      /* istanbul ignore if  */
-      if (!act) { return act; }
-      return {
-        __interceptAction: act
-      };
-    }
-
-    function isInterceptAction(act) {
-      // eslint-disable-next-line no-underscore-dangle
-      return act && act.__interceptAction;
-    }
-
-    function unwrapInterceptAction(act) {
-      // eslint-disable-next-line no-underscore-dangle
-      return act.__interceptAction;
-    }
 
     function handleNextOrDispatch(shouldProcess, act, options) {
       const shouldProcessAndHasProcessFn = shouldProcess && processFn;
       const { useDispatch } = applyAllowRejectNextDefaults(options);
       if (shouldDispatch(act, useDispatch)) {
         monitor$.next({ action, dispAction: act, name, shouldProcess, op: 'nextDisp' });
-        interceptComplete = true;
+        setInterceptComplete();
         dispatch(wrapActionForIntercept(act), { allowMore: true }); // will be completed later
         logicActionObs.complete(); // dispatched action, so no next(act)
       } else { // normal next
@@ -265,7 +80,7 @@ export default function createLogicAction$({ action, logic, store, deps,
           monitor$.next({ action, nextAction: act, name, shouldProcess, op: 'next' });
         } else { // act is undefined, filtered
           monitor$.next({ action, name, shouldProcess, op: 'filtered' });
-          interceptComplete = true;
+          setInterceptComplete();
         }
         postIfDefinedOrComplete(act, logicActionObs);
       }
@@ -274,22 +89,9 @@ export default function createLogicAction$({ action, logic, store, deps,
       if (shouldProcessAndHasProcessFn) { // processing, was an accept
         // if action provided is empty, give process orig
         depObj.action = act || action;
-        try {
-          const retValue = processFn(depObj, dispatch, done);
-          if (dispatchReturn) { // processOption.dispatchReturn true
-            // returning undefined won't dispatch
-            if (typeof retValue === 'undefined') {
-              dispatch$.complete();
-            } else { // defined return value, dispatch
-              dispatch(retValue);
-            }
-          }
-        } catch (err) {
-          // eslint-disable-next-line no-console
-          console.error(`unhandled exception in logic named: ${name}`, err);
-          // wrap in observable since might not be an error object
-          dispatch(throwError(err));
-        }
+
+        execProcessFn({ depObj, dispatch, done, processFn,
+          dispatchReturn, dispatch$, name });
       } else { // not processing, must have been a reject
         dispatch$.complete();
       }
@@ -300,15 +102,12 @@ export default function createLogicAction$({ action, logic, store, deps,
       if (act) {
         act$.next(act);  // triggers call to middleware's next()
       }
-      interceptComplete = true;
+      setInterceptComplete();
       act$.complete();
     }
 
     // start use of the action
     function start() {
-      if (!intercept) { // shortcut to only do processing
-        return allow(depObj.action);
-      }
       // normal intercept and processing
       return intercept(depObj, allow, reject);
     }

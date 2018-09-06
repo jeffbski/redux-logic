@@ -1,12 +1,10 @@
 import { Subject, BehaviorSubject } from 'rxjs';
 import { filter, map, scan, takeWhile } from 'rxjs/operators';
 import wrapper from './logicWrapper';
-import { stringifyType } from './utils';
+import { identityFn, stringifyType } from './utils';
 
 const debug = (/* ...args */) => {};
 const OP_INIT = 'init'; // initial monitor op before anything else
-
-function identity(x) { return x; }
 
 /**
    Builds a redux middleware for handling logic (created with
@@ -109,7 +107,7 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
      @param {function} fn optional fn() which is invoked on completion
      @return {promise} promise resolves when all are complete
     */
-  mw.whenComplete = function whenComplete(fn = identity) {
+  mw.whenComplete = function whenComplete(fn = identityFn) {
     return lastPending$.pipe(
       // tap(x => console.log('wc', x)), /* keep commented out */
       takeWhile(x => x.pending),

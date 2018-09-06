@@ -18,13 +18,13 @@ describe('createLogicMiddleware-throttle', () => {
     let dispatch;
     const actionFoo1 = { type: 'FOO', id: 1 };
     const actionFoo2 = { type: 'FOO', id: 2 };
-    beforeEach(done => {
-      next = expect.createSpy().andCall(() => done());
+    beforeEach(bDone => {
+      next = expect.createSpy().andCall(() => bDone());
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 0) {
-          done();
+          bDone();
         }
       }
       logicA = createLogic({
@@ -59,13 +59,13 @@ describe('createLogicMiddleware-throttle', () => {
     let dispatch;
     const actionFoo1 = { type: 'FOO', id: 1 };
     const actionFoo2 = { type: 'FOO', id: 2 };
-    beforeEach(done => {
-      next = expect.createSpy().andCall(() => done());
+    beforeEach(bDone => {
+      next = expect.createSpy().andCall(() => bDone());
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 0) {
-          done();
+          bDone();
         }
       }
       logicA = createLogic({
@@ -101,13 +101,13 @@ describe('createLogicMiddleware-throttle', () => {
     const actionFoo1 = { type: 'FOO', id: 1 };
     const actionFoo2 = { type: 'FOO', id: 2 };
     const actionResult = { type: 'FOO', id: 1, trans: ['a'] };
-    beforeEach(done => {
-      next = expect.createSpy().andCall(() => done());
+    beforeEach(bDone => {
+      next = expect.createSpy().andCall(() => bDone());
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 0) {
-          done();
+          bDone();
         }
       }
       logicA = createLogic({
@@ -146,12 +146,12 @@ describe('createLogicMiddleware-throttle', () => {
     const actionFoo1 = { type: 'FOO', id: 1 };
     const actionFoo2 = { type: 'FOO', id: 2 };
     const actionResultFoo1 = { type: 'BAR', id: 1 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
-        if (++dispatchCount >= 1) { done(); }
+        if (++dispatchCount >= 1) { bDone(); }
       }
       logicA = createLogic({
         type: 'FOO',
@@ -194,12 +194,12 @@ describe('createLogicMiddleware-throttle', () => {
     const actionFoo2 = { type: 'FOO', id: 2 };
     const actionSyncResult1 = { type: 'BAR', id: 1 };
     const actionResultFoo1 = { type: 'CAT', id: 1 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
-        if (++dispatchCount >= 2) { done(); }
+        if (++dispatchCount >= 2) { bDone(); }
       }
       logicA = createLogic({
         type: 'FOO',
@@ -250,12 +250,12 @@ describe('createLogicMiddleware-throttle', () => {
     const actionFoo2 = { type: 'FOO', id: 2 };
     const actionSyncResult1 = { type: 'BAR', id: 1 };
     const actionResultFoo1 = { type: 'CAT', id: 1 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
-        if (++dispatchCount >= 2) { done(); }
+        if (++dispatchCount >= 2) { bDone(); }
       }
       logicA = createLogic({
         type: 'FOO',

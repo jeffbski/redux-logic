@@ -86,11 +86,13 @@ describe('createLogicMiddleware-many-logic', () => {
   });
 
   describe('with process', () => {
-    const NUM_LOGICS = 280; // 340 with cancel optimization
+    // single-test 240, with mergeMapOrTap 450
+    // full suite 350, with mergeMapOrTap 540
+    const NUM_LOGICS = 280; // 350 with optimizations
     let mw;
     let store;
 
-    beforeEach(() => {
+    beforeEach(bDone => {
       const arrLogic = range(0, NUM_LOGICS).map(() => createLogic({
         type: 'foo',
         process({ action }, dispatch, done) {
@@ -117,6 +119,7 @@ describe('createLogicMiddleware-many-logic', () => {
       };
       store = createStore(reducer, undefined, applyMiddleware(mw));
       store.dispatch({ type: 'foo', validates: 0 });
+      mw.whenComplete(() => bDone());
     });
 
     it('expect state to be updated', () => {

@@ -88,12 +88,12 @@ describe('createLogic', () => {
 
   describe('debounce', () => {
     let dispatch;
-    beforeEach((done) => {
+    beforeEach((bDone) => {
       const next = expect.createSpy();
       dispatch = expect.createSpy().andCall(check);
       function check(action) {
         // last dispatch should be slow: 3
-        if (action.slow === 3) { done(); }
+        if (action.slow === 3) { bDone(); }
       }
       const logicA = createLogic({
         type: 'FOO',
@@ -140,12 +140,12 @@ describe('createLogic', () => {
 
   describe('debounce and latest', () => {
     let dispatch;
-    beforeEach((done) => {
+    beforeEach((bDone) => {
       const next = expect.createSpy();
       dispatch = expect.createSpy().andCall(check);
       function check(action) {
         // last dispatch should be slow: 3
-        if (action.slow === 3) { done(); }
+        if (action.slow === 3) { bDone(); }
       }
       const logicA = createLogic({
         type: 'FOO',
@@ -193,7 +193,7 @@ describe('createLogic', () => {
 
   describe('throttle', () => {
     let dispatch;
-    beforeEach((done) => {
+    beforeEach((bDone) => {
       const asyncProcessDelay = 100; // simulate slow service
       const next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -232,7 +232,7 @@ describe('createLogic', () => {
         },
         complete: () => {
           setTimeout(() => {
-            done();
+            bDone();
           }, asyncProcessDelay + 20); // add margin
         }
       });
@@ -247,7 +247,7 @@ describe('createLogic', () => {
 
   describe('throttle and latest', () => {
     let dispatch;
-    beforeEach((done) => {
+    beforeEach((bDone) => {
       const asyncProcessDelay = 100; // simulate slow service
       const next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -287,7 +287,7 @@ describe('createLogic', () => {
         },
         complete: () => {
           setTimeout(() => {
-            done();
+            bDone();
           }, asyncProcessDelay + 20); // add margin
         }
       });
@@ -304,7 +304,7 @@ describe('createLogic', () => {
 
   describe('debounce and throttle', () => {
     let dispatch;
-    beforeEach((done) => {
+    beforeEach((bDone) => {
       const asyncProcessDelay = 100; // simulate slow service
       const next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -344,7 +344,7 @@ describe('createLogic', () => {
         },
         complete: () => {
           setTimeout(() => {
-            done();
+            bDone();
           }, asyncProcessDelay + 20); // add margin
         }
       });
@@ -359,7 +359,7 @@ describe('createLogic', () => {
 
   describe('debounce, throttle, and latest', () => {
     let dispatch;
-    beforeEach((done) => {
+    beforeEach((bDone) => {
       const asyncProcessDelay = 100; // simulate slow service
       const next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -400,7 +400,7 @@ describe('createLogic', () => {
         },
         complete: () => {
           setTimeout(() => {
-            done();
+            bDone();
           }, asyncProcessDelay + 100); // add margin
         }
       });

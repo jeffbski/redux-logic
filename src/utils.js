@@ -8,3 +8,23 @@ export function stringifyType(type) {
          type.map(type => type.toString()) :
          type.toString();
 }
+
+// we want to know that this was from intercept (validate/transform)
+// so that we don't apply any processOptions wrapping to it
+export function wrapActionForIntercept(act) {
+  /* istanbul ignore if  */
+  if (!act) { return act; }
+  return {
+    __interceptAction: act
+  };
+}
+
+export function isInterceptAction(act) {
+  // eslint-disable-next-line no-underscore-dangle
+  return act && act.__interceptAction;
+}
+
+export function unwrapInterceptAction(act) {
+  // eslint-disable-next-line no-underscore-dangle
+  return act.__interceptAction;
+}

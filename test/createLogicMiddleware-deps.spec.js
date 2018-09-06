@@ -49,10 +49,10 @@ describe('createLogicMiddleware-deps', () => {
     let allDeps;
     const origState = { a: 1 };
     const origDeps = undefined;
-    beforeEach((done) => {
+    beforeEach((bDone) => {
       createAndGatherDeps(origState, origDeps, resultDeps => {
         allDeps = resultDeps;
-        done();
+        bDone();
       });
     });
 
@@ -83,10 +83,10 @@ describe('createLogicMiddleware-deps', () => {
     let allDeps;
     const origState = { a: 1 };
     const origDeps = { y: 42, z: 'hello' };
-    beforeEach((done) => {
+    beforeEach((bDone) => {
       createAndGatherDeps(origState, origDeps, resultDeps => {
         allDeps = resultDeps;
-        done();
+        bDone();
       });
     });
 
@@ -118,11 +118,11 @@ describe('createLogicMiddleware-deps', () => {
   });
 
   describe('RW ctx object is passed between execution hooks', () => {
-    it('should allow read/write in the hooks', done => {
+    it('should allow read/write in the hooks', bDone => {
       const getState = () => {};
       const origDeps = undefined;
       const next = expect.createSpy();
-      const dispatch = expect.createSpy().andCall(() => done());
+      const dispatch = expect.createSpy().andCall(() => bDone());
       const logicA = createLogic({
         type: '*',
         validate({ action, ctx }, allow /* , reject */) {
@@ -142,7 +142,7 @@ describe('createLogicMiddleware-deps', () => {
   });
 
   describe('cancelled$', () => {
-    it('should indicate cancellation', done => {
+    it('should indicate cancellation', itDone => {
       const getState = () => {};
       const origDeps = undefined;
       const next = expect.createSpy();
@@ -150,12 +150,13 @@ describe('createLogicMiddleware-deps', () => {
       const logicA = createLogic({
         type: 'FOO',
         cancelType: 'FOO_CANCEL',
-        process({ cancelled$ }, dispatch) {
+        process({ cancelled$ }, dispatch, done) {
           cancelled$.subscribe({
-            next: () => done() // should be cancelled
+            next: x => itDone() // should be cancelled
           });
           setTimeout(() => {
             dispatch({ type: 'BAR' });
+            done();
           }, 30);
           fireNextAction();
         }
@@ -169,7 +170,7 @@ describe('createLogicMiddleware-deps', () => {
       }
     });
 
-    it('should indicate completion even if not cancelled', done => {
+    it('should indicate completion even if not cancelled', bDone => {
       const getState = () => {};
       const origDeps = undefined;
       const next = expect.createSpy();
@@ -179,7 +180,7 @@ describe('createLogicMiddleware-deps', () => {
         cancelType: 'FOO_CANCEL',
         process({ cancelled$ }, dispatch) {
           cancelled$.subscribe({
-            complete: () => done() // should be completed regardless
+            complete: () => bDone() // should be completed regardless
           });
           setTimeout(() => {
             dispatch({ type: 'BAR' });
@@ -191,7 +192,7 @@ describe('createLogicMiddleware-deps', () => {
       storeFn(actionFoo);
     });
 
-    it('should indicate completion when error occurred', done => {
+    it('should indicate completion when error occurred', bDone => {
       const getState = () => {};
       const origDeps = undefined;
       const next = expect.createSpy();
@@ -202,7 +203,7 @@ describe('createLogicMiddleware-deps', () => {
         // eslint-disable-next-line no-unused-vars
         process({ cancelled$ }, dispatch) {
           cancelled$.subscribe({
-            complete: () => done() // should be completed regardless
+            complete: () => bDone() // should be completed regardless
           });
 
           throw new Error('bar');

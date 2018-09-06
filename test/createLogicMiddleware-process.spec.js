@@ -11,7 +11,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -24,7 +24,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -50,8 +50,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -63,7 +63,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -76,7 +76,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -102,8 +102,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -117,10 +117,10 @@ describe('createLogicMiddleware-process', () => {
     const actionFoo = { type: 'FOO' };
     const actionBar = { type: 'BAR', a: 1 };
     let dispatchReturnValue;
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
-      dispatch = expect.createSpy().andCall(() => done());
+      dispatch = expect.createSpy().andCall(() => bDone());
       logicA = createLogic({
         type: 'FOO',
         process(deps, dispatch) {
@@ -162,8 +162,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -177,10 +177,10 @@ describe('createLogicMiddleware-process', () => {
     const actionFoo = { type: 'FOO' };
     const actionBar = { type: 'BAR', a: null };
     let dispatchReturnValue;
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
-      dispatch = expect.createSpy().andCall(() => done());
+      dispatch = expect.createSpy().andCall(() => bDone());
       logicA = createLogic({
         type: 'FOO',
         process(deps, dispatch) {
@@ -222,8 +222,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -235,7 +235,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -249,7 +249,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -298,8 +298,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -311,7 +311,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -326,7 +326,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -367,8 +367,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -380,7 +380,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -396,7 +396,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -445,8 +445,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
   });
 
@@ -459,7 +459,7 @@ describe('createLogicMiddleware-process', () => {
     const actionFoo = { type: 'FOO' };
     const actionBar = { type: 'BAR', a: 1 };
     const actionCat = { type: 'CAT', a: 1 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
@@ -467,7 +467,7 @@ describe('createLogicMiddleware-process', () => {
       function cb() {
         if (++dispatchCount >= 2) {
           // handling with whenComplete()
-          // done();
+          // bDone();
         }
       }
       logicA = createLogic({
@@ -480,7 +480,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -514,8 +514,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -528,15 +528,15 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionBar = { type: 'BAR', a: 1 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 1) {
-          // done();
-          // use whenComplete to trigger done
+          // bDone();
+          // use whenComplete to trigger bDone
         }
       }
       logicA = createLogic({
@@ -549,7 +549,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -579,8 +579,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -594,7 +594,7 @@ describe('createLogicMiddleware-process', () => {
     const actionFoo = { type: 'FOO' };
     const actionBar = { type: 'BAR', a: 1 };
     const actionCat = { type: 'CAT', a: 1 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
@@ -602,7 +602,7 @@ describe('createLogicMiddleware-process', () => {
       function cb() {
         if (++dispatchCount >= 2) {
           // handling with whenComplete()
-          // done();
+          // bDone();
         }
       }
       logicA = createLogic({
@@ -616,7 +616,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -650,8 +650,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -666,7 +666,7 @@ describe('createLogicMiddleware-process', () => {
     const actionBar = { type: 'BAR', a: 1 };
     const actionCat = { type: 'CAT', a: 1 };
     const actionFooCancel = { type: 'FOO_CANCEL' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
@@ -674,7 +674,7 @@ describe('createLogicMiddleware-process', () => {
       function cb() {
         if (++dispatchCount >= 2) {
           // handling with whenComplete()
-          // done();
+          // bDone();
         }
       }
       logicA = createLogic({
@@ -692,7 +692,7 @@ describe('createLogicMiddleware-process', () => {
       mw.monitor$.subscribe(x => monArr.push(x));
       const storeFn = mw({ dispatch })(next);
       storeFn(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
       setTimeout(() => { storeFn(actionFooCancel); }, 100);
     });
 
@@ -733,8 +733,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -747,15 +747,15 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionBar = { type: 'BAR', a: 1 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 1) {
-          // done();
-          // use whenComplete to trigger done
+          // bDone();
+          // use whenComplete to trigger bDone
         }
       }
       logicA = createLogic({
@@ -769,7 +769,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -799,8 +799,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -813,15 +813,15 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionBar = { type: 'BAR', a: 1 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 1) {
-          // done();
-          // use whenComplete to trigger done
+          // bDone();
+          // use whenComplete to trigger bDone
         }
       }
       logicA = createLogic({
@@ -835,7 +835,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -865,8 +865,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -880,15 +880,15 @@ describe('createLogicMiddleware-process', () => {
     const actionFoo = { type: 'FOO' };
     const actionBar = { type: 'BAR', a: 1 };
     const actionCat = { type: 'CAT', a: 1 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 2) {
-          // done();
-          // whenComplete triggers done
+          // bDone();
+          // whenComplete triggers bDone
         }
       }
       logicA = createLogic({
@@ -900,7 +900,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -934,8 +934,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -949,15 +949,15 @@ describe('createLogicMiddleware-process', () => {
     const actionFoo = { type: 'FOO' };
     const actionBar = { type: 'BAR', a: 1 };
     const actionCat = { type: 'CAT', a: 1 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 2) {
-          // done();
-          // whenComplete triggers done
+          // bDone();
+          // whenComplete triggers bDone
         }
       }
       logicA = createLogic({
@@ -971,7 +971,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -1005,8 +1005,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -1021,15 +1021,15 @@ describe('createLogicMiddleware-process', () => {
     const actionBar = { type: 'BAR', a: 1 };
     const actionCat = { type: 'CAT', a: 1 };
     const actionDog = { type: 'DOG', a: 1 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 3) {
-          // done();
-          // use whenComplete to trigger done
+          // bDone();
+          // use whenComplete to trigger bDone
         }
       }
       logicA = createLogic({
@@ -1043,7 +1043,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -1081,8 +1081,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -1098,15 +1098,15 @@ describe('createLogicMiddleware-process', () => {
     const actionCat = { type: 'CAT', a: 1 };
     const actionDog = { type: 'DOG', a: 1 };
     const actionEgg = { type: 'EGG', a: 1 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 4) {
-          // done();
-          // use whenComplete to trigger done
+          // bDone();
+          // use whenComplete to trigger bDone
         }
       }
       logicA = createLogic({
@@ -1122,7 +1122,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -1164,8 +1164,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -1182,15 +1182,15 @@ describe('createLogicMiddleware-process', () => {
     const actionDog = { type: 'DOG', a: 1 };
     const actionEgg = { type: 'EGG', a: 1 };
     const actionFig = { type: 'FIG', a: 1 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 5) {
-          // done();
-          // use whenComplete to trigger done
+          // bDone();
+          // use whenComplete to trigger bDone
         }
       }
       logicA = createLogic({
@@ -1206,7 +1206,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -1252,8 +1252,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -1270,15 +1270,15 @@ describe('createLogicMiddleware-process', () => {
     const actionFoo = { type: 'FOO' };
     const actionBar = { type: 'BAR', a: 1 };
     const actionCat = { type: 'CAT', a: 1 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 2) {
-          // done();
-          // whenComplete triggers done
+          // bDone();
+          // whenComplete triggers bDone
         }
       }
       logicA = createLogic({
@@ -1292,7 +1292,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -1326,8 +1326,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -1342,15 +1342,15 @@ describe('createLogicMiddleware-process', () => {
     const actionBar = { type: 'BAR', a: 1 };
     const actionCat = { type: 'CAT', a: 1 };
     const actionDog = { type: 'DOG', a: 1 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 3) {
-          // done();
-          // use whenComplete to trigger done
+          // bDone();
+          // use whenComplete to trigger bDone
         }
       }
       logicA = createLogic({
@@ -1364,7 +1364,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -1402,8 +1402,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -1419,15 +1419,15 @@ describe('createLogicMiddleware-process', () => {
     const actionCat = { type: 'CAT', a: 1 };
     const actionDog = { type: 'DOG', a: 1 };
     const actionEgg = { type: 'EGG', a: 1 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 4) {
-          // done();
-          // use whenComplete to trigger done
+          // bDone();
+          // use whenComplete to trigger bDone
         }
       }
       logicA = createLogic({
@@ -1441,7 +1441,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -1483,8 +1483,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -1501,15 +1501,15 @@ describe('createLogicMiddleware-process', () => {
     const actionDog = { type: 'DOG', a: 1 };
     const actionEgg = { type: 'EGG', a: 1 };
     const actionFig = { type: 'FIG', a: 1 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 5) {
-          // done();
-          // use whenComplete to trigger done
+          // bDone();
+          // use whenComplete to trigger bDone
         }
       }
       logicA = createLogic({
@@ -1524,7 +1524,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -1570,8 +1570,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -1584,7 +1584,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionBar = { type: 'BAR', payload: 42 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -1600,7 +1600,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -1630,8 +1630,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -1644,7 +1644,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionBarFn = x => ({ type: 'BAR', payload: x });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -1660,7 +1660,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -1690,8 +1690,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -1705,7 +1705,7 @@ describe('createLogicMiddleware-process', () => {
     const actionFoo = { type: 'FOO' };
     const actionCat = { type: 'CAT' };
     const actionBar = { type: 'BAR', payload: 42 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -1724,7 +1724,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('does not pass actionFoo through next', () => {
@@ -1755,8 +1755,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -1769,7 +1769,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionErr = { type: 'ERR1', payload: 'myerror', error: true };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -1788,7 +1788,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('does not pass actionFoo through next', () => {
@@ -1816,8 +1816,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -1830,7 +1830,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionBar = { type: 'BAR', payload: 42 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -1849,7 +1849,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('does not pass actionFoo through next', () => {
@@ -1876,8 +1876,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -1889,7 +1889,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -1908,7 +1908,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('does not pass actionFoo through next', () => {
@@ -1931,8 +1931,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -1944,7 +1944,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -1960,7 +1960,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -2009,8 +2009,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -2023,7 +2023,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionBazFn = x => ({ type: 'BAZ', payload: x, error: true });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -2039,7 +2039,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -2088,8 +2088,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -2101,7 +2101,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -2117,7 +2117,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -2166,8 +2166,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -2180,7 +2180,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionBazFn = x => ({ type: 'BAZ', payload: x, error: true });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -2196,7 +2196,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -2245,8 +2245,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -2258,7 +2258,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -2274,7 +2274,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -2300,8 +2300,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -2314,7 +2314,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionBar = { type: 'BAR' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -2330,7 +2330,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -2360,8 +2360,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -2374,7 +2374,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionBar = { type: 'BAR' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -2387,7 +2387,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -2417,8 +2417,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -2431,7 +2431,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionBar = { type: 'BAR' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -2447,7 +2447,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -2477,8 +2477,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -2490,7 +2490,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -2507,7 +2507,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -2556,8 +2556,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -2569,7 +2569,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -2587,7 +2587,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -2628,8 +2628,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -2642,7 +2642,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionBar = { type: 'BAR' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -2658,7 +2658,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -2688,8 +2688,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -2701,7 +2701,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -2717,7 +2717,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -2743,8 +2743,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -2757,7 +2757,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionBar = { type: 'BAR', error: true };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -2773,7 +2773,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -2803,8 +2803,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -2816,7 +2816,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -2832,7 +2832,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -2868,8 +2868,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -2881,7 +2881,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -2897,7 +2897,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -2933,8 +2933,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -2946,7 +2946,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -2964,7 +2964,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -3013,8 +3013,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -3026,7 +3026,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -3045,7 +3045,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -3082,8 +3082,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -3095,7 +3095,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -3113,7 +3113,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -3161,8 +3161,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -3174,7 +3174,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -3193,7 +3193,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -3228,8 +3228,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -3242,7 +3242,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionBar = { type: 'BAR' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -3258,7 +3258,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -3288,8 +3288,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -3301,7 +3301,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -3317,7 +3317,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -3343,8 +3343,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -3357,7 +3357,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionBar = { type: 'BAR', error: true };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -3370,7 +3370,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -3400,8 +3400,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -3413,7 +3413,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -3426,7 +3426,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -3458,8 +3458,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -3471,7 +3471,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -3486,7 +3486,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -3534,8 +3534,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -3547,7 +3547,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -3563,7 +3563,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -3599,8 +3599,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -3612,7 +3612,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -3625,7 +3625,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -3673,8 +3673,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -3686,7 +3686,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -3700,7 +3700,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -3735,8 +3735,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -3750,7 +3750,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -3766,7 +3766,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -3792,8 +3792,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -3806,7 +3806,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionResult = { type: 'BAR', payload: null };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -3822,7 +3822,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -3856,8 +3856,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -3870,7 +3870,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionResult = { type: 'BAR', payload: 42 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -3886,7 +3886,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -3920,8 +3920,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -3933,7 +3933,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -3949,7 +3949,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -3982,8 +3982,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -3995,7 +3995,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -4011,7 +4011,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -4044,8 +4044,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -4059,7 +4059,7 @@ describe('createLogicMiddleware-process', () => {
     const actionFoo = { type: 'FOO' };
     const actionResult = { type: 'BAR', payload: 42 };
     const actionResult2 = { type: 'BAR', payload: 43 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -4079,7 +4079,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -4113,8 +4113,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -4127,7 +4127,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const barFn = x => ({ type: 'BAR', payload: x });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -4143,7 +4143,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -4176,8 +4176,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -4190,7 +4190,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionBarFn = x => ({ type: 'BAR', payload: x });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -4206,7 +4206,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -4232,8 +4232,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -4247,7 +4247,7 @@ describe('createLogicMiddleware-process', () => {
     const actionFoo = { type: 'FOO' };
     const actionBarFn = x => ({ type: 'BAR', payload: x });
     const actionResult = { type: 'BAR', payload: null };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -4263,7 +4263,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -4293,8 +4293,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -4308,7 +4308,7 @@ describe('createLogicMiddleware-process', () => {
     const actionFoo = { type: 'FOO' };
     const actionBarFn = x => ({ type: 'BAR', payload: x });
     const actionResult = { type: 'BAR', payload: 42 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -4324,7 +4324,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -4354,8 +4354,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -4368,7 +4368,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionBarFn = x => ({ type: 'BAR', payload: x });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -4384,7 +4384,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -4417,8 +4417,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -4431,7 +4431,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionBarFn = x => ({ type: 'BAR', payload: x });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -4447,7 +4447,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -4480,8 +4480,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -4494,7 +4494,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionBarFn = x => ({ type: 'BAR', payload: x });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -4510,7 +4510,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -4543,8 +4543,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -4559,7 +4559,7 @@ describe('createLogicMiddleware-process', () => {
     const actionBarFn = x => ({ type: 'BAR', payload: x });
     const actionResult = { type: 'BAR', payload: 42 };
     const actionResult2 = { type: 'BAR', payload: 43 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -4579,7 +4579,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -4613,8 +4613,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -4628,7 +4628,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -4645,7 +4645,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -4694,8 +4694,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -4708,7 +4708,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionResult = { type: 'BAZ', payload: undefined, error: true };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -4724,7 +4724,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -4754,8 +4754,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -4768,7 +4768,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionResult = { type: 'BAZ', payload: null, error: true };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -4784,7 +4784,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -4814,8 +4814,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -4828,7 +4828,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionResult = { type: 'BAZ', payload: 32, error: true };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -4844,7 +4844,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -4874,8 +4874,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -4888,7 +4888,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionResult = { type: 'BAZ', payload: 'my reject', error: true };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -4904,7 +4904,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -4934,8 +4934,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -4948,7 +4948,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionResult = { type: 'BAZ', payload: 32, error: true };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -4964,7 +4964,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -4994,8 +4994,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
  });
@@ -5007,7 +5007,7 @@ describe('createLogicMiddleware-process', () => {
     let next;
     let dispatch;
     const actionFoo = { type: 'FOO' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -5023,7 +5023,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -5069,8 +5069,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -5087,7 +5087,7 @@ describe('createLogicMiddleware-process', () => {
       payload: 'you should really throw an error',
       error: true
     };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -5104,7 +5104,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -5137,8 +5137,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -5151,7 +5151,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const bazFn = x => ({ type: 'BAZ', payload: x, error: true });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -5167,7 +5167,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -5213,8 +5213,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -5227,7 +5227,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const bazFn = x => ({ type: 'BAZ', payload: x, error: true });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -5244,7 +5244,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -5279,8 +5279,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -5293,7 +5293,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const bazFn = (/* x */) => undefined; // eats the error by returning undefined
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -5309,7 +5309,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -5335,8 +5335,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -5349,7 +5349,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const bazFn = (/* x */) => undefined; // eats the error by returning undefined
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -5366,7 +5366,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -5392,8 +5392,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -5407,7 +5407,7 @@ describe('createLogicMiddleware-process', () => {
     const actionFoo = { type: 'FOO' };
     const bazFn = x => ({ type: 'BAZ', payload: x, error: true });
     const actionResult = { type: 'BAZ', payload: undefined, error: true };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -5423,7 +5423,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -5453,8 +5453,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -5468,7 +5468,7 @@ describe('createLogicMiddleware-process', () => {
     const actionFoo = { type: 'FOO' };
     const bazFn = x => ({ type: 'BAZ', payload: x, error: true });
     const actionResult = { type: 'BAZ', payload: null, error: true };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -5484,7 +5484,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -5514,8 +5514,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -5529,7 +5529,7 @@ describe('createLogicMiddleware-process', () => {
     const actionFoo = { type: 'FOO' };
     const bazFn = x => ({ type: 'BAZ', payload: x, error: true });
     const actionResult = { type: 'BAZ', payload: 32, error: true };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -5545,7 +5545,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -5575,8 +5575,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -5590,7 +5590,7 @@ describe('createLogicMiddleware-process', () => {
     const actionFoo = { type: 'FOO' };
     const actionBazFn = x => ({ type: 'BAZ', payload: x, error: true });
 
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -5607,7 +5607,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -5656,8 +5656,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -5671,7 +5671,7 @@ describe('createLogicMiddleware-process', () => {
     const actionFoo = { type: 'FOO' };
     const actionBazFn = x => ({ type: 'BAZ', payload: x, error: true });
     const actionResult = { type: 'BAZ', payload: 32, error: true };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -5687,7 +5687,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -5717,8 +5717,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -5732,7 +5732,7 @@ describe('createLogicMiddleware-process', () => {
     const actionFoo = { type: 'FOO' };
     const actionBazFn = x => ({ type: 'BAZ', payload: x, error: true });
     const actionResult = { type: 'BAZ', payload: 32, error: true };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -5748,7 +5748,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -5778,8 +5778,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -5792,7 +5792,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionBazFn = x => ({ type: 'BAZ', payload: x, error: true });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -5810,7 +5810,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -5858,8 +5858,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -5872,7 +5872,7 @@ describe('createLogicMiddleware-process', () => {
     let dispatch;
     const actionFoo = { type: 'FOO' };
     const actionBazFn = x => ({ type: 'BAZ', payload: x, error: true });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -5891,7 +5891,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -5927,8 +5927,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -5943,7 +5943,7 @@ describe('createLogicMiddleware-process', () => {
     const actionBarFn = x => ({ type: 'BAR', payload: x });
     const actionBazFn = x => ({ type: 'BAZ', payload: x, error: true });
 
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -5963,7 +5963,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -6000,8 +6000,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -6016,7 +6016,7 @@ describe('createLogicMiddleware-process', () => {
     const actionBarFn = x => ({ type: 'BAR', payload: x });
     const actionBazFn = x => ({ type: 'BAZ', payload: x, error: true });
 
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -6036,7 +6036,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -6073,8 +6073,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -6089,7 +6089,7 @@ describe('createLogicMiddleware-process', () => {
     const actionBarFn = x => ({ type: 'BAR', payload: x });
     const actionBazFn = x => ({ type: 'BAZ', payload: x, error: true });
 
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -6110,7 +6110,7 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionFoo);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes actionFoo through next', () => {
@@ -6158,8 +6158,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -6190,7 +6190,7 @@ describe('createLogicMiddleware-process', () => {
       { type: 'MATCHED', payload: actionBar },
       { type: 'MATCHED', payload: actionFoo }
     ];
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -6211,8 +6211,9 @@ describe('createLogicMiddleware-process', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       const mwInstance = mw({ dispatch })(next);
-      actionStack.forEach(x => mwInstance(x));
-      mw.whenComplete(done);
+      actionStack.forEach((x, i) =>
+        setTimeout(() => mwInstance(x), i * 10));
+      setTimeout(() => mw.whenComplete(bDone), (actionStack.length + 1) * 10);
     });
 
     it('passes actionFoo through next', () => {
@@ -6267,8 +6268,8 @@ describe('createLogicMiddleware-process', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });

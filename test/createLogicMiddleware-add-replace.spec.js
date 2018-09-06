@@ -10,7 +10,7 @@ describe('createLogicMiddleware-add-replace', () => {
     });
 
     describe('mw.addDeps(additionalDeps)', () => {
-      it('should make new deps available to hooks', done => {
+      it('should make new deps available to hooks', bDone => {
         const dispatch = expect.createSpy();
         const next = expect.createSpy();
         const storeFn = mw({ dispatch })(next);
@@ -35,11 +35,11 @@ describe('createLogicMiddleware-add-replace', () => {
         storeFn({ type: 'CAT' });
         mw.whenComplete(() => {
           expect(arrFlow).toEqual(['validate', 'process']);
-          done();
+          bDone();
         });
       });
 
-      it('should allow call with same values/instances', done => {
+      it('should allow call with same values/instances', bDone => {
         const dispatch = expect.createSpy();
         const next = expect.createSpy();
         const storeFn = mw({ dispatch })(next);
@@ -70,7 +70,7 @@ describe('createLogicMiddleware-add-replace', () => {
         storeFn({ type: 'CAT' });
         mw.whenComplete(() => {
           expect(arrFlow).toEqual(['validate', 'process']);
-          done();
+          bDone();
         });
       });
 
@@ -275,7 +275,7 @@ describe('createLogicMiddleware-add-replace', () => {
       let storeFn;
       const action1 = { type: 'FOO' };
       const action2 = { type: 'FOO', tid: 1 };
-      beforeEach(done => {
+      beforeEach(bDone => {
         monArr = [];
         mw.monitor$.subscribe(x => monArr.push(x));
         next = expect.createSpy();
@@ -289,7 +289,7 @@ describe('createLogicMiddleware-add-replace', () => {
         const result = mw.addLogic([logic]);
         logicCount = result.logicCount;
         storeFn(action1);
-        mw.whenComplete(done);
+        mw.whenComplete(bDone);
       });
 
       it('should return count of 1', () => {
@@ -323,7 +323,7 @@ describe('createLogicMiddleware-add-replace', () => {
       let storeFn;
       const action1 = { type: 'FOO' };
       const action2 = { type: 'FOO', tid: 1 };
-      beforeEach(done => {
+      beforeEach(bDone => {
         monArr = [];
         mw.monitor$.subscribe(x => monArr.push(x));
         next = expect.createSpy();
@@ -337,7 +337,7 @@ describe('createLogicMiddleware-add-replace', () => {
         const result = mw.replaceLogic([logic]);
         logicCount = result.logicCount;
         storeFn(action1);
-        mw.whenComplete(done);
+        mw.whenComplete(bDone);
       });
 
       it('should return count of 1', () => {
@@ -372,8 +372,8 @@ describe('createLogicMiddleware-add-replace', () => {
     let next;
     const action = { type: 'FOO' };
     const actionA = { type: 'FOO', a: 1 };
-    beforeEach(done => {
-      next = expect.createSpy().andCall(() => done());
+    beforeEach(bDone => {
+      next = expect.createSpy().andCall(() => bDone());
       logicA = createLogic({
         type: 'FOO',
         transform({ action }, next) {
@@ -405,7 +405,7 @@ describe('createLogicMiddleware-add-replace', () => {
       let storeFn;
       const action1 = { type: 'FOO' };
       const actionA2 = { type: 'FOO', a: 1, tid: 2 };
-      beforeEach(done => {
+      beforeEach(bDone => {
         monArr = [];
         // reset mw
         mw = createLogicMiddleware([logicA]);
@@ -425,7 +425,7 @@ describe('createLogicMiddleware-add-replace', () => {
         const result = mw.addLogic([logic]);
         logicCount = result.logicCount;
         storeFn(action1);
-        mw.whenComplete(done);
+        mw.whenComplete(bDone);
       });
 
       it('should return count of 2', () => {
@@ -466,7 +466,7 @@ describe('createLogicMiddleware-add-replace', () => {
       let storeFn;
       const action1 = { type: 'FOO' };
       const actionA2 = { type: 'FOO', a: 1, tid: 2 };
-      beforeEach(done => {
+      beforeEach(bDone => {
         monArr = [];
         // reset mw
         mw = createLogicMiddleware([logicA]);
@@ -486,7 +486,7 @@ describe('createLogicMiddleware-add-replace', () => {
         const result = mw.mergeNewLogic([logicA, logic]);
         logicCount = result.logicCount;
         storeFn(action1);
-        mw.whenComplete(done);
+        mw.whenComplete(bDone);
       });
 
       it('should return count of 2', () => {
@@ -527,7 +527,7 @@ describe('createLogicMiddleware-add-replace', () => {
       let storeFn;
       const action1 = { type: 'FOO' };
       const action2 = { type: 'FOO', tid: 2 };
-      beforeEach(done => {
+      beforeEach(bDone => {
         monArr = [];
         // reset mw
         mw = createLogicMiddleware([logicA]);
@@ -547,7 +547,7 @@ describe('createLogicMiddleware-add-replace', () => {
         const result = mw.replaceLogic([logic]);
         logicCount = result.logicCount;
         storeFn(action1);
-        mw.whenComplete(done);
+        mw.whenComplete(bDone);
       });
 
       it('should return count of 1', () => {

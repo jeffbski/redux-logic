@@ -22,7 +22,7 @@ describe('createLogicMiddleware-integration', () => {
     });
 
     let monArr = [];
-    beforeEach((done) => {
+    beforeEach((bDone) => {
       monArr = [];
       const initialState = {};
 
@@ -51,7 +51,7 @@ describe('createLogicMiddleware-integration', () => {
       store.dispatch({ type: 'FOO' });
       // we could just call done() here since everything is sync
       // but whenComplete is always the safe thing to do
-      logicMiddleware.whenComplete(done);
+      logicMiddleware.whenComplete(bDone);
     });
 
     it('mw.monitor$ should track flow', () => {
@@ -98,7 +98,7 @@ describe('createLogicMiddleware-integration', () => {
     });
 
     let monArr = [];
-    beforeEach((done) => {
+    beforeEach((bDone) => {
       monArr = [];
       const initialState = {};
 
@@ -113,6 +113,7 @@ describe('createLogicMiddleware-integration', () => {
 
       const processLogic = createLogic({
         type: 'BAD',
+        process() { }
       });
 
       const logicMiddleware = createLogicMiddleware([processLogic]);
@@ -121,9 +122,9 @@ describe('createLogicMiddleware-integration', () => {
       const store = createStore(reducer, initialState,
         applyMiddleware(logicMiddleware));
       store.dispatch({ type: 'BAD' });
-      // we could just call done() here since everything is sync
+      // we could just call bDone() here since everything is sync
       // but whenComplete is always the safe thing to do
-      logicMiddleware.whenComplete(done);
+      logicMiddleware.whenComplete(bDone);
     });
 
     it('mw.monitor$ should track flow', () => {
@@ -167,7 +168,7 @@ describe('createLogicMiddleware-integration', () => {
     });
 
     let monArr = [];
-    beforeEach((done) => {
+    beforeEach((bDone) => {
       monArr = [];
       const initialState = {};
 
@@ -195,9 +196,9 @@ describe('createLogicMiddleware-integration', () => {
       const store = createStore(reducer, initialState,
                                 applyMiddleware(logicMiddleware));
       store.dispatch({ type: 'FOO' });
-      // we could just call done() here since everything is sync
+      // we could just call bDone() here since everything is sync
       // but whenComplete is always the safe thing to do
-      logicMiddleware.whenComplete(done);
+      logicMiddleware.whenComplete(bDone);
     });
 
     it('mw.monitor$ should track flow', () => {
@@ -231,7 +232,7 @@ describe('createLogicMiddleware-integration', () => {
   describe('rapid call with single logic', () => {
     let storeUpdates;
     let monArr = [];
-    beforeEach((done) => {
+    beforeEach((bDone) => {
       monArr = [];
       storeUpdates = [];
       const initialState = { count: 1 };
@@ -269,16 +270,16 @@ describe('createLogicMiddleware-integration', () => {
           ...store.getState()
         });
         if (storeUpdates.length === 2) {
-          // done();
-          // using whenComplete to trigger done
+          // bDone();
+          // using whenComplete to trigger bDone
         }
       });
 
       store.dispatch({ type: 'DEC' });
       store.dispatch({ type: 'DEC' });
-      // we could just call done() here since everything is sync
+      // we could just call bDone() here since everything is sync
       // but whenComplete is always the safe thing to do
-      logicMiddleware.whenComplete(done);
+      logicMiddleware.whenComplete(bDone);
     });
 
     it('should only decrement once', () => {
@@ -317,7 +318,7 @@ describe('createLogicMiddleware-integration', () => {
   describe('rapid call with 2 logic', () => {
     let storeUpdates;
     let monArr = [];
-    beforeEach((done) => {
+    beforeEach((bDone) => {
       monArr = [];
       storeUpdates = [];
       const initialState = { count: 1 };
@@ -367,8 +368,8 @@ describe('createLogicMiddleware-integration', () => {
           ...store.getState()
         });
         if (storeUpdates.length === 4) {
-          // done();
-          // using whenComplete to trigger done
+          // bDone();
+          // using whenComplete to trigger bDone
         }
       });
 
@@ -376,7 +377,7 @@ describe('createLogicMiddleware-integration', () => {
       store.dispatch({ type: 'DEC' });
       store.dispatch({ type: 'DEC' });
       store.dispatch({ type: 'DEC' });
-      logicMiddleware.whenComplete(done);
+      logicMiddleware.whenComplete(bDone);
     });
 
     it('should only decrement once', () => {

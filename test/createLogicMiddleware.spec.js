@@ -40,17 +40,17 @@ describe('createLogicMiddleware', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
-    it('mw.whenComplete(fn) should resolve to promise', (done) => {
+    it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
       function fn() { }
-      mw.whenComplete(fn).then(done);
+      mw.whenComplete(fn).then(bDone);
     });
 
-    it('mw.whenComplete() should resolve to promise', (done) => {
-      mw.whenComplete().then(done);
+    it('mw.whenComplete() should resolve to promise', (bDone) => {
+      mw.whenComplete().then(bDone);
     });
 
     it('assigning a same store to mw instance is ok', () => {
@@ -137,8 +137,8 @@ describe('createLogicMiddleware', () => {
       mw({ dispatch })(next);
     });
 
-    it('mw.whenComplete(fn) should be called', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called', (bDone) => {
+      mw.whenComplete(bDone);
     });
   });
 
@@ -161,8 +161,8 @@ describe('createLogicMiddleware', () => {
       storeFn({ type: 'BAR' });
     });
 
-    it('mw.whenComplete(fn) should be called', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called', (bDone) => {
+      mw.whenComplete(bDone);
     });
   });
 
@@ -186,8 +186,8 @@ describe('createLogicMiddleware', () => {
       storeFn({ type: 'BAZ' });
     });
 
-    it('mw.whenComplete(fn) should be called', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called', (bDone) => {
+      mw.whenComplete(bDone);
     });
   });
 
@@ -201,7 +201,7 @@ describe('createLogicMiddleware', () => {
     const actionAResult = { type: 'FOO', allowed: ['a'] };
     const actionADispatch = { type: 'BAR', allowed: ['a'] };
     const actionIgnore = { type: 'CAT' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -225,7 +225,7 @@ describe('createLogicMiddleware', () => {
       const storeFn = mw({ dispatch })(next);
       storeFn(actionIgnore);
       storeFn(actionA);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('both messages hit next, one bypassed validation/transform', () => {
@@ -261,22 +261,22 @@ describe('createLogicMiddleware', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
-    it('mw.whenComplete(fn) should resolve to promise', (done) => {
+    it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
       function fn() { }
-      mw.whenComplete(fn).then(done);
+      mw.whenComplete(fn).then(bDone);
     });
 
-    it('mw.whenComplete() should resolve to promise', (done) => {
-      mw.whenComplete().then(done);
+    it('mw.whenComplete() should resolve to promise', (bDone) => {
+      mw.whenComplete().then(bDone);
     });
 
-    it('delayed mw.whenComplete() should still resolve to promise', (done) => {
+    it('delayed mw.whenComplete() should still resolve to promise', (bDone) => {
       setTimeout(() => {
-        mw.whenComplete().then(done);
+        mw.whenComplete().then(bDone);
       }, 100);
     });
 
@@ -291,9 +291,9 @@ describe('createLogicMiddleware', () => {
     const actionAResult = { type: 'FOO', allowed: ['a'] };
     const actionADispatch = { type: 'BAR', allowed: ['a'] };
     const actionIgnore = { type: 'CAT' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       next = expect.createSpy();
-      dispatch = expect.createSpy().andCall(() => done());
+      dispatch = expect.createSpy().andCall(() => bDone());
       logicA = createLogic({
         type: ['DOG', 'FOO'],
         validate({ action }, allow) {
@@ -340,7 +340,7 @@ describe('createLogicMiddleware', () => {
     const actionAResult = { type: FOO, allowed: ['a'] };
     const actionADispatch = { type: BAR, allowed: ['a'] };
     const actionIgnore = { type: CAT };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -364,7 +364,7 @@ describe('createLogicMiddleware', () => {
       const storeFn = mw({ dispatch })(next);
       storeFn(actionIgnore);
       storeFn(actionA);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('both messages hit next, one bypassed validation/transform', () => {
@@ -400,22 +400,22 @@ describe('createLogicMiddleware', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
-    it('mw.whenComplete(fn) should resolve to promise', (done) => {
+    it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
       function fn() { }
-      mw.whenComplete(fn).then(done);
+      mw.whenComplete(fn).then(bDone);
     });
 
-    it('mw.whenComplete() should resolve to promise', (done) => {
-      mw.whenComplete().then(done);
+    it('mw.whenComplete() should resolve to promise', (bDone) => {
+      mw.whenComplete().then(bDone);
     });
 
-    it('delayed mw.whenComplete() should still resolve to promise', (done) => {
+    it('delayed mw.whenComplete() should still resolve to promise', (bDone) => {
       setTimeout(() => {
-        mw.whenComplete().then(done);
+        mw.whenComplete().then(bDone);
       }, 100);
     });
   });
@@ -433,9 +433,9 @@ describe('createLogicMiddleware', () => {
     const actionAResult = { type: FOO, allowed: ['a'] };
     const actionADispatch = { type: BAR, allowed: ['a'] };
     const actionIgnore = { type: CAT };
-    beforeEach(done => {
+    beforeEach(bDone => {
       next = expect.createSpy();
-      dispatch = expect.createSpy().andCall(() => done());
+      dispatch = expect.createSpy().andCall(() => bDone());
       logicA = createLogic({
         type: [DOG, FOO],
         validate({ action }, allow) {
@@ -478,9 +478,9 @@ describe('createLogicMiddleware', () => {
     const actionAResult = { type: 'FOO', allowed: ['a'] };
     const actionADispatch = { type: 'BAR', allowed: ['a'] };
     const actionIgnore = { type: 'CAT' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       next = expect.createSpy();
-      dispatch = expect.createSpy().andCall(() => done());
+      dispatch = expect.createSpy().andCall(() => bDone());
       logicA = createLogic({
         type: /^F.*$/,
         validate({ action }, allow) {
@@ -524,9 +524,9 @@ describe('createLogicMiddleware', () => {
     const actionAResult = { type: 'FOO', allowed: ['a'] };
     const actionADispatch = { type: 'BAR', allowed: ['a'] };
     const actionIgnore = { type: 'CAT' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       next = expect.createSpy();
-      dispatch = expect.createSpy().andCall(() => done());
+      dispatch = expect.createSpy().andCall(() => bDone());
       logicA = createLogic({
         type: [/^D.*$/, /^F.*$/],
         validate({ action }, allow) {
@@ -569,9 +569,9 @@ describe('createLogicMiddleware', () => {
     const actionAResult = { type: 'FOO', allowed: ['a'] };
     const actionADispatch = { type: 'BAR', allowed: ['a'] };
     const actionIgnore = { type: 'CAT' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       next = expect.createSpy();
-      dispatch = expect.createSpy().andCall(() => done());
+      dispatch = expect.createSpy().andCall(() => bDone());
       logicA = createLogic({
         type: ['EGG', 'FROG', 'FOO', /^D.*$/],
         validate({ action }, allow) {
@@ -616,12 +616,12 @@ describe('createLogicMiddleware', () => {
     const actionCat = { type: 'CAT', id: 2 };
     const actionCatResult = { type: 'CAT', id: 2, allowed: ['a'] };
     const actionCatDispatch = { type: 'BAR', id: 2, allowed: ['a'] };
-    beforeEach(done => {
+    beforeEach(bDone => {
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
-        if (++dispatchCount >= 2) { done(); }
+        if (++dispatchCount >= 2) { bDone(); }
       }
       logicA = createLogic({
         type: '*',
@@ -665,7 +665,7 @@ describe('createLogicMiddleware', () => {
     let next;
     const actionAllow = { type: 'FOO', allowMe: true };
     const actionA = { type: 'FOO', allowMe: true, allowed: ['a'] };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       logicA = createLogic({
@@ -684,7 +684,7 @@ describe('createLogicMiddleware', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({})(next)(actionAllow);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('allow and augment action', () => {
@@ -720,7 +720,7 @@ describe('createLogicMiddleware', () => {
     let next;
     const actionReject = { type: 'FOO', allowMe: false };
     const actionA = { type: 'FOO', allowMe: false, rejected: ['a'] };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       logicA = createLogic({
@@ -743,7 +743,7 @@ describe('createLogicMiddleware', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({})(next)(actionReject);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('reject and augment action', () => {
@@ -778,7 +778,7 @@ describe('createLogicMiddleware', () => {
     let logicA;
     let next;
     const actionAllow = { type: 'FOO', allowMe: true };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       logicA = createLogic({
@@ -794,7 +794,7 @@ describe('createLogicMiddleware', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({})(next)(actionAllow);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('allow and augment action', () => {
@@ -827,7 +827,7 @@ describe('createLogicMiddleware', () => {
     let logicA;
     let next;
     const actionReject = { type: 'FOO', allowMe: false };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       logicA = createLogic({
@@ -847,7 +847,7 @@ describe('createLogicMiddleware', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({})(next)(actionReject);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('reject and augment action', () => {
@@ -870,17 +870,17 @@ describe('createLogicMiddleware', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
-    it('mw.whenComplete(fn) should resolve to promise', (done) => {
+    it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
       function fn() { }
-      mw.whenComplete(fn).then(done);
+      mw.whenComplete(fn).then(bDone);
     });
 
-    it('mw.whenComplete() should resolve to promise', (done) => {
-      mw.whenComplete().then(done);
+    it('mw.whenComplete() should resolve to promise', (bDone) => {
+      mw.whenComplete().then(bDone);
     });
 
   });
@@ -896,7 +896,7 @@ describe('createLogicMiddleware', () => {
                       allowed: ['a'] };
     const actionBar = { type: 'BAR', allowMe: true,
                       allowed: ['a'], processed: ['a'] };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -913,7 +913,7 @@ describe('createLogicMiddleware', () => {
           }
         },
         process({ action, cancelled$ }, dispatch) {
-          cancelled$.subscribe({ complete: () => done() });
+          cancelled$.subscribe({ complete: () => bDone() });
           dispatch({
             ...action,
             type: 'BAR',
@@ -962,17 +962,17 @@ describe('createLogicMiddleware', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
-    it('mw.whenComplete(fn) should resolve to promise', (done) => {
+    it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
       function fn() { }
-      mw.whenComplete(fn).then(done);
+      mw.whenComplete(fn).then(bDone);
     });
 
-    it('mw.whenComplete() should resolve to promise', (done) => {
-      mw.whenComplete().then(done);
+    it('mw.whenComplete() should resolve to promise', (bDone) => {
+      mw.whenComplete().then(bDone);
     });
 
   });
@@ -986,14 +986,14 @@ describe('createLogicMiddleware', () => {
     const actionAllow = { type: 'FOO', allowMe: true };
     const actionA = { type: 'FOO', allowMe: true, allowed: ['a'] };
     const actionProcess = { type: 'DOG' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCalled = 0;
       function cb() {
         if (++dispatchCalled >= 2) {
-          // calling done with mw.whenComplete below
+          // calling bDone with mw.whenComplete below
         }
       }
       logicA = createLogic({
@@ -1015,7 +1015,7 @@ describe('createLogicMiddleware', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionAllow);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('allow will not call next since useDispatch=true', () => {
@@ -1062,9 +1062,9 @@ describe('createLogicMiddleware', () => {
                       allowed: ['a'] };
     const actionBar = { type: 'BAR', allowMe: true,
                       allowed: ['a'], processed: ['a'] };
-    beforeEach(done => {
+    beforeEach(bDone => {
       next = expect.createSpy();
-      dispatch = expect.createSpy().andCall(() => done());
+      dispatch = expect.createSpy().andCall(() => bDone());
       logicA = createLogic({
         type: 'FOO',
         validate({ action }, allow, reject) {
@@ -1099,17 +1099,17 @@ describe('createLogicMiddleware', () => {
       expect(dispatch.calls[0].arguments[0]).toEqual(actionBar);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
-    it('mw.whenComplete(fn) should resolve to promise', (done) => {
+    it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
       function fn() { }
-      mw.whenComplete(fn).then(done);
+      mw.whenComplete(fn).then(bDone);
     });
 
-    it('mw.whenComplete() should resolve to promise', (done) => {
-      mw.whenComplete().then(done);
+    it('mw.whenComplete() should resolve to promise', (bDone) => {
+      mw.whenComplete().then(bDone);
     });
 
   });
@@ -1123,13 +1123,13 @@ describe('createLogicMiddleware', () => {
     const actionAllow = { type: 'FOO', allowMe: true };
     const actionA = { type: 'CAT', allowMe: true, allowed: ['a'] };
     const actionProcess = { type: 'DOG' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCalled = 0;
       function cb() {
-        if (++dispatchCalled >= 2) { /* done called by whenComplete */ }
+        if (++dispatchCalled >= 2) { /* bDone called by whenComplete */ }
       }
       logicA = createLogic({
         type: 'FOO',
@@ -1151,7 +1151,7 @@ describe('createLogicMiddleware', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionAllow);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('allow will not call next since type was diff', () => {
@@ -1187,17 +1187,17 @@ describe('createLogicMiddleware', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
-    it('mw.whenComplete(fn) should resolve to promise', (done) => {
+    it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
       function fn() { }
-      mw.whenComplete(fn).then(done);
+      mw.whenComplete(fn).then(bDone);
     });
 
-    it('mw.whenComplete() should resolve to promise', (done) => {
-      mw.whenComplete().then(done);
+    it('mw.whenComplete() should resolve to promise', (bDone) => {
+      mw.whenComplete().then(bDone);
     });
 
   });
@@ -1210,12 +1210,12 @@ describe('createLogicMiddleware', () => {
     const actionAllow = { type: 'FOO', allowMe: true };
     const actionA = { type: 'CAT', allowMe: true, allowed: ['a'] };
     const actionProcess = { type: 'DOG' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCalled = 0;
       function cb() {
-        if (++dispatchCalled >= 2) { done(); }
+        if (++dispatchCalled >= 2) { bDone(); }
       }
       logicA = createLogic({
         type: 'FOO',
@@ -1248,17 +1248,17 @@ describe('createLogicMiddleware', () => {
       expect(dispatch.calls[1].arguments[0]).toEqual(actionProcess);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
-    it('mw.whenComplete(fn) should resolve to promise', (done) => {
+    it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
       function fn() { }
-      mw.whenComplete(fn).then(done);
+      mw.whenComplete(fn).then(bDone);
     });
 
-    it('mw.whenComplete() should resolve to promise', (done) => {
-      mw.whenComplete().then(done);
+    it('mw.whenComplete() should resolve to promise', (bDone) => {
+      mw.whenComplete().then(bDone);
     });
 
   });
@@ -1271,12 +1271,12 @@ describe('createLogicMiddleware', () => {
     const actionAllow = { type: 'FOO', allowMe: true };
     const actionA = { type: 'CAT', allowMe: true, allowed: ['a'] };
     const actionProcess = { type: 'DOG' };
-    beforeEach(done => {
+    beforeEach(bDone => {
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCalled = 0;
       function cb() {
-        if (++dispatchCalled >= 1) { done(); }
+        if (++dispatchCalled >= 1) { bDone(); }
       }
       logicA = createLogic({
         type: 'FOO',
@@ -1309,17 +1309,17 @@ describe('createLogicMiddleware', () => {
       expect(dispatch.calls[0].arguments[0]).toEqual(actionProcess);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
-    it('mw.whenComplete(fn) should resolve to promise', (done) => {
+    it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
       function fn() { }
-      mw.whenComplete(fn).then(done);
+      mw.whenComplete(fn).then(bDone);
     });
 
-    it('mw.whenComplete() should resolve to promise', (done) => {
-      mw.whenComplete().then(done);
+    it('mw.whenComplete() should resolve to promise', (bDone) => {
+      mw.whenComplete().then(bDone);
     });
 
   });
@@ -1332,11 +1332,11 @@ describe('createLogicMiddleware', () => {
     let dispatch;
     const actionReject = { type: 'FOO', allowMe: false };
     const actionA = { type: 'FOO', allowMe: false, rejected: ['a'] };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy()
-        .andCall(() => done(new Error('should not call')));
+        .andCall(() => bDone(new Error('should not call')));
       logicA = createLogic({
         type: 'FOO',
         validate({ action }, allow, reject) {
@@ -1356,7 +1356,7 @@ describe('createLogicMiddleware', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionReject);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('reject, augment, and transform action', () => {
@@ -1387,17 +1387,17 @@ describe('createLogicMiddleware', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
-    it('mw.whenComplete(fn) should resolve to promise', (done) => {
+    it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
       function fn() { }
-      mw.whenComplete(fn).then(done);
+      mw.whenComplete(fn).then(bDone);
     });
 
-    it('mw.whenComplete() should resolve to promise', (done) => {
-      mw.whenComplete().then(done);
+    it('mw.whenComplete() should resolve to promise', (bDone) => {
+      mw.whenComplete().then(bDone);
     });
 
   });
@@ -1409,11 +1409,11 @@ describe('createLogicMiddleware', () => {
     let dispatch;
     const actionReject = { type: 'FOO', allowMe: false };
     const actionA = { type: 'BAR', allowMe: false, rejected: ['a'] };
-    beforeEach(done => {
+    beforeEach(bDone => {
       next = expect.createSpy()
-        .andCall(() => done(new Error('should not call next')));
+        .andCall(() => bDone(new Error('should not call next')));
       dispatch = expect.createSpy()
-        .andCall(() => done());
+        .andCall(() => bDone());
       logicA = createLogic({
         type: 'FOO',
         validate({ action }, allow, reject) {
@@ -1451,17 +1451,17 @@ describe('createLogicMiddleware', () => {
       expect(dispatch.calls[0].arguments[0]).toEqual(actionA);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
-    it('mw.whenComplete(fn) should resolve to promise', (done) => {
+    it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
       function fn() { }
-      mw.whenComplete(fn).then(done);
+      mw.whenComplete(fn).then(bDone);
     });
 
-    it('mw.whenComplete() should resolve to promise', (done) => {
-      mw.whenComplete().then(done);
+    it('mw.whenComplete() should resolve to promise', (bDone) => {
+      mw.whenComplete().then(bDone);
     });
 
   });
@@ -1472,8 +1472,8 @@ describe('createLogicMiddleware', () => {
     let next;
     const action = { type: 'FOO' };
     const actionA = { type: 'FOO', a: 1 };
-    beforeEach(done => {
-      next = expect.createSpy().andCall(() => done());
+    beforeEach(bDone => {
+      next = expect.createSpy().andCall(() => bDone());
       logicA = createLogic({
         type: 'FOO',
         transform({ action }, next) {
@@ -1498,8 +1498,8 @@ describe('createLogicMiddleware', () => {
     let next;
     const action = { type: 'FOO', trans: [] };
     const actionAB = { type: 'FOO', trans: ['a', 'b'] };
-    beforeEach(done => {
-      next = expect.createSpy().andCall(() => done());
+    beforeEach(bDone => {
+      next = expect.createSpy().andCall(() => bDone());
       const logicA = createLogic({
         type: 'FOO',
         transform({ action }, next) {
@@ -1536,7 +1536,7 @@ describe('createLogicMiddleware', () => {
     let next;
     const action = { type: 'FOO', trans: [] };
     const actionAB = { type: 'FOO', trans: ['a', 'b'] };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       const logicA = createLogic({
@@ -1550,7 +1550,7 @@ describe('createLogicMiddleware', () => {
         },
         process({ action, cancelled$ }, dispatch) {
           // logicA is the last to exit since it is first
-          cancelled$.subscribe({ complete: () => done() });
+          cancelled$.subscribe({ complete: () => bDone() });
           dispatch();
         }
       });
@@ -1603,22 +1603,22 @@ describe('createLogicMiddleware', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
-    it('mw.whenComplete(fn) should resolve to promise', (done) => {
+    it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
       function fn() { }
-      mw.whenComplete(fn).then(done);
+      mw.whenComplete(fn).then(bDone);
     });
 
-    it('mw.whenComplete() should resolve to promise', (done) => {
-      mw.whenComplete().then(done);
+    it('mw.whenComplete() should resolve to promise', (bDone) => {
+      mw.whenComplete().then(bDone);
     });
 
-    it('delayed mw.whenComplete() should still resolve to promise', (done) => {
+    it('delayed mw.whenComplete() should still resolve to promise', (bDone) => {
       setTimeout(() => {
-        mw.whenComplete().then(done);
+        mw.whenComplete().then(bDone);
       }, 100);
     });
 
