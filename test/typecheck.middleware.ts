@@ -13,7 +13,8 @@
  * -------------------------------------------------------------------------
  */
 
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, merge, interval } from 'rxjs';
+import { take, delay, map } from 'rxjs/operators';
 
 import { createLogicMiddleware } from '../';
 
@@ -107,15 +108,17 @@ let logicArray: Logic[];
   }
 
   {
-    Observable.merge(
+    merge(
       // fast 0, 1, 2
-      Observable.interval(10)
-        .take(3)
-        .map(x => ({ meta: { fast: x } })),
-      Observable.interval(60)
-        .take(4)
-        .delay(40)
-        .map(x => ({ meta: { slow: x } }))
+      interval(10).pipe(
+        take(3),
+        map(x => ({ meta: { fast: x } }))
+      ),
+      interval(60).pipe(
+        take(4),
+        delay(40),
+        map(x => ({ meta: { slow: x } }))
+      )
     ).subscribe(x => {
       storeFn({
         ...x,

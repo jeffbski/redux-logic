@@ -5,8 +5,7 @@ import { createLogicMiddleware } from 'redux-logic';
 import rootReducer  from './rootReducer';
 import logic from './rootLogic';
 
-import Rx from 'rxjs'; // can import everything or just what you need
-const ajax = Rx.Observable.ajax;
+import { ajax } from 'rxjs/ajax';
 
 // selectively just getting ajax and map from rxjs to keep size smaller
 // be sure to add everything you need in your logic
@@ -16,7 +15,7 @@ const ajax = Rx.Observable.ajax;
 // import { ajax } from 'rxjs/observable/dom/ajax';
 
 const deps = { // injected dependencies for logic
-  httpClient: ajax // RxJS ajax
+  httpClient: ajax.getJSON // RxJS ajax
 };
 
 const logicMiddleware = createLogicMiddleware(logic, deps);

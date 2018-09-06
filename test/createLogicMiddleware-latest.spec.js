@@ -1,4 +1,4 @@
-import Rx from 'rxjs';
+import { Observable } from 'rxjs';
 import expect from 'expect-legacy';
 import { createLogic, createLogicMiddleware } from '../src/index';
 
@@ -10,16 +10,16 @@ describe('createLogicMiddleware-latest', () => {
     let dispatch;
     const actionFoo1 = { type: 'FOO', id: 1 };
     const actionFoo2 = { type: 'FOO', id: 2 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       next = expect.createSpy().andCall(nextCb);
       let nextCount = 0;
       function nextCb() {
-        if (++nextCount >= 2) { done(); }
+        if (++nextCount >= 2) { bDone(); }
       }
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
-        if (++dispatchCount >= 0) { done(); }
+        if (++dispatchCount >= 0) { bDone(); }
       }
       logicA = createLogic({
         type: 'FOO',
@@ -45,8 +45,8 @@ describe('createLogicMiddleware-latest', () => {
       expect(dispatch.calls.length).toBe(0);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
   });
 
@@ -59,12 +59,12 @@ describe('createLogicMiddleware-latest', () => {
     const actionFoo2 = { type: 'FOO', id: 2 };
     const actionResultFoo1 = { type: 'BAR', id: 1 };
     const actionResultFoo2 = { type: 'BAR', id: 2 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
-        if (++dispatchCount >= 2) { done(); }
+        if (++dispatchCount >= 2) { bDone(); }
       }
       logicA = createLogic({
         type: 'FOO',
@@ -93,8 +93,8 @@ describe('createLogicMiddleware-latest', () => {
       expect(dispatch.calls[1].arguments[0]).toEqual(actionResultFoo2);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -107,15 +107,15 @@ describe('createLogicMiddleware-latest', () => {
     let dispatch;
     const actionFoo1 = { type: 'FOO', id: 1 };
     const actionFoo2 = { type: 'FOO', id: 2 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 0) {
-          // letting whenComplete let us know when we are done
-          // done();
+          // letting whenComplete let us know when we are bDone
+          // bDone();
         }
       }
       logicA = createLogic({
@@ -132,7 +132,7 @@ describe('createLogicMiddleware-latest', () => {
       const storeFn = mw({ dispatch })(next);
       storeFn(actionFoo1);
       storeFn(actionFoo2);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('take only latest, passes only actionFoo2 since validate async', () => {
@@ -169,8 +169,8 @@ describe('createLogicMiddleware-latest', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -183,15 +183,15 @@ describe('createLogicMiddleware-latest', () => {
     let dispatch;
     const actionFoo1 = { type: 'FOO', id: 1 };
     const actionFoo2 = { type: 'FOO', id: 2 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 0) {
-          // whenComplete is calling done
-          // done();
+          // whenComplete is calling bDone
+          // bDone();
         }
       }
       logicA = createLogic({
@@ -208,7 +208,7 @@ describe('createLogicMiddleware-latest', () => {
       const storeFn = mw({ dispatch })(next);
       storeFn(actionFoo1);
       storeFn(actionFoo2);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('take only latest, passes only actionFoo2 since validate async', () => {
@@ -245,8 +245,8 @@ describe('createLogicMiddleware-latest', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -260,15 +260,15 @@ describe('createLogicMiddleware-latest', () => {
     const actionFoo1 = { type: 'FOO', id: 1 };
     const actionFoo2 = { type: 'FOO', id: 2 };
     const actionResult = { type: 'FOO', id: 2, trans: ['a'] };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
         if (++dispatchCount >= 0) {
-          // whenComplete is calling done
-          //           done();
+          // whenComplete is calling bDone
+          //           bDone();
         }
       }
       logicA = createLogic({
@@ -288,7 +288,7 @@ describe('createLogicMiddleware-latest', () => {
       const storeFn = mw({ dispatch })(next);
       storeFn(actionFoo1);
       storeFn(actionFoo2);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('take only latest, passes only actionFoo2 since validate async', () => {
@@ -326,8 +326,8 @@ describe('createLogicMiddleware-latest', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -341,7 +341,7 @@ describe('createLogicMiddleware-latest', () => {
     const actionFoo1 = { type: 'FOO', id: 1 };
     const actionFoo2 = { type: 'FOO', id: 2 };
     const actionResultFoo2 = { type: 'BAR', id: 2 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -364,7 +364,7 @@ describe('createLogicMiddleware-latest', () => {
       setTimeout(() => {
         storeFn(actionFoo2);
       }, 0);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes both actionFoo1 and actionFoo2', () => {
@@ -407,8 +407,8 @@ describe('createLogicMiddleware-latest', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -424,14 +424,14 @@ describe('createLogicMiddleware-latest', () => {
     const actionSyncResult1 = { type: 'BAR', id: 1 };
     const actionSyncResult2 = { type: 'BAR', id: 2 };
     const actionResultFoo2 = { type: 'CAT', id: 2 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
       logicA = createLogic({
         type: 'FOO',
         latest: true,
-        process({ action }, dispatch) {
+        process({ action }, dispatch, done) {
           // immediate dispatch
           dispatch({
             ...action,
@@ -444,6 +444,7 @@ describe('createLogicMiddleware-latest', () => {
               ...action,
               type: 'CAT'
             });
+            done();
           }, 20);
         }
       });
@@ -454,7 +455,7 @@ describe('createLogicMiddleware-latest', () => {
       setTimeout(() => {
         storeFn(actionFoo2);
       }, 10);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes both actionFoo1 and actionFoo2', () => {
@@ -491,13 +492,13 @@ describe('createLogicMiddleware-latest', () => {
           shouldProcess: true,
           op: 'next' },
         { nextAction: { type: 'FOO', id: 2 }, op: 'bottom' },
-        { action: { type: 'FOO', id: 2 },
-          dispAction: { type: 'BAR', id: 2 },
-          op: 'dispatch' },
         { action: { type: 'FOO', id: 1 },
           name: 'L(FOO)-0',
           op: 'dispCancelled' },
         { action: { type: 'FOO', id: 1 }, name: 'L(FOO)-0', op: 'end' },
+        { action: { type: 'FOO', id: 2 },
+          dispAction: { type: 'BAR', id: 2 },
+          op: 'dispatch' },
         { action: { type: 'FOO', id: 2 },
           dispAction: { type: 'CAT', id: 2 },
           op: 'dispatch' },
@@ -505,8 +506,8 @@ describe('createLogicMiddleware-latest', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });
@@ -522,15 +523,15 @@ describe('createLogicMiddleware-latest', () => {
     const actionSyncResult1 = { type: 'BAR', id: 1 };
     const actionSyncResult2 = { type: 'BAR', id: 2 };
     const actionResultFoo2 = { type: 'CAT', id: 2 };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
       logicA = createLogic({
         type: 'FOO',
         latest: true,
-        process({ action }, dispatch) {
-          dispatch(Rx.Observable.create(obs => {
+        process({ action }, dispatch, done) {
+          dispatch(Observable.create(obs => {
             // immediate dispatch
             obs.next({
               ...action,
@@ -546,6 +547,7 @@ describe('createLogicMiddleware-latest', () => {
               obs.complete();
             }, 30);
           }));
+          done();
         }
       });
       mw = createLogicMiddleware([logicA]);
@@ -555,7 +557,7 @@ describe('createLogicMiddleware-latest', () => {
       setTimeout(() => {
         storeFn(actionFoo2);
       }, 10);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('passes both actionFoo1 and actionFoo2', () => {
@@ -592,13 +594,13 @@ describe('createLogicMiddleware-latest', () => {
           shouldProcess: true,
           op: 'next' },
         { nextAction: { type: 'FOO', id: 2 }, op: 'bottom' },
-        { action: { type: 'FOO', id: 2 },
-          dispAction: { type: 'BAR', id: 2 },
-          op: 'dispatch' },
         { action: { type: 'FOO', id: 1 },
           name: 'L(FOO)-0',
           op: 'dispCancelled' },
         { action: { type: 'FOO', id: 1 }, name: 'L(FOO)-0', op: 'end' },
+        { action: { type: 'FOO', id: 2 },
+          dispAction: { type: 'BAR', id: 2 },
+          op: 'dispatch' },
         { action: { type: 'FOO', id: 2 },
           dispAction: { type: 'CAT', id: 2 },
           op: 'dispatch' },
@@ -606,8 +608,8 @@ describe('createLogicMiddleware-latest', () => {
       ]);
     });
 
-    it('mw.whenComplete(fn) should be called when complete', (done) => {
-      mw.whenComplete(done);
+    it('mw.whenComplete(fn) should be called when complete', (bDone) => {
+      mw.whenComplete(bDone);
     });
 
   });

@@ -35,7 +35,7 @@ describe('rxbuild', () => {
     let next;
     let dispatch;
     const actionAllow = { type: 'FOO', allowMe: true };
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -62,7 +62,7 @@ describe('rxbuild', () => {
       mw = createLogicMiddleware([logicA]);
       mw.monitor$.subscribe(x => monArr.push(x));
       mw({ dispatch })(next)(actionAllow);
-      mw.whenComplete(() => done());
+      mw.whenComplete(() => bDone());
     });
 
     it('mw.monitor$ should track flow', () => {

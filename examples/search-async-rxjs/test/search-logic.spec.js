@@ -1,7 +1,6 @@
 
 import expect from 'expect';
 import { searchLogic } from '../src/search/logic';
-import { Observable } from 'rxjs';
 
 describe('searchLogic', () => {
   describe('validate for valid search term', () => {

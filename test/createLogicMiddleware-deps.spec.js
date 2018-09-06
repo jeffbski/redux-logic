@@ -1,4 +1,5 @@
-import Rx from 'rxjs';
+import { interval } from 'rxjs';
+import { map } from 'rxjs/operators';
 import expect from 'expect-legacy';
 import { createLogic, createLogicMiddleware } from '../src/index';
 
@@ -48,10 +49,10 @@ describe('createLogicMiddleware-deps', () => {
     let allDeps;
     const origState = { a: 1 };
     const origDeps = undefined;
-    beforeEach((done) => {
+    beforeEach((bDone) => {
       createAndGatherDeps(origState, origDeps, resultDeps => {
         allDeps = resultDeps;
-        done();
+        bDone();
       });
     });
 
@@ -60,7 +61,7 @@ describe('createLogicMiddleware-deps', () => {
       const { action, cancelled$, ctx } = allDeps.valDeps;
       const valCtx = allDeps.valCtx;
       expect(Object.keys(allDeps.valDeps).sort())
-        .toEqual(['action', 'cancelled$', 'ctx', 'getState']);
+        .toEqual(['action', 'action$', 'cancelled$', 'ctx', 'getState']);
       expect(valState).toEqual(origState);
       expect(action).toEqual(actionFoo);
       expect(cancelled$).toExist();
@@ -71,7 +72,7 @@ describe('createLogicMiddleware-deps', () => {
     it('process deps should have getState, action, cancelled$, ctx', () => {
       const { action, cancelled$, ctx } = allDeps.procDeps;
       expect(Object.keys(allDeps.procDeps).sort())
-        .toEqual(['action', 'cancelled$', 'ctx', 'getState']);
+        .toEqual(['action', 'action$', 'cancelled$', 'ctx', 'getState']);
       expect(action).toEqual(actionFoo);
       expect(cancelled$).toExist();
       expect(ctx).toEqual({ data: ['v'] }); // updated in validate
@@ -82,10 +83,10 @@ describe('createLogicMiddleware-deps', () => {
     let allDeps;
     const origState = { a: 1 };
     const origDeps = { y: 42, z: 'hello' };
-    beforeEach((done) => {
+    beforeEach((bDone) => {
       createAndGatherDeps(origState, origDeps, resultDeps => {
         allDeps = resultDeps;
-        done();
+        bDone();
       });
     });
 
@@ -94,7 +95,7 @@ describe('createLogicMiddleware-deps', () => {
       const { action, cancelled$, ctx, y, z } = allDeps.valDeps;
       const valCtx = allDeps.valCtx;
       expect(Object.keys(allDeps.valDeps).sort())
-        .toEqual(['action', 'cancelled$', 'ctx', 'getState', 'y', 'z']);
+        .toEqual(['action', 'action$', 'cancelled$', 'ctx', 'getState', 'y', 'z']);
       expect(valState).toEqual(origState);
       expect(action).toEqual(actionFoo);
       expect(cancelled$).toExist();
@@ -107,7 +108,7 @@ describe('createLogicMiddleware-deps', () => {
     it('process deps should have getState, action, cancelled$, ctx, y, z', () => {
       const { action, cancelled$, ctx, y, z } = allDeps.procDeps;
       expect(Object.keys(allDeps.procDeps).sort())
-        .toEqual(['action', 'cancelled$', 'ctx', 'getState', 'y', 'z']);
+        .toEqual(['action', 'action$', 'cancelled$', 'ctx', 'getState', 'y', 'z']);
       expect(action).toEqual(actionFoo);
       expect(cancelled$).toExist();
       expect(ctx).toEqual({ data: ['v'] }); // updated in validate
@@ -117,11 +118,11 @@ describe('createLogicMiddleware-deps', () => {
   });
 
   describe('RW ctx object is passed between execution hooks', () => {
-    it('should allow read/write in the hooks', done => {
+    it('should allow read/write in the hooks', bDone => {
       const getState = () => {};
       const origDeps = undefined;
       const next = expect.createSpy();
-      const dispatch = expect.createSpy().andCall(() => done());
+      const dispatch = expect.createSpy().andCall(() => bDone());
       const logicA = createLogic({
         type: '*',
         validate({ action, ctx }, allow /* , reject */) {
@@ -141,7 +142,7 @@ describe('createLogicMiddleware-deps', () => {
   });
 
   describe('cancelled$', () => {
-    it('should indicate cancellation', done => {
+    it('should indicate cancellation', itDone => {
       const getState = () => {};
       const origDeps = undefined;
       const next = expect.createSpy();
@@ -149,12 +150,13 @@ describe('createLogicMiddleware-deps', () => {
       const logicA = createLogic({
         type: 'FOO',
         cancelType: 'FOO_CANCEL',
-        process({ cancelled$ }, dispatch) {
+        process({ cancelled$ }, dispatch, done) {
           cancelled$.subscribe({
-            next: () => done() // should be cancelled
+            next: x => itDone() // should be cancelled
           });
           setTimeout(() => {
             dispatch({ type: 'BAR' });
+            done();
           }, 30);
           fireNextAction();
         }
@@ -168,7 +170,7 @@ describe('createLogicMiddleware-deps', () => {
       }
     });
 
-    it('should indicate completion even if not cancelled', done => {
+    it('should indicate completion even if not cancelled', bDone => {
       const getState = () => {};
       const origDeps = undefined;
       const next = expect.createSpy();
@@ -178,7 +180,7 @@ describe('createLogicMiddleware-deps', () => {
         cancelType: 'FOO_CANCEL',
         process({ cancelled$ }, dispatch) {
           cancelled$.subscribe({
-            complete: () => done() // should be completed regardless
+            complete: () => bDone() // should be completed regardless
           });
           setTimeout(() => {
             dispatch({ type: 'BAR' });
@@ -190,7 +192,7 @@ describe('createLogicMiddleware-deps', () => {
       storeFn(actionFoo);
     });
 
-    it('should indicate completion when error occurred', done => {
+    it('should indicate completion when error occurred', bDone => {
       const getState = () => {};
       const origDeps = undefined;
       const next = expect.createSpy();
@@ -201,7 +203,7 @@ describe('createLogicMiddleware-deps', () => {
         // eslint-disable-next-line no-unused-vars
         process({ cancelled$ }, dispatch) {
           cancelled$.subscribe({
-            complete: () => done() // should be completed regardless
+            complete: () => bDone() // should be completed regardless
           });
 
           throw new Error('bar');
@@ -215,7 +217,7 @@ describe('createLogicMiddleware-deps', () => {
   });
 
   describe('cancelled$ dispatch(obs)', () => {
-    it('should not dispatch after cancelled', done => {
+    it('should not dispatch after cancelled', itDone => {
       const getState = () => {};
       const origDeps = undefined;
       const next = expect.createSpy();
@@ -223,24 +225,25 @@ describe('createLogicMiddleware-deps', () => {
       const dispatch = expect.createSpy().andCall(cb);
       function cb() {
         if (cancelFired) {
-          done(new Error('dispatched after cancelled'));
+          itDone(new Error('dispatched after cancelled'));
         }
       }
       const logicA = createLogic({
         type: 'FOO',
         cancelType: 'FOO_CANCEL',
-        process({ cancelled$ }, dispatch) {
+        process({ cancelled$ }, dispatch, done) {
           cancelled$.subscribe({
             next: () => {
               cancelFired = true;
               // let's delay to see if any dispatches occur
               setTimeout(() => {
-                done();
+                itDone();
               }, 10);
             }
           });
-          const ob$ = Rx.Observable.interval(1)
-                .map(x => ({ type: 'BAR', payload: x }));
+          const ob$ = interval(1).pipe(
+            map(x => ({ type: 'BAR', payload: x }))
+          );
           dispatch(ob$);
 
           fireNextAction(); // manually triggering to get timing right

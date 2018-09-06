@@ -1,28 +1,22 @@
+const BABEL_ENV = process.env.BABEL_ENV;
+const CI = (process.env.CI && process.env.CI === 'true');
+
 const presets = [
   ['@babel/env', {
     // targets are specified in .browserslist
-    // run `npx browserslist` will show resultant targets
-    useBuiltIns: 'usage'
+    // run `npx browserslist` will show resultant targets or see debug output from build
+    useBuiltIns: 'usage',
+    modules: (BABEL_ENV === 'es') ? false : 'auto', // not transforming modules for es
+    debug: (CI)  // show the browser target and plugins used when in CI mode
   }]
 ];
 
-const plugins = [
-];
+const plugins = [];
 
 // these are merged with others
 const env = {
-  commonjs: {
+  cov: {
     plugins: [
-      ['@babel/plugin-transform-modules-commonjs', { loose: true }]
-    ]
-  },
-  es: {
-    plugins: [
-    ]
-  },
-  test: {
-    plugins: [
-      ['@babel/plugin-transform-modules-commonjs', { loose: true }],
       'istanbul'
     ]
   }

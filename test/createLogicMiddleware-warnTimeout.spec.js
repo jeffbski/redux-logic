@@ -18,7 +18,7 @@ describe('createLogicMiddleware-warnTimeout', () => {
     afterEach('reset console.error', () => {
       consoleErrorSpy.restore();
     });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -39,7 +39,7 @@ describe('createLogicMiddleware-warnTimeout', () => {
       mw.monitor$.subscribe(x => monArr.push(x));
       const storeFn = mw({ dispatch })(next);
       storeFn(actionA);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     if (NODE_ENV === 'production') {
@@ -85,7 +85,7 @@ describe('createLogicMiddleware-warnTimeout', () => {
     afterEach('reset console.error', () => {
       consoleErrorSpy.restore();
     });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -104,7 +104,7 @@ describe('createLogicMiddleware-warnTimeout', () => {
       mw.monitor$.subscribe(x => monArr.push(x));
       const storeFn = mw({ dispatch })(next);
       storeFn(actionA);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('should not have called console.error with warning', () => {
@@ -143,7 +143,7 @@ describe('createLogicMiddleware-warnTimeout', () => {
     afterEach('reset console.error', () => {
       consoleErrorSpy.restore();
     });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -165,7 +165,7 @@ describe('createLogicMiddleware-warnTimeout', () => {
       mw.monitor$.subscribe(x => monArr.push(x));
       const storeFn = mw({ dispatch })(next);
       storeFn(actionA);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
       setTimeout(() => { // cancel after warnTimeout
         storeFn({ type: 'FOO_CANCEL' });
       }, 200);
@@ -219,7 +219,7 @@ describe('createLogicMiddleware-warnTimeout', () => {
     afterEach('reset console.error', () => {
       consoleErrorSpy.restore();
     });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -241,8 +241,10 @@ describe('createLogicMiddleware-warnTimeout', () => {
       mw.monitor$.subscribe(x => monArr.push(x));
       const storeFn = mw({ dispatch })(next);
       storeFn(actionA);
-      storeFn({ type: 'FOO_CANCEL' });
-      mw.whenComplete(done);
+      setTimeout(() => {
+        storeFn({ type: 'FOO_CANCEL' });
+        mw.whenComplete(bDone);
+      }, 10);
     });
 
     it('should not have called console.error with warning', () => {
@@ -286,7 +288,7 @@ describe('createLogicMiddleware-warnTimeout', () => {
     afterEach('reset console.error', () => {
       consoleErrorSpy.restore();
     });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -303,7 +305,7 @@ describe('createLogicMiddleware-warnTimeout', () => {
       mw.monitor$.subscribe(x => monArr.push(x));
       const storeFn = mw({ dispatch })(next);
       storeFn(actionA);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     if (NODE_ENV === 'production') {
@@ -346,7 +348,7 @@ describe('createLogicMiddleware-warnTimeout', () => {
     afterEach('reset console.error', () => {
       consoleErrorSpy.restore();
     });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -361,7 +363,7 @@ describe('createLogicMiddleware-warnTimeout', () => {
       mw.monitor$.subscribe(x => monArr.push(x));
       const storeFn = mw({ dispatch })(next);
       storeFn(actionA);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('should not have called console.error with warning', () => {
@@ -397,7 +399,7 @@ describe('createLogicMiddleware-warnTimeout', () => {
     afterEach('reset console.error', () => {
       consoleErrorSpy.restore();
     });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -418,7 +420,7 @@ describe('createLogicMiddleware-warnTimeout', () => {
       mw.monitor$.subscribe(x => monArr.push(x));
       const storeFn = mw({ dispatch })(next);
       storeFn(actionA);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('should not have called console.error with warning', () => {
@@ -457,7 +459,7 @@ describe('createLogicMiddleware-warnTimeout', () => {
     afterEach('reset console.error', () => {
       consoleErrorSpy.restore();
     });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -476,7 +478,7 @@ describe('createLogicMiddleware-warnTimeout', () => {
       mw.monitor$.subscribe(x => monArr.push(x));
       const storeFn = mw({ dispatch })(next);
       storeFn(actionA);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('should not have called console.error with warning', () => {
@@ -515,7 +517,7 @@ describe('createLogicMiddleware-warnTimeout', () => {
     afterEach('reset console.error', () => {
       consoleErrorSpy.restore();
     });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -537,7 +539,7 @@ describe('createLogicMiddleware-warnTimeout', () => {
       mw.monitor$.subscribe(x => monArr.push(x));
       const storeFn = mw({ dispatch })(next);
       storeFn(actionA);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
       setTimeout(() => { // cancel after warnTimeout
         storeFn({ type: 'FOO_CANCEL' });
       }, 200);
@@ -584,7 +586,7 @@ describe('createLogicMiddleware-warnTimeout', () => {
     afterEach('reset console.error', () => {
       consoleErrorSpy.restore();
     });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -606,8 +608,10 @@ describe('createLogicMiddleware-warnTimeout', () => {
       mw.monitor$.subscribe(x => monArr.push(x));
       const storeFn = mw({ dispatch })(next);
       storeFn(actionA);
-      storeFn({ type: 'FOO_CANCEL' });
-      mw.whenComplete(done);
+      setTimeout(() => {
+        storeFn({ type: 'FOO_CANCEL' });
+        mw.whenComplete(bDone);
+      }, 10);
     });
 
     it('should not have called console.error with warning', () => {
@@ -651,7 +655,7 @@ describe('createLogicMiddleware-warnTimeout', () => {
     afterEach('reset console.error', () => {
       consoleErrorSpy.restore();
     });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -668,7 +672,7 @@ describe('createLogicMiddleware-warnTimeout', () => {
       mw.monitor$.subscribe(x => monArr.push(x));
       const storeFn = mw({ dispatch })(next);
       storeFn(actionA);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('should not have called console.error with warning', () => {
@@ -704,7 +708,7 @@ describe('createLogicMiddleware-warnTimeout', () => {
     afterEach('reset console.error', () => {
       consoleErrorSpy.restore();
     });
-    beforeEach(done => {
+    beforeEach(bDone => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -719,7 +723,7 @@ describe('createLogicMiddleware-warnTimeout', () => {
       mw.monitor$.subscribe(x => monArr.push(x));
       const storeFn = mw({ dispatch })(next);
       storeFn(actionA);
-      mw.whenComplete(done);
+      mw.whenComplete(bDone);
     });
 
     it('should not have called console.error with warning', () => {

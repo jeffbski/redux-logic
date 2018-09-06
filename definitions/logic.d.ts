@@ -13,7 +13,7 @@
  * -------------------------------------------------------------------------
  */
 
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 import { Middleware } from 'redux';
 
@@ -139,6 +139,7 @@ export namespace CreateLogic {
     export type DepObj<State, Action, Dependency> = Dependency & {
       getState(): State;
       action: Action;
+      action$: Observable<Action>;
     };
 
     export type PrimitiveType<Type extends string | symbol, InputPayload> =

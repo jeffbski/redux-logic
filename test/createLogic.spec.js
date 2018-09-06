@@ -1,5 +1,6 @@
 import expect from 'expect-legacy';
-import Rx from 'rxjs';
+import { merge, interval } from 'rxjs';
+import { take, map, delay } from 'rxjs/operators';
 import { createLogic, createLogicMiddleware, configureLogic } from '../src/index';
 
 const NODE_ENV = process.env.NODE_ENV;
@@ -26,6 +27,22 @@ describe('createLogic', () => {
           type: `${undefined}`
         });
       }).toThrow(/type.*undefined/);
+    });
+  });
+
+  describe('configureLogic', () => {
+    describe('empty options', () => {
+      it('should not error', () => {
+        configureLogic();
+      });
+    });
+    describe('invalid argument', () => {
+      it('should error', () => {
+        const setInvalidSettingFn = () => {
+          configureLogic({ aBadSetting: true });
+        };
+        expect(setInvalidSettingFn).toThrow('are not globally configurable options');
+      });
     });
   });
 
@@ -71,12 +88,12 @@ describe('createLogic', () => {
 
   describe('debounce', () => {
     let dispatch;
-    beforeEach((done) => {
+    beforeEach((bDone) => {
       const next = expect.createSpy();
       dispatch = expect.createSpy().andCall(check);
       function check(action) {
         // last dispatch should be slow: 3
-        if (action.slow === 3) { done(); }
+        if (action.slow === 3) { bDone(); }
       }
       const logicA = createLogic({
         type: 'FOO',
@@ -92,16 +109,18 @@ describe('createLogic', () => {
       });
       const mw = createLogicMiddleware([logicA]);
       const storeFn = mw({ dispatch })(next);
-      Rx.Observable.merge(
+      merge(
         // fast 0, 1, 2
-        Rx.Observable.interval(10)
-          .take(3)
-          .map(x => ({ fast: x })),
+        interval(10).pipe(
+          take(3),
+          map(x => ({ fast: x }))
+        ),
         // slow 0, 1, 2, 3
-        Rx.Observable.interval(60)
-          .take(4)
-          .delay(40)
-          .map(x => ({ slow: x }))
+        interval(60).pipe(
+          take(4),
+          delay(40),
+          map(x => ({ slow: x }))
+        )
       ).subscribe(x => {
         storeFn({
           ...x,
@@ -121,12 +140,12 @@ describe('createLogic', () => {
 
   describe('debounce and latest', () => {
     let dispatch;
-    beforeEach((done) => {
+    beforeEach((bDone) => {
       const next = expect.createSpy();
       dispatch = expect.createSpy().andCall(check);
       function check(action) {
         // last dispatch should be slow: 3
-        if (action.slow === 3) { done(); }
+        if (action.slow === 3) { bDone(); }
       }
       const logicA = createLogic({
         type: 'FOO',
@@ -143,16 +162,18 @@ describe('createLogic', () => {
       });
       const mw = createLogicMiddleware([logicA]);
       const storeFn = mw({ dispatch })(next);
-      Rx.Observable.merge(
+      merge(
         // fast 0, 1, 2
-        Rx.Observable.interval(10)
-          .take(3)
-          .map(x => ({ fast: x })),
+        interval(10).pipe(
+          take(3),
+          map(x => ({ fast: x }))
+        ),
         // slow 0, 1, 2, 3
-        Rx.Observable.interval(60)
-          .take(4)
-          .delay(40)
-          .map(x => ({ slow: x }))
+        interval(60).pipe(
+          take(4),
+          delay(40),
+          map(x => ({ slow: x }))
+        )
       ).subscribe(x => {
         storeFn({
           ...x,
@@ -172,7 +193,7 @@ describe('createLogic', () => {
 
   describe('throttle', () => {
     let dispatch;
-    beforeEach((done) => {
+    beforeEach((bDone) => {
       const asyncProcessDelay = 100; // simulate slow service
       const next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -190,16 +211,18 @@ describe('createLogic', () => {
       });
       const mw = createLogicMiddleware([logicA]);
       const storeFn = mw({ dispatch })(next);
-      Rx.Observable.merge(
+      merge(
         // fast 0, 1, 2
-        Rx.Observable.interval(10)
-          .take(3)
-          .map(x => ({ fast: x })),
+        interval(10).pipe(
+          take(3),
+          map(x => ({ fast: x }))
+        ),
         // slow 0, 1, 2, 3
-        Rx.Observable.interval(60)
-          .take(4)
-          .delay(40)
-          .map(x => ({ slow: x }))
+        interval(60).pipe(
+          take(4),
+          delay(40),
+          map(x => ({ slow: x }))
+        )
       ).subscribe({
         next: x => {
           storeFn({
@@ -209,7 +232,7 @@ describe('createLogic', () => {
         },
         complete: () => {
           setTimeout(() => {
-            done();
+            bDone();
           }, asyncProcessDelay + 20); // add margin
         }
       });
@@ -224,7 +247,7 @@ describe('createLogic', () => {
 
   describe('throttle and latest', () => {
     let dispatch;
-    beforeEach((done) => {
+    beforeEach((bDone) => {
       const asyncProcessDelay = 100; // simulate slow service
       const next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -243,16 +266,18 @@ describe('createLogic', () => {
       });
       const mw = createLogicMiddleware([logicA]);
       const storeFn = mw({ dispatch })(next);
-      Rx.Observable.merge(
+      merge(
         // fast 0, 1, 2
-        Rx.Observable.interval(10)
-          .take(3)
-          .map(x => ({ fast: x })),
+        interval(10).pipe(
+          take(3),
+          map(x => ({ fast: x }))
+        ),
         // slow 0, 1, 2, 3
-        Rx.Observable.interval(60)
-          .take(4)
-          .delay(40)
-          .map(x => ({ slow: x }))
+        interval(60).pipe(
+          take(4),
+          delay(40),
+          map(x => ({ slow: x }))
+        )
       ).subscribe({
         next: x => {
           storeFn({
@@ -262,7 +287,7 @@ describe('createLogic', () => {
         },
         complete: () => {
           setTimeout(() => {
-            done();
+            bDone();
           }, asyncProcessDelay + 20); // add margin
         }
       });
@@ -279,7 +304,7 @@ describe('createLogic', () => {
 
   describe('debounce and throttle', () => {
     let dispatch;
-    beforeEach((done) => {
+    beforeEach((bDone) => {
       const asyncProcessDelay = 100; // simulate slow service
       const next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -298,16 +323,18 @@ describe('createLogic', () => {
       });
       const mw = createLogicMiddleware([logicA]);
       const storeFn = mw({ dispatch })(next);
-      Rx.Observable.merge(
+      merge(
         // fast 0, 1, 2
-        Rx.Observable.interval(10)
-          .take(3)
-          .map(x => ({ fast: x })),
+        interval(10).pipe(
+          take(3),
+          map(x => ({ fast: x }))
+        ),
         // slow 0, 1, 2, 3
-        Rx.Observable.interval(60)
-          .take(4)
-          .delay(40)
-          .map(x => ({ slow: x }))
+        interval(60).pipe(
+          take(4),
+          delay(40),
+          map(x => ({ slow: x }))
+        )
       ).subscribe({
         next: x => {
           storeFn({
@@ -317,7 +344,7 @@ describe('createLogic', () => {
         },
         complete: () => {
           setTimeout(() => {
-            done();
+            bDone();
           }, asyncProcessDelay + 20); // add margin
         }
       });
@@ -332,7 +359,7 @@ describe('createLogic', () => {
 
   describe('debounce, throttle, and latest', () => {
     let dispatch;
-    beforeEach((done) => {
+    beforeEach((bDone) => {
       const asyncProcessDelay = 100; // simulate slow service
       const next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -352,16 +379,18 @@ describe('createLogic', () => {
       });
       const mw = createLogicMiddleware([logicA]);
       const storeFn = mw({ dispatch })(next);
-      Rx.Observable.merge(
+      merge(
         // fast 0, 1, 2
-        Rx.Observable.interval(10)
-          .take(3)
-          .map(x => ({ fast: x })),
+        interval(10).pipe(
+          take(3),
+          map(x => ({ fast: x }))
+        ),
         // slow 0, 1, 2, 3
-        Rx.Observable.interval(60)
-          .take(4)
-          .delay(40)
-          .map(x => ({ slow: x }))
+        interval(60).pipe(
+          take(4),
+          delay(40),
+          map(x => ({ slow: x }))
+        )
       ).subscribe({
         next: x => {
           storeFn({
@@ -371,7 +400,7 @@ describe('createLogic', () => {
         },
         complete: () => {
           setTimeout(() => {
-            done();
+            bDone();
           }, asyncProcessDelay + 100); // add margin
         }
       });
