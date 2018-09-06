@@ -3,9 +3,9 @@
  * Runs an ordered set of commands within each of the build directories.
  */
 
-import fs from 'fs';
-import path from 'path';
-import { spawnSync } from 'child_process';
+const fs = require('fs');
+const path = require('path');
+const { spawnSync } = require('child_process');
 
 var exampleDirs = fs.readdirSync(__dirname).filter((file) =>
   fs.statSync(path.join(__dirname, file)).isDirectory());
