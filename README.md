@@ -322,6 +322,7 @@ See the [docs for the full api](./docs/api.md)
  - [async await - react](https://codesandbox.io/s/0q0xw8vm6n) - using ES7 async functions (async/await) displaying with React
  - [async await - redux only](https://codesandbox.io/s/742zx6w946) - using ES7 async functions (async/await) - just redux and redux-logic code
  - [async await - react processOptions](https://codesandbox.io/s/64l8xv1po3) - using ES7 async functions (async/await) with processOptions, displayed with React
+ - [drag and drop - rxjs@6 - react](https://codesandbox.io/s/n34x5j3jv4) - drag a button using rxjs@6 and the new stream added to redux-logic@v2 `action$`
 
 ### Full examples
 
