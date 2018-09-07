@@ -68,9 +68,7 @@
     "promise",
     "async await"
   ],
-  "authors": [
-    "Jeff Barczewski <jeff.barczewski@gmail.com> (https://github.com/jeffbski)"
-  ],
+  "author": "Jeff Barczewski <jeff.barczewski@gmail.com> (https://github.com/jeffbski)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/jeffbski/redux-logic/issues"
