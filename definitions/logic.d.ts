@@ -198,7 +198,7 @@ export namespace CreateLogic {
       > = (
         depObj: DepObj<State, Action, Dependency>,
         allow: Pass<Action, Context>,
-        reject?: Pass<Action, Context>
+        reject: Pass<Action, Context>
       ) => void;
     }
 
@@ -224,7 +224,7 @@ export namespace CreateLogic {
       > = (
         depObj: DepObj<State, Action, Dependency>,
         next: Pass<Action, Context>,
-        reject: Pass<Action, Context>
+        reject?: Pass<Action, Context>
       ) => void;
     }
 
