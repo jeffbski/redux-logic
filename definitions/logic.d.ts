@@ -223,7 +223,8 @@ export namespace CreateLogic {
         Context extends Object = undefined
       > = (
         depObj: DepObj<State, Action, Dependency>,
-        next: Pass<Action, Context>
+        next: Pass<Action, Context>,
+        reject?: Pass<Action, Context>
       ) => void;
     }
 
