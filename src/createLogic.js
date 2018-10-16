@@ -21,7 +21,7 @@ const allowedProcessOptions = [
   'failType',
 ];
 
-const NODE_ENV = process.env.NODE_ENV;
+const NODE_ENV = (process && process.env && process.env.NODE_ENV) ? process.env.NODE_ENV : '';
 
 const defaultOptions = {
   warnTimeout: 60000,
