@@ -1,7 +1,7 @@
 import { Subject, timer } from 'rxjs';
 import { defaultIfEmpty, tap, take, takeUntil } from 'rxjs/operators';
 
-const NODE_ENV = process.env.NODE_ENV;
+const NODE_ENV = (typeof window  === 'undefined' && process && process.env && process.env.NODE_ENV) ? process.env.NODE_ENV : '';
 
 // returns { cancelled$, setInterceptComplete }
 export default function createCancelled$({ action, cancel$, monitor$, logic }) {

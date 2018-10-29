@@ -19,6 +19,7 @@
     "no-use-before-define": [2, { "functions": false, "classes": true }],
     // Disable until Flow supports let and const
     "no-var": 0,
+    "no-undef": 0,
     "no-unused-vars": 0,
     "object-curly-newline": 0,
     "object-curly-spacing": 0,
