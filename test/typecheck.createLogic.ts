@@ -182,7 +182,7 @@ import { Dependency, Meta, Payload, State } from './typecheck';
       dispatchReturn: true,
       successType: 'successType'
     },
-    process({ getState, action, cancelled$ }): void {
+    process({ getState, action, cancelled$ }: { getState: any, action: any, cancelled$: any }): void {
       let state: State = getState();
       let expectedAction:
         | (StandardAction<'type'>)
@@ -202,7 +202,7 @@ import { Dependency, Meta, Payload, State } from './typecheck';
       dispatchReturn: true,
       successType: (payload: Payload) => ({ type: 'successType' })
     },
-    process({ getState, action, cancelled$ }) {
+    process({ getState, action, cancelled$ }: { getState: any, action: any, cancelled$: any }) {
       let state: State = getState();
       let expectedAction:
         | (ActionBasis<'type'> & PayloadBasis<Payload> & MetaBasis<Meta>)
@@ -218,7 +218,7 @@ import { Dependency, Meta, Payload, State } from './typecheck';
       dispatchReturn: true,
       dispatchMultiple: false
     },
-    process(depObj) {
+    process(depObj: any) {
       let dep: Dependency = depObj;
       let state: State = depObj.getState();
       let expectedAction: (ActionBasis<'type'>) | ErroneousAction<'type'> =
