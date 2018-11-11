@@ -67,11 +67,12 @@ export interface CreateLogic {
     Meta extends Object = undefined,
     Dependency extends object = {},
     Context extends Object = undefined,
-    Type extends string = string
+    Type extends string = string,
+    Action extends StandardAction<Type, Payload, Meta> = StandardAction<Type, Payload, Meta>,
   >(
     config: CreateLogic.Config<
       State,
-      Action<Type, Payload, Meta>,
+      Action,
       Dependency,
       Context,
       Type
@@ -84,11 +85,12 @@ export interface CreateLogic {
     Payload extends Object = undefined,
     Meta extends Object = undefined,
     Dependency extends object = {},
-    Type extends string = string
+    Type extends string = string,
+    Action extends StandardAction<Type, Payload, Meta> = StandardAction<Type, Payload, Meta>,
   >(
     config: CreateLogic.Config<
       State,
-      Action<Type, Payload, Meta>,
+      Action,
       Dependency,
       undefined,
       Type
@@ -100,23 +102,25 @@ export interface CreateLogic {
     State extends object,
     Dependency extends object = {},
     Context extends Object = undefined,
-    Type extends string = string
+    Type extends string = string,
+    Action extends StandardAction<Type> = StandardAction<Type>
   >(
-    config: CreateLogic.Config<State, Action<Type>, Dependency, Context, Type>
+    config: CreateLogic.Config<State, Action, Dependency, Context, Type>
   ): Logic<State, undefined, undefined, Dependency, Context, Type>;
 
   // createLogic with State and Type only
-  <State extends object, Type extends string = string>(
-    config: CreateLogic.Config<State, Action<Type>, {}, undefined, Type>
+  <State extends object, Type extends string = string, Action extends StandardAction<Type> = StandardAction<Type>>(
+    config: CreateLogic.Config<State, Action, {}, undefined, Type>
   ): Logic<State, undefined, undefined, {}, undefined, Type>;
 
   // createLogic with State, Dependency and Type only
   <
     State extends object,
     Dependency extends object = {},
-    Type extends string = string
+    Type extends string = string,
+    Action extends StandardAction<Type> = StandardAction<Type>
   >(
-    config: CreateLogic.Config<State, Action<Type>, Dependency, undefined, Type>
+    config: CreateLogic.Config<State, Action, Dependency, undefined, Type>
   ): Logic<State, undefined, undefined, Dependency, undefined, Type>;
 }
 
@@ -141,6 +145,11 @@ export namespace CreateLogic {
       action: Action;
       action$: Observable<Action>;
     };
+
+    export type ActionCreatorType<Action extends StandardAction> = {
+      (payload: PayloadExtractor<Action>): Action;
+      toString(): string;
+    }
 
     export type PrimitiveType<Type extends string | symbol, InputPayload> =
       | Type
@@ -168,7 +177,7 @@ export namespace CreateLogic {
       Type extends string
     > {
       name?: string | Function;
-      type: TypeMatcher<Type, PayloadExtractor<Action>>;
+      type: TypeMatcher<Type, PayloadExtractor<Action>> | ActionCreatorType<Action>;
       cancelType?: TypeMatcher<string, PayloadExtractor<Action>>;
       latest?: boolean;
       debounce?: number;
@@ -253,9 +262,7 @@ export namespace CreateLogic {
       Context extends Object = undefined
     > {
       processOptions?: Process.Options<Action>;
-      process?:
-        | Process.SimpleHook<State, Action, Dependency, Context>
-        | Process.AdvancedHook<State, Action, Dependency, Context>;
+      process?: Process.Hook<State, Action, Dependency, Context>;
     }
 
     export namespace Process {
@@ -276,14 +283,7 @@ export namespace CreateLogic {
         ctx: Context;
       };
 
-      export type SimpleHook<
-        State extends object,
-        Action extends StandardAction,
-        Dependency extends object,
-        Context extends Object = undefined
-      > = (depObj: Process.DepObj<State, Action, Dependency, Context>) => void;
-
-      export type AdvancedHook<
+      export type Hook<
         State extends object,
         Action extends StandardAction,
         Dependency extends object,

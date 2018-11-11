@@ -280,6 +280,33 @@ import { Dependency, Meta, Payload, State } from './typecheck';
   });
 }
 
+{
+  interface ActionCreator<P> {
+    (payload: P): { type: string; payload: P };
+    toString(): string;
+  }
+  let fooAction: ActionCreator<{ foo: number }>;
+  const logic1 = createLogic({
+    type: fooAction,
+    validate({action}) {
+      action.payload.foo.toFixed();
+    },
+  });
+  const logic2 = createLogic({
+    type: fooAction,
+    process({ action }) {
+      action.payload.foo.toExponential();
+    },
+  });
+  const logic3 = createLogic({
+    type: fooAction,
+    process({ action }, dispatch, done) {
+      action.payload.foo.toExponential();
+    },
+  })
+}
+
+
 //
 // EXPECT ERROR
 //
