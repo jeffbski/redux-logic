@@ -6,6 +6,7 @@
   "browser": {
     "main": "dist/redux-logic.js"
   },
+  "react-native": "src/index.js",
   "browserify": {
     "transform": [
       "loose-envify"
