@@ -221,8 +221,7 @@ function applyLogic(arrLogic, store, next, sub, actionIn$, deps,
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('error in mw dispatch or next call, probably in middlware/reducer/render fn:', err);
-      const msg = (err && err.message) ? err.message : err;
-      monitor$.next({ action, err: msg, op: 'nextError' });
+      monitor$.next({ action, err, op: 'nextError' });
     }
     // at this point, action is the transformed action, not original
     monitor$.next({ nextAction: action, op: 'bottom' });
