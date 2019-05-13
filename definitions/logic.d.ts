@@ -290,7 +290,7 @@ export namespace CreateLogic {
         Context extends Object = undefined
       > = ((
         depObj: Process.DepObj<State, Action, Dependency, Context>,
-        dispatch: (action: ArgumentAction) => void,
+        dispatch: <T extends ArgumentAction>(action: T) => T,
         done: () => void
       ) => void);
     }
