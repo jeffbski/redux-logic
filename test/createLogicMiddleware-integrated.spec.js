@@ -69,7 +69,7 @@ describe('createLogicMiddleware-integration', () => {
           op: 'dispatch' },
         { action: { type: 'BAD' }, op: 'top' },
         { action: { type: 'BAD' },
-          err: 'something bad happened',
+          err: new Error('something bad happened'),
           op: 'nextError' },
         { nextAction: { type: 'BAD' }, op: 'bottom' },
         { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
@@ -137,7 +137,7 @@ describe('createLogicMiddleware-integration', () => {
           shouldProcess: true,
           op: 'next' },
         { action: { type: 'BAD' },
-          err: 'another bad thing',
+          err: new Error('another bad thing'),
           op: 'nextError' },
         { nextAction: { type: 'BAD' }, op: 'bottom' },
         { action: { type: 'BAD' }, name: 'L(BAD)-0', op: 'end' }
