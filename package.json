@@ -36,7 +36,7 @@
     "check:src": "npm run lint && npm run test && npm run test:rxbuild && npm run test:prod && npm run test:typescript",
     "escheck": "npm run escheck:commonjs && npm run escheck:es && npm run escheck:umd",
     "escheck:commonjs": "es-check es5 build-lib/**.js",
-    "escheck:es": "es-check --module true es6 build-es/**.js",
+    "escheck:es": "es-check --module es6 build-es/**.js",
     "escheck:umd": "es-check es5 dist/**.js",
     "check:examples": "npm run build:examples && npm run test:examples",
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir build-lib",
