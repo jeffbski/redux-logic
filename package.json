@@ -6,6 +6,9 @@
   "browser": {
     "main": "dist/redux-logic.js"
   },
+  "engines": {
+    "node": ">=8.0.0"
+  },
   "react-native": "src/index.js",
   "browserify": {
     "transform": [
