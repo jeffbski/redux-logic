@@ -30,13 +30,13 @@ describe('createLogicMiddleware', () => {
 
     it('mw.monitor$ to monitor flow', () => {
       const monArr = [];
-      mw.monitor$.subscribe(x => monArr.push(x));
+      mw.monitor$.subscribe((x) => monArr.push(x));
       const next = expect.createSpy();
       const action = { type: 'FOO' };
       mw({})(next)(action);
       expect(monArr).toEqual([
         { action: { type: 'FOO' }, op: 'top' },
-        { nextAction: { type: 'FOO' }, op: 'bottom' }
+        { nextAction: { type: 'FOO' }, op: 'bottom' },
       ]);
     });
 
@@ -45,7 +45,7 @@ describe('createLogicMiddleware', () => {
     });
 
     it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
-      function fn() { }
+      function fn() {}
       mw.whenComplete(fn).then(bDone);
     });
 
@@ -80,11 +80,7 @@ describe('createLogicMiddleware', () => {
     it('throws an error', () => {
       const fooLogic = createLogic({ type: 'FOO' });
       const barLogic = createLogic({ type: 'BAR' });
-      const arrLogic = [
-        fooLogic,
-        barLogic,
-        fooLogic,
-      ];
+      const arrLogic = [fooLogic, barLogic, fooLogic];
       expect(() => {
         createLogicMiddleware(arrLogic);
       }).toThrow('duplicate logic');
@@ -95,12 +91,7 @@ describe('createLogicMiddleware', () => {
     it('throws an error', () => {
       const fooLogic = createLogic({ type: 'FOO' });
       const barLogic = createLogic({ type: 'BAR' });
-      const arrLogic = [
-        fooLogic,
-        barLogic,
-        fooLogic,
-        barLogic,
-      ];
+      const arrLogic = [fooLogic, barLogic, fooLogic, barLogic];
       expect(() => {
         createLogicMiddleware(arrLogic);
       }).toThrow('duplicate logic');
@@ -111,10 +102,7 @@ describe('createLogicMiddleware', () => {
     it('is allowed', () => {
       const fooLogic = createLogic({ type: 'FOO' });
       const foo2Logic = createLogic({ type: 'FOO' });
-      const arrLogic = [
-        fooLogic,
-        foo2Logic
-      ];
+      const arrLogic = [fooLogic, foo2Logic];
       createLogicMiddleware(arrLogic);
     });
   });
@@ -130,10 +118,10 @@ describe('createLogicMiddleware', () => {
       next = expect.createSpy();
       dispatch = expect.createSpy();
       logicA = createLogic({
-        type: 'FOO'
+        type: 'FOO',
       });
       mw = createLogicMiddleware([logicA]);
-      mw.monitor$.subscribe(x => monArr.push(x));
+      mw.monitor$.subscribe((x) => monArr.push(x));
       mw({ dispatch })(next);
     });
 
@@ -153,10 +141,10 @@ describe('createLogicMiddleware', () => {
       next = expect.createSpy();
       dispatch = expect.createSpy();
       logicA = createLogic({
-        type: 'FOO'
+        type: 'FOO',
       });
       mw = createLogicMiddleware([logicA]);
-      mw.monitor$.subscribe(x => monArr.push(x));
+      mw.monitor$.subscribe((x) => monArr.push(x));
       const storeFn = mw({ dispatch })(next);
       storeFn({ type: 'BAR' });
     });
@@ -177,10 +165,10 @@ describe('createLogicMiddleware', () => {
       next = expect.createSpy();
       dispatch = expect.createSpy();
       logicA = createLogic({
-        type: 'FOO'
+        type: 'FOO',
       });
       mw = createLogicMiddleware([logicA]);
-      mw.monitor$.subscribe(x => monArr.push(x));
+      mw.monitor$.subscribe((x) => monArr.push(x));
       const storeFn = mw({ dispatch })(next);
       storeFn({ type: 'BAR' });
       storeFn({ type: 'BAZ' });
@@ -201,7 +189,7 @@ describe('createLogicMiddleware', () => {
     const actionAResult = { type: 'FOO', allowed: ['a'] };
     const actionADispatch = { type: 'BAR', allowed: ['a'] };
     const actionIgnore = { type: 'CAT' };
-    beforeEach(bDone => {
+    beforeEach((bDone) => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -210,18 +198,18 @@ describe('createLogicMiddleware', () => {
         validate({ action }, allow) {
           allow({
             ...action,
-            allowed: ['a']
+            allowed: ['a'],
           });
         },
         process({ action }, dispatch) {
           dispatch({
             ...action,
-            type: 'BAR'
+            type: 'BAR',
           });
-        }
+        },
       });
       mw = createLogicMiddleware([logicA]);
-      mw.monitor$.subscribe(x => monArr.push(x));
+      mw.monitor$.subscribe((x) => monArr.push(x));
       const storeFn = mw({ dispatch })(next);
       storeFn(actionIgnore);
       storeFn(actionA);
@@ -245,19 +233,16 @@ describe('createLogicMiddleware', () => {
         { nextAction: { type: 'CAT' }, op: 'bottom' },
         { action: { type: 'FOO' }, op: 'top' },
         { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'begin' },
-        { action: { type: 'FOO' },
+        {
+          action: { type: 'FOO' },
           nextAction: { type: 'FOO', allowed: ['a'] },
           name: 'L(FOO)-0',
           shouldProcess: true,
-          op: 'next' },
+          op: 'next',
+        },
         { nextAction: { type: 'FOO', allowed: ['a'] }, op: 'bottom' },
-        { action: { type: 'FOO' },
-          dispAction: { type: 'BAR', allowed: ['a'] },
-          op: 'dispatch' },
-        { action: { type: 'FOO' },
-          name: 'L(FOO)-0',
-          op: 'end'
-         }
+        { action: { type: 'FOO' }, dispAction: { type: 'BAR', allowed: ['a'] }, op: 'dispatch' },
+        { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' },
       ]);
     });
 
@@ -266,7 +251,7 @@ describe('createLogicMiddleware', () => {
     });
 
     it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
-      function fn() { }
+      function fn() {}
       mw.whenComplete(fn).then(bDone);
     });
 
@@ -279,7 +264,6 @@ describe('createLogicMiddleware', () => {
         mw.whenComplete().then(bDone);
       }, 100);
     });
-
   });
 
   describe('[logicA] type is arr of strings, match any', () => {
@@ -291,7 +275,7 @@ describe('createLogicMiddleware', () => {
     const actionAResult = { type: 'FOO', allowed: ['a'] };
     const actionADispatch = { type: 'BAR', allowed: ['a'] };
     const actionIgnore = { type: 'CAT' };
-    beforeEach(bDone => {
+    beforeEach((bDone) => {
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(() => bDone());
       logicA = createLogic({
@@ -299,15 +283,15 @@ describe('createLogicMiddleware', () => {
         validate({ action }, allow) {
           allow({
             ...action,
-            allowed: ['a']
+            allowed: ['a'],
           });
         },
         process({ action }, dispatch) {
           dispatch({
             ...action,
-            type: 'BAR'
+            type: 'BAR',
           });
-        }
+        },
       });
       mw = createLogicMiddleware([logicA]);
       const storeFn = mw({ dispatch })(next);
@@ -340,7 +324,7 @@ describe('createLogicMiddleware', () => {
     const actionAResult = { type: FOO, allowed: ['a'] };
     const actionADispatch = { type: BAR, allowed: ['a'] };
     const actionIgnore = { type: CAT };
-    beforeEach(bDone => {
+    beforeEach((bDone) => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -349,18 +333,18 @@ describe('createLogicMiddleware', () => {
         validate({ action }, allow) {
           allow({
             ...action,
-            allowed: ['a']
+            allowed: ['a'],
           });
         },
         process({ action }, dispatch) {
           dispatch({
             ...action,
-            type: BAR
+            type: BAR,
           });
-        }
+        },
       });
       mw = createLogicMiddleware([logicA]);
-      mw.monitor$.subscribe(x => monArr.push(x));
+      mw.monitor$.subscribe((x) => monArr.push(x));
       const storeFn = mw({ dispatch })(next);
       storeFn(actionIgnore);
       storeFn(actionA);
@@ -384,19 +368,16 @@ describe('createLogicMiddleware', () => {
         { nextAction: { type: CAT }, op: 'bottom' },
         { action: { type: FOO }, op: 'top' },
         { action: { type: FOO }, name: 'L(Symbol(FOO))-0', op: 'begin' },
-        { action: { type: FOO },
+        {
+          action: { type: FOO },
           nextAction: { type: FOO, allowed: ['a'] },
           name: 'L(Symbol(FOO))-0',
           shouldProcess: true,
-          op: 'next' },
+          op: 'next',
+        },
         { nextAction: { type: FOO, allowed: ['a'] }, op: 'bottom' },
-        { action: { type: FOO },
-          dispAction: { type: BAR, allowed: ['a'] },
-          op: 'dispatch' },
-        { action: { type: FOO },
-          name: 'L(Symbol(FOO))-0',
-          op: 'end'
-         }
+        { action: { type: FOO }, dispAction: { type: BAR, allowed: ['a'] }, op: 'dispatch' },
+        { action: { type: FOO }, name: 'L(Symbol(FOO))-0', op: 'end' },
       ]);
     });
 
@@ -405,7 +386,7 @@ describe('createLogicMiddleware', () => {
     });
 
     it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
-      function fn() { }
+      function fn() {}
       mw.whenComplete(fn).then(bDone);
     });
 
@@ -433,7 +414,7 @@ describe('createLogicMiddleware', () => {
     const actionAResult = { type: FOO, allowed: ['a'] };
     const actionADispatch = { type: BAR, allowed: ['a'] };
     const actionIgnore = { type: CAT };
-    beforeEach(bDone => {
+    beforeEach((bDone) => {
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(() => bDone());
       logicA = createLogic({
@@ -441,15 +422,15 @@ describe('createLogicMiddleware', () => {
         validate({ action }, allow) {
           allow({
             ...action,
-            allowed: ['a']
+            allowed: ['a'],
           });
         },
         process({ action }, dispatch) {
           dispatch({
             ...action,
-            type: BAR
+            type: BAR,
           });
-        }
+        },
       });
       mw = createLogicMiddleware([logicA]);
       const storeFn = mw({ dispatch })(next);
@@ -478,7 +459,7 @@ describe('createLogicMiddleware', () => {
     const actionAResult = { type: 'FOO', allowed: ['a'] };
     const actionADispatch = { type: 'BAR', allowed: ['a'] };
     const actionIgnore = { type: 'CAT' };
-    beforeEach(bDone => {
+    beforeEach((bDone) => {
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(() => bDone());
       logicA = createLogic({
@@ -486,15 +467,15 @@ describe('createLogicMiddleware', () => {
         validate({ action }, allow) {
           allow({
             ...action,
-            allowed: ['a']
+            allowed: ['a'],
           });
         },
         process({ action }, dispatch) {
           dispatch({
             ...action,
-            type: 'BAR'
+            type: 'BAR',
           });
-        }
+        },
       });
       mw = createLogicMiddleware([logicA]);
       const storeFn = mw({ dispatch })(next);
@@ -524,7 +505,7 @@ describe('createLogicMiddleware', () => {
     const actionAResult = { type: 'FOO', allowed: ['a'] };
     const actionADispatch = { type: 'BAR', allowed: ['a'] };
     const actionIgnore = { type: 'CAT' };
-    beforeEach(bDone => {
+    beforeEach((bDone) => {
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(() => bDone());
       logicA = createLogic({
@@ -532,15 +513,15 @@ describe('createLogicMiddleware', () => {
         validate({ action }, allow) {
           allow({
             ...action,
-            allowed: ['a']
+            allowed: ['a'],
           });
         },
         process({ action }, dispatch) {
           dispatch({
             ...action,
-            type: 'BAR'
+            type: 'BAR',
           });
-        }
+        },
       });
       mw = createLogicMiddleware([logicA]);
       const storeFn = mw({ dispatch })(next);
@@ -569,7 +550,7 @@ describe('createLogicMiddleware', () => {
     const actionAResult = { type: 'FOO', allowed: ['a'] };
     const actionADispatch = { type: 'BAR', allowed: ['a'] };
     const actionIgnore = { type: 'CAT' };
-    beforeEach(bDone => {
+    beforeEach((bDone) => {
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(() => bDone());
       logicA = createLogic({
@@ -577,15 +558,15 @@ describe('createLogicMiddleware', () => {
         validate({ action }, allow) {
           allow({
             ...action,
-            allowed: ['a']
+            allowed: ['a'],
           });
         },
         process({ action }, dispatch) {
           dispatch({
             ...action,
-            type: 'BAR'
+            type: 'BAR',
           });
-        }
+        },
       });
       mw = createLogicMiddleware([logicA]);
       const storeFn = mw({ dispatch })(next);
@@ -616,27 +597,29 @@ describe('createLogicMiddleware', () => {
     const actionCat = { type: 'CAT', id: 2 };
     const actionCatResult = { type: 'CAT', id: 2, allowed: ['a'] };
     const actionCatDispatch = { type: 'BAR', id: 2, allowed: ['a'] };
-    beforeEach(bDone => {
+    beforeEach((bDone) => {
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCount = 0;
       function cb() {
-        if (++dispatchCount >= 2) { bDone(); }
+        if (++dispatchCount >= 2) {
+          bDone();
+        }
       }
       logicA = createLogic({
         type: '*',
         validate({ action }, allow) {
           allow({
             ...action,
-            allowed: ['a']
+            allowed: ['a'],
           });
         },
         process({ action }, dispatch) {
           dispatch({
             ...action,
-            type: 'BAR'
+            type: 'BAR',
           });
-        }
+        },
       });
       mw = createLogicMiddleware([logicA]);
       const storeFn = mw({ dispatch })(next);
@@ -657,7 +640,6 @@ describe('createLogicMiddleware', () => {
     });
   });
 
-
   describe('[logicA] validate allow', () => {
     let monArr = [];
     let mw;
@@ -665,7 +647,7 @@ describe('createLogicMiddleware', () => {
     let next;
     const actionAllow = { type: 'FOO', allowMe: true };
     const actionA = { type: 'FOO', allowMe: true, allowed: ['a'] };
-    beforeEach(bDone => {
+    beforeEach((bDone) => {
       monArr = [];
       next = expect.createSpy();
       logicA = createLogic({
@@ -673,16 +655,16 @@ describe('createLogicMiddleware', () => {
         validate({ action }, allow, reject) {
           if (action.allowMe) {
             allow({
-                ...action,
-              allowed: ['a']
+              ...action,
+              allowed: ['a'],
             });
           } else {
             reject(action);
           }
-        }
+        },
       });
       mw = createLogicMiddleware([logicA]);
-      mw.monitor$.subscribe(x => monArr.push(x));
+      mw.monitor$.subscribe((x) => monArr.push(x));
       mw({})(next)(actionAllow);
       mw.whenComplete(bDone);
     });
@@ -695,20 +677,16 @@ describe('createLogicMiddleware', () => {
     it('mw.monitor$ should track flow', () => {
       expect(monArr).toEqual([
         { action: { type: 'FOO', allowMe: true }, op: 'top' },
-        { action: { type: 'FOO', allowMe: true },
-          name: 'L(FOO)-0',
-          op: 'begin' },
-        { action: { type: 'FOO', allowMe: true },
+        { action: { type: 'FOO', allowMe: true }, name: 'L(FOO)-0', op: 'begin' },
+        {
+          action: { type: 'FOO', allowMe: true },
           nextAction: { type: 'FOO', allowMe: true, allowed: ['a'] },
           name: 'L(FOO)-0',
           shouldProcess: true,
-          op: 'next' },
-        { nextAction: { type: 'FOO', allowMe: true, allowed: ['a'] },
-          op: 'bottom' },
-        { action: { type: 'FOO', allowMe: true },
-          name: 'L(FOO)-0',
-          op: 'end'
-         }
+          op: 'next',
+        },
+        { nextAction: { type: 'FOO', allowMe: true, allowed: ['a'] }, op: 'bottom' },
+        { action: { type: 'FOO', allowMe: true }, name: 'L(FOO)-0', op: 'end' },
       ]);
     });
   });
@@ -720,7 +698,7 @@ describe('createLogicMiddleware', () => {
     let next;
     const actionReject = { type: 'FOO', allowMe: false };
     const actionA = { type: 'FOO', allowMe: false, rejected: ['a'] };
-    beforeEach(bDone => {
+    beforeEach((bDone) => {
       monArr = [];
       next = expect.createSpy();
       logicA = createLogic({
@@ -730,18 +708,18 @@ describe('createLogicMiddleware', () => {
           if (action.allowMe) {
             allow({
               ...action,
-              allowed: ['a']
+              allowed: ['a'],
             });
           } else {
             reject({
-                ...action,
-              rejected: ['a']
+              ...action,
+              rejected: ['a'],
             });
           }
-        }
+        },
       });
       mw = createLogicMiddleware([logicA]);
-      mw.monitor$.subscribe(x => monArr.push(x));
+      mw.monitor$.subscribe((x) => monArr.push(x));
       mw({})(next)(actionReject);
       mw.whenComplete(bDone);
     });
@@ -754,20 +732,16 @@ describe('createLogicMiddleware', () => {
     it('mw.monitor$ should track flow', () => {
       expect(monArr).toEqual([
         { action: { type: 'FOO', allowMe: false }, op: 'top' },
-        { action: { type: 'FOO', allowMe: false },
-          name: 'logicA',
-          op: 'begin' },
-        { action: { type: 'FOO', allowMe: false },
+        { action: { type: 'FOO', allowMe: false }, name: 'logicA', op: 'begin' },
+        {
+          action: { type: 'FOO', allowMe: false },
           nextAction: { type: 'FOO', allowMe: false, rejected: ['a'] },
           name: 'logicA',
           shouldProcess: false,
-          op: 'next' },
-        { nextAction: { type: 'FOO', allowMe: false, rejected: ['a'] },
-          op: 'bottom' },
-        { action: { type: 'FOO', allowMe: false },
-          name: 'logicA',
-          op: 'end'
-         }
+          op: 'next',
+        },
+        { nextAction: { type: 'FOO', allowMe: false, rejected: ['a'] }, op: 'bottom' },
+        { action: { type: 'FOO', allowMe: false }, name: 'logicA', op: 'end' },
       ]);
     });
   });
@@ -778,7 +752,7 @@ describe('createLogicMiddleware', () => {
     let logicA;
     let next;
     const actionAllow = { type: 'FOO', allowMe: true };
-    beforeEach(bDone => {
+    beforeEach((bDone) => {
       monArr = [];
       next = expect.createSpy();
       logicA = createLogic({
@@ -789,10 +763,10 @@ describe('createLogicMiddleware', () => {
           } else {
             reject(action);
           }
-        }
+        },
       });
       mw = createLogicMiddleware([logicA]);
-      mw.monitor$.subscribe(x => monArr.push(x));
+      mw.monitor$.subscribe((x) => monArr.push(x));
       mw({})(next)(actionAllow);
       mw.whenComplete(bDone);
     });
@@ -804,19 +778,16 @@ describe('createLogicMiddleware', () => {
     it('mw.monitor$ should track flow', () => {
       expect(monArr).toEqual([
         { action: { type: 'FOO', allowMe: true }, op: 'top' },
-        { action: { type: 'FOO', allowMe: true },
-          name: 'L(FOO)-0',
-          op: 'begin' },
-        { action: { type: 'FOO', allowMe: true },
-          name: 'L(FOO)-0',
-          shouldProcess: true,
-          op: 'filtered' },
-        { action: {
+        { action: { type: 'FOO', allowMe: true }, name: 'L(FOO)-0', op: 'begin' },
+        { action: { type: 'FOO', allowMe: true }, name: 'L(FOO)-0', shouldProcess: true, op: 'filtered' },
+        {
+          action: {
             allowMe: true,
-            type: 'FOO'
+            type: 'FOO',
           },
           name: 'L(FOO)-0',
-          op: 'end' }
+          op: 'end',
+        },
       ]);
     });
   });
@@ -827,7 +798,7 @@ describe('createLogicMiddleware', () => {
     let logicA;
     let next;
     const actionReject = { type: 'FOO', allowMe: false };
-    beforeEach(bDone => {
+    beforeEach((bDone) => {
       monArr = [];
       next = expect.createSpy();
       logicA = createLogic({
@@ -837,15 +808,15 @@ describe('createLogicMiddleware', () => {
           if (action.allowMe) {
             allow({
               ...action,
-              allowed: ['a']
+              allowed: ['a'],
             });
           } else {
             reject();
           }
-        }
+        },
       });
       mw = createLogicMiddleware([logicA]);
-      mw.monitor$.subscribe(x => monArr.push(x));
+      mw.monitor$.subscribe((x) => monArr.push(x));
       mw({})(next)(actionReject);
       mw.whenComplete(bDone);
     });
@@ -857,16 +828,9 @@ describe('createLogicMiddleware', () => {
     it('mw.monitor$ should track flow', () => {
       expect(monArr).toEqual([
         { action: { type: 'FOO', allowMe: false }, op: 'top' },
-        { action: { type: 'FOO', allowMe: false },
-          name: 'logicA',
-          op: 'begin' },
-        { action: { type: 'FOO', allowMe: false },
-          name: 'logicA',
-          shouldProcess: false,
-          op: 'filtered' },
-        { action: { type: 'FOO', allowMe: false },
-          name: 'logicA',
-          op: 'end' }
+        { action: { type: 'FOO', allowMe: false }, name: 'logicA', op: 'begin' },
+        { action: { type: 'FOO', allowMe: false }, name: 'logicA', shouldProcess: false, op: 'filtered' },
+        { action: { type: 'FOO', allowMe: false }, name: 'logicA', op: 'end' },
       ]);
     });
 
@@ -875,14 +839,13 @@ describe('createLogicMiddleware', () => {
     });
 
     it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
-      function fn() { }
+      function fn() {}
       mw.whenComplete(fn).then(bDone);
     });
 
     it('mw.whenComplete() should resolve to promise', (bDone) => {
       mw.whenComplete().then(bDone);
     });
-
   });
 
   describe('[logicA] validate+process allow same', () => {
@@ -892,11 +855,9 @@ describe('createLogicMiddleware', () => {
     let next;
     let dispatch;
     const actionAllow = { type: 'FOO', allowMe: true };
-    const actionA = { type: 'FOO', allowMe: true,
-                      allowed: ['a'] };
-    const actionBar = { type: 'BAR', allowMe: true,
-                      allowed: ['a'], processed: ['a'] };
-    beforeEach(bDone => {
+    const actionA = { type: 'FOO', allowMe: true, allowed: ['a'] };
+    const actionBar = { type: 'BAR', allowMe: true, allowed: ['a'], processed: ['a'] };
+    beforeEach((bDone) => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy();
@@ -905,8 +866,8 @@ describe('createLogicMiddleware', () => {
         validate({ action }, allow, reject) {
           if (action.allowMe) {
             allow({
-                ...action,
-              allowed: ['a']
+              ...action,
+              allowed: ['a'],
             });
           } else {
             reject(action);
@@ -917,12 +878,12 @@ describe('createLogicMiddleware', () => {
           dispatch({
             ...action,
             type: 'BAR',
-            processed: ['a']
+            processed: ['a'],
           });
-        }
+        },
       });
       mw = createLogicMiddleware([logicA]);
-      mw.monitor$.subscribe(x => monArr.push(x));
+      mw.monitor$.subscribe((x) => monArr.push(x));
       mw({ dispatch })(next)(actionAllow);
     });
 
@@ -939,26 +900,21 @@ describe('createLogicMiddleware', () => {
     it('mw.monitor$ should track flow', () => {
       expect(monArr).toEqual([
         { action: { type: 'FOO', allowMe: true }, op: 'top' },
-        { action: { type: 'FOO', allowMe: true },
-          name: 'L(FOO)-0',
-          op: 'begin' },
-        { action: { type: 'FOO', allowMe: true },
+        { action: { type: 'FOO', allowMe: true }, name: 'L(FOO)-0', op: 'begin' },
+        {
+          action: { type: 'FOO', allowMe: true },
           nextAction: { type: 'FOO', allowMe: true, allowed: ['a'] },
           name: 'L(FOO)-0',
           shouldProcess: true,
-          op: 'next' },
-        { nextAction: { type: 'FOO', allowMe: true, allowed: ['a'] },
-          op: 'bottom' },
-        { action: { type: 'FOO', allowMe: true },
-          dispAction:
-                     { type: 'BAR',
-                       allowMe: true,
-                       allowed: ['a'],
-                       processed: ['a'] },
-          op: 'dispatch' },
-        { action: { type: 'FOO', allowMe: true },
-          name: 'L(FOO)-0',
-          op: 'end' }
+          op: 'next',
+        },
+        { nextAction: { type: 'FOO', allowMe: true, allowed: ['a'] }, op: 'bottom' },
+        {
+          action: { type: 'FOO', allowMe: true },
+          dispAction: { type: 'BAR', allowMe: true, allowed: ['a'], processed: ['a'] },
+          op: 'dispatch',
+        },
+        { action: { type: 'FOO', allowMe: true }, name: 'L(FOO)-0', op: 'end' },
       ]);
     });
 
@@ -967,14 +923,13 @@ describe('createLogicMiddleware', () => {
     });
 
     it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
-      function fn() { }
+      function fn() {}
       mw.whenComplete(fn).then(bDone);
     });
 
     it('mw.whenComplete() should resolve to promise', (bDone) => {
       mw.whenComplete().then(bDone);
     });
-
   });
 
   describe('[logicA] validate+process allow same useDispatch=true', () => {
@@ -986,7 +941,7 @@ describe('createLogicMiddleware', () => {
     const actionAllow = { type: 'FOO', allowMe: true };
     const actionA = { type: 'FOO', allowMe: true, allowed: ['a'] };
     const actionProcess = { type: 'DOG' };
-    beforeEach(bDone => {
+    beforeEach((bDone) => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
@@ -1000,20 +955,23 @@ describe('createLogicMiddleware', () => {
         type: 'FOO',
         validate({ action }, allow, reject) {
           if (action.allowMe) {
-            allow({
+            allow(
+              {
                 ...action,
-              allowed: ['a']
-            }, { useDispatch: true });
+                allowed: ['a'],
+              },
+              { useDispatch: true }
+            );
           } else {
             reject(action);
           }
         },
         process({ action }, dispatch) {
           dispatch(actionProcess);
-        }
+        },
       });
       mw = createLogicMiddleware([logicA]);
-      mw.monitor$.subscribe(x => monArr.push(x));
+      mw.monitor$.subscribe((x) => monArr.push(x));
       mw({ dispatch })(next)(actionAllow);
       mw.whenComplete(bDone);
     });
@@ -1031,23 +989,21 @@ describe('createLogicMiddleware', () => {
     it('mw.monitor$ should track flow', () => {
       expect(monArr).toEqual([
         { action: { type: 'FOO', allowMe: true }, op: 'top' },
-        { action: { type: 'FOO', allowMe: true },
-          name: 'L(FOO)-0',
-          op: 'begin' },
-        { action: { type: 'FOO', allowMe: true },
+        { action: { type: 'FOO', allowMe: true }, name: 'L(FOO)-0', op: 'begin' },
+        {
+          action: { type: 'FOO', allowMe: true },
           dispAction: { type: 'FOO', allowMe: true, allowed: ['a'] },
           name: 'L(FOO)-0',
           shouldProcess: true,
-          op: 'nextDisp' },
-        { action: { type: 'FOO', allowMe: true },
+          op: 'nextDisp',
+        },
+        {
+          action: { type: 'FOO', allowMe: true },
           dispAction: { type: 'FOO', allowMe: true, allowed: ['a'] },
-          op: 'dispatch' },
-        { action: { type: 'FOO', allowMe: true },
-          dispAction: { type: 'DOG' },
-          op: 'dispatch' },
-        { action: { type: 'FOO', allowMe: true },
-          name: 'L(FOO)-0',
-          op: 'end' }
+          op: 'dispatch',
+        },
+        { action: { type: 'FOO', allowMe: true }, dispAction: { type: 'DOG' }, op: 'dispatch' },
+        { action: { type: 'FOO', allowMe: true }, name: 'L(FOO)-0', op: 'end' },
       ]);
     });
   });
@@ -1058,21 +1014,22 @@ describe('createLogicMiddleware', () => {
     let next;
     let dispatch;
     const actionAllow = { type: 'FOO', allowMe: true };
-    const actionA = { type: 'FOO', allowMe: true,
-                      allowed: ['a'] };
-    const actionBar = { type: 'BAR', allowMe: true,
-                      allowed: ['a'], processed: ['a'] };
-    beforeEach(bDone => {
+    const actionA = { type: 'FOO', allowMe: true, allowed: ['a'] };
+    const actionBar = { type: 'BAR', allowMe: true, allowed: ['a'], processed: ['a'] };
+    beforeEach((bDone) => {
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(() => bDone());
       logicA = createLogic({
         type: 'FOO',
         validate({ action }, allow, reject) {
           if (action.allowMe) {
-            allow({
+            allow(
+              {
                 ...action,
-              allowed: ['a']
-            }, { useDispatch: false });
+                allowed: ['a'],
+              },
+              { useDispatch: false }
+            );
           } else {
             reject(action);
           }
@@ -1081,9 +1038,9 @@ describe('createLogicMiddleware', () => {
           dispatch({
             ...action,
             type: 'BAR',
-            processed: ['a']
+            processed: ['a'],
           });
-        }
+        },
       });
       mw = createLogicMiddleware([logicA]);
       mw({ dispatch })(next)(actionAllow);
@@ -1104,14 +1061,13 @@ describe('createLogicMiddleware', () => {
     });
 
     it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
-      function fn() { }
+      function fn() {}
       mw.whenComplete(fn).then(bDone);
     });
 
     it('mw.whenComplete() should resolve to promise', (bDone) => {
       mw.whenComplete().then(bDone);
     });
-
   });
 
   describe('[logicA] validate+process allow diff', () => {
@@ -1123,22 +1079,24 @@ describe('createLogicMiddleware', () => {
     const actionAllow = { type: 'FOO', allowMe: true };
     const actionA = { type: 'CAT', allowMe: true, allowed: ['a'] };
     const actionProcess = { type: 'DOG' };
-    beforeEach(bDone => {
+    beforeEach((bDone) => {
       monArr = [];
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCalled = 0;
       function cb() {
-        if (++dispatchCalled >= 2) { /* bDone called by whenComplete */ }
+        if (++dispatchCalled >= 2) {
+          /* bDone called by whenComplete */
+        }
       }
       logicA = createLogic({
         type: 'FOO',
         validate({ action }, allow, reject) {
           if (action.allowMe) {
             allow({
-                ...action,
+              ...action,
               type: 'CAT', // changing type
-              allowed: ['a']
+              allowed: ['a'],
             });
           } else {
             reject(action);
@@ -1146,10 +1104,10 @@ describe('createLogicMiddleware', () => {
         },
         process({ action }, dispatch) {
           dispatch(actionProcess);
-        }
+        },
       });
       mw = createLogicMiddleware([logicA]);
-      mw.monitor$.subscribe(x => monArr.push(x));
+      mw.monitor$.subscribe((x) => monArr.push(x));
       mw({ dispatch })(next)(actionAllow);
       mw.whenComplete(bDone);
     });
@@ -1167,23 +1125,21 @@ describe('createLogicMiddleware', () => {
     it('mw.monitor$ should track flow', () => {
       expect(monArr).toEqual([
         { action: { type: 'FOO', allowMe: true }, op: 'top' },
-        { action: { type: 'FOO', allowMe: true },
-          name: 'L(FOO)-0',
-          op: 'begin' },
-        { action: { type: 'FOO', allowMe: true },
+        { action: { type: 'FOO', allowMe: true }, name: 'L(FOO)-0', op: 'begin' },
+        {
+          action: { type: 'FOO', allowMe: true },
           dispAction: { type: 'CAT', allowMe: true, allowed: ['a'] },
           name: 'L(FOO)-0',
           shouldProcess: true,
-          op: 'nextDisp' },
-        { action: { type: 'FOO', allowMe: true },
+          op: 'nextDisp',
+        },
+        {
+          action: { type: 'FOO', allowMe: true },
           dispAction: { type: 'CAT', allowMe: true, allowed: ['a'] },
-          op: 'dispatch' },
-        { action: { type: 'FOO', allowMe: true },
-          dispAction: { type: 'DOG' },
-          op: 'dispatch' },
-        { action: { type: 'FOO', allowMe: true },
-          name: 'L(FOO)-0',
-          op: 'end' }
+          op: 'dispatch',
+        },
+        { action: { type: 'FOO', allowMe: true }, dispAction: { type: 'DOG' }, op: 'dispatch' },
+        { action: { type: 'FOO', allowMe: true }, name: 'L(FOO)-0', op: 'end' },
       ]);
     });
 
@@ -1192,14 +1148,13 @@ describe('createLogicMiddleware', () => {
     });
 
     it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
-      function fn() { }
+      function fn() {}
       mw.whenComplete(fn).then(bDone);
     });
 
     it('mw.whenComplete() should resolve to promise', (bDone) => {
       mw.whenComplete().then(bDone);
     });
-
   });
 
   describe('[logicA] validate+process allow diff useDispatch=true', () => {
@@ -1210,29 +1165,34 @@ describe('createLogicMiddleware', () => {
     const actionAllow = { type: 'FOO', allowMe: true };
     const actionA = { type: 'CAT', allowMe: true, allowed: ['a'] };
     const actionProcess = { type: 'DOG' };
-    beforeEach(bDone => {
+    beforeEach((bDone) => {
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCalled = 0;
       function cb() {
-        if (++dispatchCalled >= 2) { bDone(); }
+        if (++dispatchCalled >= 2) {
+          bDone();
+        }
       }
       logicA = createLogic({
         type: 'FOO',
         validate({ action }, allow, reject) {
           if (action.allowMe) {
-            allow({
+            allow(
+              {
                 ...action,
-              type: 'CAT', // changing type
-              allowed: ['a']
-            }, { useDispatch: true });
+                type: 'CAT', // changing type
+                allowed: ['a'],
+              },
+              { useDispatch: true }
+            );
           } else {
             reject(action);
           }
         },
         process({ action }, dispatch) {
           dispatch(actionProcess);
-        }
+        },
       });
       mw = createLogicMiddleware([logicA]);
       mw({ dispatch })(next)(actionAllow);
@@ -1253,14 +1213,13 @@ describe('createLogicMiddleware', () => {
     });
 
     it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
-      function fn() { }
+      function fn() {}
       mw.whenComplete(fn).then(bDone);
     });
 
     it('mw.whenComplete() should resolve to promise', (bDone) => {
       mw.whenComplete().then(bDone);
     });
-
   });
 
   describe('[logicA] validate+process allow diff useDispatch=false', () => {
@@ -1271,29 +1230,34 @@ describe('createLogicMiddleware', () => {
     const actionAllow = { type: 'FOO', allowMe: true };
     const actionA = { type: 'CAT', allowMe: true, allowed: ['a'] };
     const actionProcess = { type: 'DOG' };
-    beforeEach(bDone => {
+    beforeEach((bDone) => {
       next = expect.createSpy();
       dispatch = expect.createSpy().andCall(cb);
       let dispatchCalled = 0;
       function cb() {
-        if (++dispatchCalled >= 1) { bDone(); }
+        if (++dispatchCalled >= 1) {
+          bDone();
+        }
       }
       logicA = createLogic({
         type: 'FOO',
         validate({ action }, allow, reject) {
           if (action.allowMe) {
-            allow({
+            allow(
+              {
                 ...action,
-              type: 'CAT', // changing type
-              allowed: ['a']
-            }, { useDispatch: false });
+                type: 'CAT', // changing type
+                allowed: ['a'],
+              },
+              { useDispatch: false }
+            );
           } else {
             reject(action);
           }
         },
         process({ action }, dispatch) {
           dispatch(actionProcess);
-        }
+        },
       });
       mw = createLogicMiddleware([logicA]);
       mw({ dispatch })(next)(actionAllow);
@@ -1314,14 +1278,13 @@ describe('createLogicMiddleware', () => {
     });
 
     it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
-      function fn() { }
+      function fn() {}
       mw.whenComplete(fn).then(bDone);
     });
 
     it('mw.whenComplete() should resolve to promise', (bDone) => {
       mw.whenComplete().then(bDone);
     });
-
   });
 
   describe('[logicA] validate+process reject same', () => {
@@ -1332,29 +1295,28 @@ describe('createLogicMiddleware', () => {
     let dispatch;
     const actionReject = { type: 'FOO', allowMe: false };
     const actionA = { type: 'FOO', allowMe: false, rejected: ['a'] };
-    beforeEach(bDone => {
+    beforeEach((bDone) => {
       monArr = [];
       next = expect.createSpy();
-      dispatch = expect.createSpy()
-        .andCall(() => bDone(new Error('should not call')));
+      dispatch = expect.createSpy().andCall(() => bDone(new Error('should not call')));
       logicA = createLogic({
         type: 'FOO',
         validate({ action }, allow, reject) {
           reject({
             ...action,
-            rejected: ['a']
+            rejected: ['a'],
           });
         },
         process({ action }, dispatch) {
           dispatch({
             ...action,
             type: 'BAR',
-            processed: ['a']
+            processed: ['a'],
           });
-        }
+        },
       });
       mw = createLogicMiddleware([logicA]);
-      mw.monitor$.subscribe(x => monArr.push(x));
+      mw.monitor$.subscribe((x) => monArr.push(x));
       mw({ dispatch })(next)(actionReject);
       mw.whenComplete(bDone);
     });
@@ -1371,19 +1333,16 @@ describe('createLogicMiddleware', () => {
     it('mw.monitor$ should track flow', () => {
       expect(monArr).toEqual([
         { action: { type: 'FOO', allowMe: false }, op: 'top' },
-        { action: { type: 'FOO', allowMe: false },
-          name: 'L(FOO)-0',
-          op: 'begin' },
-        { action: { type: 'FOO', allowMe: false },
+        { action: { type: 'FOO', allowMe: false }, name: 'L(FOO)-0', op: 'begin' },
+        {
+          action: { type: 'FOO', allowMe: false },
           nextAction: { type: 'FOO', allowMe: false, rejected: ['a'] },
           name: 'L(FOO)-0',
           shouldProcess: false,
-          op: 'next' },
-        { nextAction: { type: 'FOO', allowMe: false, rejected: ['a'] },
-          op: 'bottom' },
-        { action: { type: 'FOO', allowMe: false },
-          name: 'L(FOO)-0',
-          op: 'end' }
+          op: 'next',
+        },
+        { nextAction: { type: 'FOO', allowMe: false, rejected: ['a'] }, op: 'bottom' },
+        { action: { type: 'FOO', allowMe: false }, name: 'L(FOO)-0', op: 'end' },
       ]);
     });
 
@@ -1392,14 +1351,13 @@ describe('createLogicMiddleware', () => {
     });
 
     it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
-      function fn() { }
+      function fn() {}
       mw.whenComplete(fn).then(bDone);
     });
 
     it('mw.whenComplete() should resolve to promise', (bDone) => {
       mw.whenComplete().then(bDone);
     });
-
   });
 
   describe('[logicA] validate+process reject diff', () => {
@@ -1409,24 +1367,22 @@ describe('createLogicMiddleware', () => {
     let dispatch;
     const actionReject = { type: 'FOO', allowMe: false };
     const actionA = { type: 'BAR', allowMe: false, rejected: ['a'] };
-    beforeEach(bDone => {
-      next = expect.createSpy()
-        .andCall(() => bDone(new Error('should not call next')));
-      dispatch = expect.createSpy()
-        .andCall(() => bDone());
+    beforeEach((bDone) => {
+      next = expect.createSpy().andCall(() => bDone(new Error('should not call next')));
+      dispatch = expect.createSpy().andCall(() => bDone());
       logicA = createLogic({
         type: 'FOO',
         validate({ action }, allow, reject) {
           if (action.allowMe) {
             allow({
-                ...action,
-              allowed: ['a']
+              ...action,
+              allowed: ['a'],
             });
           } else {
             reject({
-                ...action,
+              ...action,
               type: 'BAR',
-              rejected: ['a']
+              rejected: ['a'],
             });
           }
         },
@@ -1434,9 +1390,9 @@ describe('createLogicMiddleware', () => {
           dispatch({
             ...action,
             type: 'BAR',
-            processed: ['a']
+            processed: ['a'],
           });
-        }
+        },
       });
       mw = createLogicMiddleware([logicA]);
       mw({ dispatch })(next)(actionReject);
@@ -1456,14 +1412,13 @@ describe('createLogicMiddleware', () => {
     });
 
     it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
-      function fn() { }
+      function fn() {}
       mw.whenComplete(fn).then(bDone);
     });
 
     it('mw.whenComplete() should resolve to promise', (bDone) => {
       mw.whenComplete().then(bDone);
     });
-
   });
 
   describe('[logicA] transform', () => {
@@ -1472,16 +1427,16 @@ describe('createLogicMiddleware', () => {
     let next;
     const action = { type: 'FOO' };
     const actionA = { type: 'FOO', a: 1 };
-    beforeEach(bDone => {
+    beforeEach((bDone) => {
       next = expect.createSpy().andCall(() => bDone());
       logicA = createLogic({
         type: 'FOO',
         transform({ action }, next) {
           next({
             ...action,
-            a: 1
+            a: 1,
           });
-        }
+        },
       });
       mw = createLogicMiddleware([logicA]);
       mw({})(next)(action);
@@ -1498,7 +1453,7 @@ describe('createLogicMiddleware', () => {
     let next;
     const action = { type: 'FOO', trans: [] };
     const actionAB = { type: 'FOO', trans: ['a', 'b'] };
-    beforeEach(bDone => {
+    beforeEach((bDone) => {
       next = expect.createSpy().andCall(() => bDone());
       const logicA = createLogic({
         type: 'FOO',
@@ -1506,9 +1461,9 @@ describe('createLogicMiddleware', () => {
           const trans = action.trans;
           next({
             ...action,
-            trans: [...trans, 'a']
+            trans: [...trans, 'a'],
           });
-        }
+        },
       });
       const logicB = createLogic({
         type: 'FOO',
@@ -1516,9 +1471,9 @@ describe('createLogicMiddleware', () => {
           const trans = action.trans;
           next({
             ...action,
-            trans: [...trans, 'b']
+            trans: [...trans, 'b'],
           });
-        }
+        },
       });
       mw = createLogicMiddleware([logicA, logicB]);
       mw({})(next)(action);
@@ -1536,7 +1491,7 @@ describe('createLogicMiddleware', () => {
     let next;
     const action = { type: 'FOO', trans: [] };
     const actionAB = { type: 'FOO', trans: ['a', 'b'] };
-    beforeEach(bDone => {
+    beforeEach((bDone) => {
       monArr = [];
       next = expect.createSpy();
       const logicA = createLogic({
@@ -1545,14 +1500,14 @@ describe('createLogicMiddleware', () => {
           const trans = action.trans;
           next({
             ...action,
-            trans: [...trans, 'a']
+            trans: [...trans, 'a'],
           });
         },
         process({ action, cancelled$ }, dispatch) {
           // logicA is the last to exit since it is first
           cancelled$.subscribe({ complete: () => bDone() });
           dispatch();
-        }
+        },
       });
       const logicB = createLogic({
         type: ['BAR', 'FOO'],
@@ -1560,12 +1515,12 @@ describe('createLogicMiddleware', () => {
           const trans = action.trans;
           next({
             ...action,
-            trans: [...trans, 'b']
+            trans: [...trans, 'b'],
           });
-        }
+        },
       });
       mw = createLogicMiddleware([logicA, logicB]);
-      mw.monitor$.subscribe(x => monArr.push(x));
+      mw.monitor$.subscribe((x) => monArr.push(x));
       mw({})(next)(action);
     });
 
@@ -1577,29 +1532,25 @@ describe('createLogicMiddleware', () => {
     it('mw.monitor$ should track flow', () => {
       expect(monArr).toEqual([
         { action: { type: 'FOO', trans: [] }, op: 'top' },
-        { action: { type: 'FOO', trans: [] },
-          name: 'L(FOO)-0',
-          op: 'begin' },
-        { action: { type: 'FOO', trans: [] },
+        { action: { type: 'FOO', trans: [] }, name: 'L(FOO)-0', op: 'begin' },
+        {
+          action: { type: 'FOO', trans: [] },
           nextAction: { type: 'FOO', trans: ['a'] },
           name: 'L(FOO)-0',
           shouldProcess: true,
-          op: 'next' },
-        { action: { type: 'FOO', trans: ['a'] },
-          name: 'L(BAR,FOO)-1',
-          op: 'begin' },
-        { action: { type: 'FOO', trans: ['a'] },
+          op: 'next',
+        },
+        { action: { type: 'FOO', trans: ['a'] }, name: 'L(BAR,FOO)-1', op: 'begin' },
+        {
+          action: { type: 'FOO', trans: ['a'] },
           nextAction: { type: 'FOO', trans: ['a', 'b'] },
           name: 'L(BAR,FOO)-1',
           shouldProcess: true,
-          op: 'next' },
+          op: 'next',
+        },
         { nextAction: { type: 'FOO', trans: ['a', 'b'] }, op: 'bottom' },
-        { action: { type: 'FOO', trans: ['a'] },
-          name: 'L(BAR,FOO)-1',
-          op: 'end' },
-        { action: { type: 'FOO', trans: [] },
-          name: 'L(FOO)-0',
-          op: 'end' }
+        { action: { type: 'FOO', trans: ['a'] }, name: 'L(BAR,FOO)-1', op: 'end' },
+        { action: { type: 'FOO', trans: [] }, name: 'L(FOO)-0', op: 'end' },
       ]);
     });
 
@@ -1608,7 +1559,7 @@ describe('createLogicMiddleware', () => {
     });
 
     it('mw.whenComplete(fn) should resolve to promise', (bDone) => {
-      function fn() { }
+      function fn() {}
       mw.whenComplete(fn).then(bDone);
     });
 
@@ -1621,6 +1572,5 @@ describe('createLogicMiddleware', () => {
         mw.whenComplete().then(bDone);
       }, 100);
     });
-
   });
 });

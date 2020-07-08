@@ -1,5 +1,5 @@
 import { Subject, BehaviorSubject } from 'rxjs';
-import { filter, map, scan, takeWhile } from 'rxjs/operators';
+import { map, scan, takeWhile } from 'rxjs/operators';
 import wrapper from './logicWrapper';
 import { identityFn, stringifyType } from './utils';
 
@@ -37,32 +37,41 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
   const actionSrc$ = new Subject(); // mw action stream
   const monitor$ = new Subject(); // monitor all activity
   const lastPending$ = new BehaviorSubject({ op: OP_INIT });
-  monitor$.pipe(
-    scan((acc, x) => { // append a pending logic count
-      let pending = acc.pending || 0;
-      switch (x.op) { // eslint-disable-line default-case
-        case 'top' : // action at top of logic stack
-        case 'begin' : // starting into a logic
-          pending += 1;
-          break;
+  monitor$
+    .pipe(
+      scan(
+        (acc, x) => {
+          // append a pending logic count
+          let pending = acc.pending || 0;
+          switch (
+            x.op // eslint-disable-line default-case
+          ) {
+            case 'top': // action at top of logic stack
+            case 'begin': // starting into a logic
+              pending += 1;
+              break;
 
-        case 'end' : // completed from a logic
-        case 'bottom' : // action cleared bottom of logic stack
-        case 'nextDisp' : // action changed type and dispatched
-        case 'filtered' : // action filtered
-        case 'dispatchError' : // error when dispatching
-        case 'cancelled' : // action cancelled before intercept complete
-                           // dispCancelled is not included here since
-                           // already accounted for in the 'end' op
-          pending -= 1;
-          break;
-      }
-      return {
-        ...x,
-        pending
-      };
-    }, { pending: 0 })
-  ).subscribe(lastPending$); // pipe to lastPending
+            case 'end': // completed from a logic
+            case 'bottom': // action cleared bottom of logic stack
+            case 'nextDisp': // action changed type and dispatched
+            case 'filtered': // action filtered
+            case 'dispatchError': // error when dispatching
+            case 'cancelled': // action cancelled before intercept complete
+              // dispCancelled is not included here since
+              // already accounted for in the 'end' op
+              pending -= 1;
+              break;
+            default:
+          }
+          return {
+            ...x,
+            pending
+          };
+        },
+        { pending: 0 }
+      )
+    )
+    .subscribe(lastPending$); // pipe to lastPending
 
   let savedStore;
   let savedNext;
@@ -77,17 +86,23 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
     }
     savedStore = store;
 
-    return next => {
+    return (next) => {
       savedNext = next;
-      const { action$, sub, logicCount: cnt } =
-            applyLogic(arrLogic, savedStore, savedNext,
-                       logicSub, actionSrc$, deps, logicCount,
-                       monitor$);
+      const { action$, sub, logicCount: cnt } = applyLogic(
+        arrLogic,
+        savedStore,
+        savedNext,
+        logicSub,
+        actionSrc$,
+        deps,
+        logicCount,
+        monitor$
+      );
       actionEnd$ = action$;
       logicSub = sub;
       logicCount = cnt;
 
-      return action => {
+      return (action) => {
         debug('starting off', action);
         monitor$.next({ action, op: 'top' });
         actionSrc$.next(action);
@@ -108,11 +123,13 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
      @return {promise} promise resolves when all are complete
     */
   mw.whenComplete = function whenComplete(fn = identityFn) {
-    return lastPending$.pipe(
-      // tap(x => console.log('wc', x)), /* keep commented out */
-      takeWhile(x => x.pending),
-      map((/* x */) => undefined) // not passing along anything
-    ).toPromise()
+    return lastPending$
+      .pipe(
+        // tap(x => console.log('wc', x)), /* keep commented out */
+        takeWhile((x) => x.pending),
+        map((/* x */) => undefined) // not passing along anything
+      )
+      .toPromise()
       .then(fn);
   };
 
@@ -128,11 +145,14 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
     if (typeof additionalDeps !== 'object') {
       throw new Error('addDeps should be called with an object');
     }
-    Object.keys(additionalDeps).forEach(k => {
+    Object.keys(additionalDeps).forEach((k) => {
       const existing = deps[k];
       const newValue = additionalDeps[k];
-      if (typeof existing !== 'undefined' && // previously existing dep
-          existing !== newValue) { // no override
+      if (
+        typeof existing !== 'undefined' && // previously existing dep
+        existing !== newValue
+      ) {
+        // no override
         throw new Error(`addDeps cannot override an existing dep value: ${k}`);
       }
       // eslint-disable-next-line no-param-reassign
@@ -147,15 +167,24 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
     @return {object} object with a property logicCount set to the count of logic items
    */
   mw.addLogic = function addLogic(arrNewLogic) {
-    if (!arrNewLogic.length) { return { logicCount }; }
+    if (!arrNewLogic.length) {
+      return { logicCount };
+    }
     const combinedLogic = savedLogicArr.concat(arrNewLogic);
     const duplicateLogic = findDuplicates(combinedLogic);
     if (duplicateLogic.length) {
       throw new Error(`duplicate logic, indexes: ${duplicateLogic}`);
     }
-    const { action$, sub, logicCount: cnt } =
-          applyLogic(arrNewLogic, savedStore, savedNext,
-                     logicSub, actionEnd$, deps, logicCount, monitor$);
+    const { action$, sub, logicCount: cnt } = applyLogic(
+      arrNewLogic,
+      savedStore,
+      savedNext,
+      logicSub,
+      actionEnd$,
+      deps,
+      logicCount,
+      monitor$
+    );
     actionEnd$ = action$;
     logicSub = sub;
     logicCount = cnt;
@@ -171,8 +200,7 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
       throw new Error(`duplicate logic, indexes: ${duplicateLogic}`);
     }
     // filter out any refs that match existing logic, then addLogic
-    const arrNewLogic = arrMergeLogic.filter(x =>
-      savedLogicArr.indexOf(x) === -1);
+    const arrNewLogic = arrMergeLogic.filter((x) => savedLogicArr.indexOf(x) === -1);
     return mw.addLogic(arrNewLogic);
   };
 
@@ -187,9 +215,16 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
     if (duplicateLogic.length) {
       throw new Error(`duplicate logic, indexes: ${duplicateLogic}`);
     }
-    const { action$, sub, logicCount: cnt } =
-          applyLogic(arrRepLogic, savedStore, savedNext,
-                     logicSub, actionSrc$, deps, 0, monitor$);
+    const { action$, sub, logicCount: cnt } = applyLogic(
+      arrRepLogic,
+      savedStore,
+      savedNext,
+      logicSub,
+      actionSrc$,
+      deps,
+      0,
+      monitor$
+    );
     actionEnd$ = action$;
     logicSub = sub;
     logicCount = cnt;
@@ -201,19 +236,21 @@ export default function createLogicMiddleware(arrLogic = [], deps = {}) {
   return mw;
 }
 
-function applyLogic(arrLogic, store, next, sub, actionIn$, deps,
-                    startLogicCount, monitor$) {
-  if (!store || !next) { throw new Error('store is not defined'); }
+function applyLogic(arrLogic, store, next, sub, actionIn$, deps, startLogicCount, monitor$) {
+  if (!store || !next) {
+    throw new Error('store is not defined');
+  }
 
-  if (sub) { sub.unsubscribe(); }
+  if (sub) {
+    sub.unsubscribe();
+  }
 
   const wrappedLogic = arrLogic.map((logic, idx) => {
     const namedLogic = naming(logic, idx + startLogicCount);
     return wrapper(namedLogic, store, deps, monitor$);
   });
-  const actionOut$ = wrappedLogic.reduce((acc$, wep) => wep(acc$),
-                                         actionIn$);
-  const newSub = actionOut$.subscribe(action => {
+  const actionOut$ = wrappedLogic.reduce((acc$, wep) => wep(acc$), actionIn$);
+  const newSub = actionOut$.subscribe((action) => {
     debug('actionEnd$', action);
     try {
       const result = next(action);
@@ -221,7 +258,7 @@ function applyLogic(arrLogic, store, next, sub, actionIn$, deps,
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('error in mw dispatch or next call, probably in middlware/reducer/render fn:', err);
-      const msg = (err && err.message) ? err.message : err;
+      const msg = err && err.message ? err.message : err;
       monitor$.next({ action, err: msg, op: 'nextError' });
     }
     // at this point, action is the transformed action, not original
@@ -242,7 +279,9 @@ function applyLogic(arrLogic, store, next, sub, actionIn$, deps,
  * @return {object} namedLogic named logic
  */
 function naming(logic, idx) {
-  if (logic.name) { return logic; }
+  if (logic.name) {
+    return logic;
+  }
   return {
     ...logic,
     name: `L(${stringifyType(logic.type)})-${idx}`
@@ -256,7 +295,7 @@ function naming(logic, idx) {
  */
 function findDuplicates(arrLogic) {
   return arrLogic.reduce((acc, x1, idx1) => {
-    if (arrLogic.some((x2, idx2) => (idx1 !== idx2 && x1 === x2))) {
+    if (arrLogic.some((x2, idx2) => idx1 !== idx2 && x1 === x2)) {
       acc.push(idx1);
     }
     return acc;

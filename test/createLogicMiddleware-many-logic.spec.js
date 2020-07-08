@@ -16,13 +16,13 @@ describe('createLogicMiddleware-many-logic', () => {
           validate({ action }, allow) {
             allow({
               ...action,
-              validates: action.validates + 1,
+              validates: action.validates + 1
             });
           },
           process({ action }, dispatch, done) {
             dispatch({ type: 'foo-success' });
             done();
-          },
+          }
         })
       );
       mw = createLogicMiddleware(arrLogic);
@@ -31,12 +31,12 @@ describe('createLogicMiddleware-many-logic', () => {
           case 'foo':
             return {
               ...state,
-              validates: state.validates + action.validates,
+              validates: state.validates + action.validates
             };
           case 'foo-success':
             return {
               ...state,
-              processes: state.processes + 1,
+              processes: state.processes + 1
             };
           default:
             return state;
@@ -63,9 +63,9 @@ describe('createLogicMiddleware-many-logic', () => {
           validate({ action }, allow) {
             allow({
               ...action,
-              validates: action.validates + 1,
+              validates: action.validates + 1
             });
-          },
+          }
         })
       );
       mw = createLogicMiddleware(arrLogic);
@@ -74,7 +74,7 @@ describe('createLogicMiddleware-many-logic', () => {
           case 'foo':
             return {
               ...state,
-              validates: state.validates + action.validates,
+              validates: state.validates + action.validates
             };
           default:
             return state;
@@ -93,7 +93,8 @@ describe('createLogicMiddleware-many-logic', () => {
     // single-test 240, with mergeMapOrTap 450
     // full suite 350, with mergeMapOrTap 540
     const NUM_LOGICS = 600; // 350 with optimizations
-    let mw1, mw2;
+    let mw1;
+    let mw2;
     let store;
 
     beforeEach(async () => {
@@ -103,7 +104,7 @@ describe('createLogicMiddleware-many-logic', () => {
           process({ action }, dispatch, done) {
             dispatch({ type: 'foo-success' });
             done();
-          },
+          }
         })
       );
       mw1 = createLogicMiddleware(arrLogic.slice(0, 300));
@@ -113,12 +114,12 @@ describe('createLogicMiddleware-many-logic', () => {
           case 'foo':
             return {
               ...state,
-              validates: state.validates + action.validates,
+              validates: state.validates + action.validates
             };
           case 'foo-success':
             return {
               ...state,
-              processes: state.processes + 1,
+              processes: state.processes + 1
             };
           default:
             return state;

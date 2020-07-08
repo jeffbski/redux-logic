@@ -1,6 +1,5 @@
-import isPromise from 'is-promise';
-import { Observable, Subject } from 'rxjs';
-import { take, takeUntil} from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { take, takeUntil } from 'rxjs/operators';
 import { identityFn, wrapActionForIntercept } from './utils';
 import createDepObject from './createDepObject';
 import execProcessFn from './execProcessFn';
@@ -9,42 +8,56 @@ import createCancelled$ from './createCancelled$';
 
 const debug = (/* ...args */) => {};
 
-export default function createLogicAction$({ action, logic, store, deps,
-  cancel$, monitor$, action$ }) {
+export default function createLogicAction$({ action, logic, store, deps, cancel$, monitor$, action$ }) {
   const { getState } = store;
-  const { name, process: processFn, processOptions: { dispatchReturn,
-    dispatchMultiple, successType, failType } } = logic;
+  const {
+    name,
+    process: processFn,
+    processOptions: { dispatchReturn }
+  } = logic;
   const intercept = logic.validate || logic.transform; // aliases
 
   debug('createLogicAction$', name, action);
   monitor$.next({ action, name, op: 'begin' }); // also in logicWrapper
 
   const logicActionOps = [
-    (cancel$) ? takeUntil(cancel$) : null, // only takeUntil if cancel or latest
+    cancel$ ? takeUntil(cancel$) : null, // only takeUntil if cancel or latest
     take(1)
   ].filter(identityFn);
 
   // logicAction$ is used for the mw next(action) call
-  const logicAction$ = Observable.create(logicActionObs => {
+  const logicAction$ = Observable.create((logicActionObs) => {
     // create notification subject for process which we dispose of
     // when take(1) or when we are done dispatching
     const { cancelled$, setInterceptComplete } = createCancelled$({
-      action, cancel$, monitor$, logic });
+      action,
+      cancel$,
+      monitor$,
+      logic
+    });
 
     const { dispatch, dispatch$, done } = createDispatch({
-      action, cancel$, cancelled$, logic, monitor$, store });
+      action,
+      cancel$,
+      cancelled$,
+      logic,
+      monitor$,
+      store
+    });
 
     // passed into each execution phase hook as first argument
     const ctx = {}; // for sharing data between hooks
     const depObj = createDepObject({ deps, cancelled$, ctx, getState, action, action$ });
 
-
     function shouldDispatch(act, useDispatch) {
-      if (!act) { return false; }
-      if (useDispatch === 'auto') { // dispatch on diff type
-        return (act.type !== action.type);
+      if (!act) {
+        return false;
       }
-      return (useDispatch); // otherwise forced truthy/falsy
+      if (useDispatch === 'auto') {
+        // dispatch on diff type
+        return act.type !== action.type;
+      }
+      return useDispatch; // otherwise forced truthy/falsy
     }
 
     const AllowRejectNextDefaults = {
@@ -66,7 +79,6 @@ export default function createLogicAction$({ action, logic, store, deps,
       handleNextOrDispatch(false, act, options);
     }
 
-
     function handleNextOrDispatch(shouldProcess, act, options) {
       const shouldProcessAndHasProcessFn = shouldProcess && processFn;
       const { useDispatch } = applyAllowRejectNextDefaults(options);
@@ -75,10 +87,12 @@ export default function createLogicAction$({ action, logic, store, deps,
         setInterceptComplete();
         dispatch(wrapActionForIntercept(act), { allowMore: true }); // will be completed later
         logicActionObs.complete(); // dispatched action, so no next(act)
-      } else { // normal next
+      } else {
+        // normal next
         if (act) {
           monitor$.next({ action, nextAction: act, name, shouldProcess, op: 'next' });
-        } else { // act is undefined, filtered
+        } else {
+          // act is undefined, filtered
           monitor$.next({ action, name, shouldProcess, op: 'filtered' });
           setInterceptComplete();
         }
@@ -86,13 +100,14 @@ export default function createLogicAction$({ action, logic, store, deps,
       }
 
       // unless rejected, we will process even if allow/next dispatched
-      if (shouldProcessAndHasProcessFn) { // processing, was an accept
+      if (shouldProcessAndHasProcessFn) {
+        // processing, was an accept
         // if action provided is empty, give process orig
         depObj.action = act || action;
 
-        execProcessFn({ depObj, dispatch, done, processFn,
-          dispatchReturn, dispatch$, name });
-      } else { // not processing, must have been a reject
+        execProcessFn({ depObj, dispatch, done, processFn, dispatchReturn, dispatch$, name });
+      } else {
+        // not processing, must have been a reject
         dispatch$.complete();
       }
     }
@@ -100,7 +115,7 @@ export default function createLogicAction$({ action, logic, store, deps,
     /* post if defined, then complete */
     function postIfDefinedOrComplete(act, act$) {
       if (act) {
-        act$.next(act);  // triggers call to middleware's next()
+        act$.next(act); // triggers call to middleware's next()
       }
       setInterceptComplete();
       act$.complete();
