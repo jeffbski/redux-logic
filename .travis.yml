@@ -15,16 +15,3 @@ branches:
 cache:
   directories:
     - $HOME/.npm
-    - examples/async-rxjs-ajax-fetch/node_modules
-    - examples/async-fetch-vanilla/node_modules
-    - examples/async-fetch-proc-options/node_modules
-    - examples/async-rxjs-ajax-proc-options/node_modules
-    - examples/async-await/node_modules
-    - examples/async-await-proc-options/node_modules
-    - examples/countdown/node_modules
-    - examples/countdown-obs/node_modules
-    - examples/form-validation/node_modules
-    - examples/notification/node_modules
-    - examples/search-async-fetch/node_modules
-    - examples/single-file/node_modules
-    - examples/single-file-redux/node_modules
