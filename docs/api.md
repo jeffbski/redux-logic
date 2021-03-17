@@ -15,15 +15,15 @@ Contents:
 
 ## Installation
 
-redux-logic uses rxjs@5 under the covers and to prevent multiple copies (of different versions) from being installed, it is recommended to install rxjs first before redux-logic. That way you can use the same copy of rxjs elsewhere.
+redux-logic uses rxjs@6 under the covers and to prevent multiple copies (of different versions) from being installed, it is recommended to install rxjs first before redux-logic. That way you can use the same copy of rxjs elsewhere.
 
 If you are never using rxjs outside of redux-logic and don't plan to use Observables directly in your logic then you can skip the rxjs install and it will be installed as a redux-logic dependency. However if you think you might use Observables directly in the future (possibly creating Observables in your logic), it is still recommended to install rxjs separately first
 just to help ensure that only one copy will be in the project.
 
-The rxjs install below `npm install rxjs@^5` installs the lastest 5.x.x version of rxjs.
+The rxjs install below `npm install rxjs@^6` installs the lastest 6.x.x version of rxjs.
 
 ```bash
-npm install rxjs@^5 --save  # optional see note above
+npm install rxjs@^6 --save  # optional see note above
 npm install redux-logic --save
 ```
 
@@ -39,6 +39,7 @@ import { createLogic } from 'redux-logic';
    and process properties of the returned logic object */
 const fooLogic = createLogic({
   // optional name - used in monitor$ and error messages, the default name assigned is L(TYPE)-N where TYPE is the action type(s) and N is the index in the logic array
+  name: 'someLogicName',
 
   // filtering/canceling
   type: T, // required string, regex, Symbol, array of str/regex/Symbol, use '*' for all
@@ -342,7 +343,7 @@ The successType and failType would enable clean code, where you can simply retur
 
 ### Additional properties available to execution hooks
 
-The first argument of each execution phase hook, `depObj`, contains any dependencies that were supplied to the createLogicMiddleware command as well as built-in properties.
+The first argument of each execution phase hook, `depObj`, contains any dependencies that were supplied to the `createLogicMiddleware` command as well as built-in properties.
 
 The signature of each execution phase hook is:
 
@@ -352,14 +353,14 @@ transform(depObj, next, ?reject)
 process(depObj, ?dispatch, ?done)
 ```
 
-Supplying dependencies to createLogicMiddleware makes it easy to create testable code since you can use different injected deps in your tests than you do at runtime. It also makes it easy to inject different config or connections in development, staging, and production. Use of these is optional.
+Supplying dependencies to `createLogicMiddleware` makes it easy to create testable code since you can use different injected deps in your tests than you do at runtime. It also makes it easy to inject different config or connections in development, staging, and production. Use of these is optional.
 
-There are also built-in properties supplied to the execution hooks regardless of whether you supply any dendencies or not. These are merged in at runtime.
+There are also built-in properties supplied to the execution hooks regardless of whether you supply any dependencies or not. These are merged in at runtime.
 
  - `getState` - the `store.getState` function is provided so logic can get access to the full state of the app. In the `validate` and `transform` hooks this will be the state before the reducers have updated anything for this action. For the `process` hook, the reducers should have been run (unless there are other middleware introducing async delays).
  - `action` - in `validate/transform` hook this is the action that triggered the logic to run. In the `process` hook it will be the action passed on by the `transform` hook, or if it was falsey then the original action will be provided.
- - `ctx` - initially an empty object representing a shared place that you can use to pass data between the `validate/transform` and `process` hooks if you have implemented more than one of them. For instance if you set the `ctx.foo = { a: 1}` in your `validate` hook, then the `process` hook can read the previous value.
- - `cancelled$` - an observable that emits if the logic is cancelled. This osbservable will also complete when the hooks have finished, regardless of whether it was cancelled. Subscribing to the cancelled$.next allows you to respond to a cancellation performing any additional cleanup that you need to do. For instance if you had a long running web socket connection, you might close it. Normally you won't need to use this unless there is something you need to close from your end. Even without using `cancelled$` future dispatching is stopped, so use of this is only necessary for cleanup or termination of resources you created.
+ - `ctx` - initially an empty object representing a shared place that you can use to pass data between the `validate/transform` and `process` hooks if you have implemented more than one of them. For instance if you set the `ctx.foo = {a: 1}` in your `validate` hook, then the `process` hook can read the previous value.
+ - `cancelled$` - an observable that emits if the logic is cancelled. This observable will also complete when the hooks have finished, regardless of whether it was cancelled. Subscribing to the cancelled$.next allows you to respond to a cancellation performing any additional cleanup that you need to do. For instance if you had a long running web socket connection, you might close it. Normally you won't need to use this unless there is something you need to close from your end. Even without using `cancelled$` future dispatching is stopped, so use of this is only necessary for cleanup or termination of resources you created.
  - `action$` - the action observable stream which can be used to created advanced flows like for drag/drop, web sockets etc.
 
 ### Cancellation / take latest - XHR aborting
@@ -448,7 +449,7 @@ In most situations the default options `{ useDefault: 'auto' }` is the proper ch
 
 ### dispatch - multi-dispatching and process' variable signature
 
-The `process` hook supports a variable signature that affect how dispatching works
+The `process` hook supports a variable signature that affect how dispatching works.
 
 The official signature for process is
 ```js
@@ -512,7 +513,7 @@ process({ getState, action }, dispatch, done) {
 }
 ```
 
-For a subscription that never ends (except when cancelled) the relevant parts of our createLogic might look something like this
+For a subscription that never ends (except when cancelled) the relevant parts of our `createLogic` might look something like this:
 
 ```js
 cancelType: CANCEL_SUBSCRIPTION, // whatever action(s) cancel
@@ -544,7 +545,7 @@ process({ getState, action }, dispatch, done) {
 }
 ```
 
-Or if dispatching things over time
+Or if dispatching things over time:
 
 ```js
 process({ getState, action }, dispatch, done) {
@@ -566,7 +567,7 @@ process({ getState, action }, dispatch, done) {
 
 ### Monitoring redux logic internal operations
 
-For debugging or gaining insight into the internal operations of redux-logic, you may subscribe to the monitor$ observable. This could also be used for developing developer tools.
+For debugging or gaining insight into the internal operations of redux-logic, you may subscribe to the `monitor$` observable. This could also be used for developing developer tools.
 
 ```js
 logicMiddleware.monitor$.subscribe(
@@ -577,7 +578,7 @@ logicMiddleware.monitor$.subscribe(
 The structure emitted by the observable is an object with properties:
 
  - action - the original action
- - op - what is occurring in redux-logic, one of the following values
+ - op - what is occurring in redux-logic, one of the following values:
    - top - top of the redux-logic before any logic
    - bottom - after all redux-logic processing handed to next middleware/reducers
    - begin - enter a logic
