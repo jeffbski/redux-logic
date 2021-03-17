@@ -59,7 +59,7 @@ describe('createLogicMiddleware-integration', () => {
         { nextAction: { type: 'FOO' }, op: 'bottom' },
         { action: { type: 'FOO' }, dispAction: { type: 'BAD' }, op: 'dispatch' },
         { action: { type: 'BAD' }, op: 'top' },
-        { action: { type: 'BAD' }, err: 'something bad happened', op: 'nextError' },
+        { action: { type: 'BAD' }, err: new Error('something bad happened'), op: 'nextError' },
         { nextAction: { type: 'BAD' }, op: 'bottom' },
         { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
       ]);
@@ -120,7 +120,7 @@ describe('createLogicMiddleware-integration', () => {
         { action: { type: 'BAD' }, op: 'top' },
         { action: { type: 'BAD' }, name: 'L(BAD)-0', op: 'begin' },
         { action: { type: 'BAD' }, nextAction: { type: 'BAD' }, name: 'L(BAD)-0', shouldProcess: true, op: 'next' },
-        { action: { type: 'BAD' }, err: 'another bad thing', op: 'nextError' },
+        { action: { type: 'BAD' }, err: new Error('another bad thing'), op: 'nextError' },
         { nextAction: { type: 'BAD' }, op: 'bottom' },
         { action: { type: 'BAD' }, name: 'L(BAD)-0', op: 'end' }
       ]);
