@@ -78,7 +78,7 @@
     "core-js": "^3.6.5",
     "is-promise": "^4.0.0",
     "loose-envify": "^1.4.0",
-    "rxjs": "^6.6.0"
+    "rxjs": "^6.6.6"
   },
   "peerDependencies": {
     "redux": ">=3.5.2"
@@ -94,14 +94,14 @@
     "babel-loader": "^8.1.0",
     "babel-plugin-istanbul": "^6.0.0",
     "browserslist": "^4.13.0",
-    "cross-env": "^7.0.2",
+    "cross-env": "^7.0.3",
     "es-check": "^5.2.3",
     "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-import": "^2.22.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-react": "^7.20.3",
     "expect-legacy": "^1.20.2",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "mocha": "^7.2.0",
     "nyc": "^15.1.0",
     "redux": "^4.0.5",
