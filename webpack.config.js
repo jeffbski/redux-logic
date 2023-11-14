@@ -1,7 +1,6 @@
 'use strict';
 
 const webpack = require('webpack');
-const rxPaths = require('rxjs/_esm5/path-mapping');
 const babelOptions = require('./babel.config');
 
 const env = process.env.NODE_ENV || 'production';
@@ -27,9 +26,6 @@ const config = {
         ]
       }
     ]
-  },
-  resolve: {
-    alias: rxPaths()  // not sure that this is needed but is in rxjs docs
   },
   output: {
     library: 'ReduxLogic',

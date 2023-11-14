@@ -8,7 +8,7 @@ const presets = [
       // targets are specified in .browserslist
       // run `npx browserslist` will show resultant targets or see debug output from build
       useBuiltIns: 'usage',
-      corejs: '3.6.4',
+      corejs: '3.33.2',
       modules: BABEL_ENV === 'es' ? false : 'auto', // not transforming modules for es
       debug: CI // show the browser target and plugins used when in CI mode
     }

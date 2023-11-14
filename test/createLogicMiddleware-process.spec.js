@@ -378,7 +378,7 @@ describe('createLogicMiddleware-process', () => {
     it('dispatches UNHANDLED_LOGIC_ERROR', () => {
       expect(dispatch.calls.length).toBe(1);
       expect(dispatch.calls[0].arguments[0].type).toBe('UNHANDLED_LOGIC_ERROR');
-      expect(dispatch.calls[0].arguments[0].payload.message).toMatch('Cannot read property');
+      expect(dispatch.calls[0].arguments[0].payload.message).toMatch('Cannot read propert');
       expect(dispatch.calls[0].arguments[0].error).toBe(true);
     });
 
@@ -404,7 +404,7 @@ describe('createLogicMiddleware-process', () => {
         { nextAction: { type: 'FOO' }, op: 'bottom' },
         {
           action: { type: 'FOO' },
-          dispAction: { type: 'UNHANDLED_LOGIC_ERROR', payload: "Cannot read property 'xyz' of null", error: true },
+          dispAction: { type: 'UNHANDLED_LOGIC_ERROR', payload: "Cannot read properties of null (reading 'xyz')", error: true },
           op: 'dispatch'
         },
         { action: { type: 'FOO' }, name: 'L(FOO)-0', op: 'end' }
