@@ -108,7 +108,7 @@
     "rimraf": "^5.0.5",
     "typescript": "^5.2.2",
     "webpack": "^4.47.0",
-    "webpack-command": "^0.5.0"
+    "webpack-command": "^0.5.1"
   },
   "npmName": "redux-logic",
   "npmFileMap": [
