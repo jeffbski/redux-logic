@@ -42,8 +42,8 @@
     "escheck:umd": "es-check es5 dist/**.js",
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir build-lib",
     "build:es": "cross-env BABEL_ENV=es babel src --out-dir build-es",
-    "build:umd": "cross-env NODE_ENV=production MINIMIZE=false BABEL_ENV=es webpack --entry ./src/index.js --output ./dist/redux-logic.js",
-    "build:umd:min": "cross-env NODE_ENV=production BABEL_ENV=es webpack --entry ./src/index.js --output ./dist/redux-logic.min.js",
+    "build:umd": "cross-env NODE_ENV=production MINIMIZE=false BABEL_ENV=es webpack --entry ./src/index.js -o ./dist --output-filename redux-logic.js",
+    "build:umd:min": "cross-env NODE_ENV=production BABEL_ENV=es webpack --entry ./src/index.js -o ./dist --output-filename redux-logic.min.js",
     "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min",
     "debug-build": "cross-env CI=true npm run build:commonjs && cross-env CI=true npm run build:es && cross-env CI=true npm run build:umd && cross-env CI=true npm run build:umd:min",
     "prepublish": "npm run clean && npm run check:src && npm run build && npm run escheck",
@@ -107,8 +107,8 @@
     "redux": "^4.2.1",
     "rimraf": "^5.0.5",
     "typescript": "^5.2.2",
-    "webpack": "^4.47.0",
-    "webpack-command": "^0.5.1"
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
   },
   "npmName": "redux-logic",
   "npmFileMap": [
