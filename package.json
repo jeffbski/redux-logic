@@ -39,7 +39,7 @@
     "escheck": "npm run escheck:commonjs && npm run escheck:es && npm run escheck:umd",
     "escheck:commonjs": "es-check es5 build-lib/**.js",
     "escheck:es": "es-check --module es6 build-es/**.js",
-    "escheck:umd": "es-check es5 dist/**.js",
+    "escheck:umd": "es-check es6 dist/**.js",
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir build-lib",
     "build:es": "cross-env BABEL_ENV=es babel src --out-dir build-es",
     "build:umd": "cross-env NODE_ENV=production MINIMIZE=false BABEL_ENV=es webpack --entry ./src/index.js -o ./dist --output-filename redux-logic.js",
