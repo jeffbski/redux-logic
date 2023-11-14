@@ -78,7 +78,7 @@
     "core-js": "^3.33.2",
     "is-promise": "^4.0.0",
     "loose-envify": "^1.4.0",
-    "rxjs": "^6.6.6"
+    "rxjs": "^7.8.1"
   },
   "peerDependencies": {
     "redux": ">=3.5.2"
